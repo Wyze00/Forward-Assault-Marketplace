@@ -10,10 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@prisma/client": "^6.18.0",
     "@tailwindcss/vite": "^4.1.16",
+    "dotenv": "^17.2.3",
     "nuxt": "^4.2.0",
     "tailwindcss": "^4.1.16",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.18.0"
   }
 }
