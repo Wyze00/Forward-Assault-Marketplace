@@ -2,8 +2,9 @@ import { setup } from '@nuxt/test-utils'
 
 export async function setupTest() {
   await setup({
-    rootDir: process.cwd() + "../../../",
+    rootDir: process.cwd(),
     server: true,
-    browser: false
+    browser: false,
+    host: 'http://localhost:3000',
   })
 }
