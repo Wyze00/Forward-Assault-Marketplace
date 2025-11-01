@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const { data } = await useFetch('/api/test');
+const { data } = await useFetch('/api/nuxt');
 
 </script>
 

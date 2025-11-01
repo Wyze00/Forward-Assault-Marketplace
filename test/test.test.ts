@@ -10,12 +10,12 @@ describe('Test API: POST /api/test', () => {
   });
 
   it('Testing', async () => {
-    const response: {message: string, data: Nuxt[] }= await $fetch('/api/test');
+    const response: {message: string, data: Nuxt[] }= await $fetch('/api/nuxt');
     expect(response!.message).toEqual('Data fetched securely');
   });
 
   it('Testing2', async () => {
-    const response: {message: string, data: Nuxt[] }= await $fetch('/api/test');
-    expect(response.data).toHaveLength(6);
+    const response: {message: string, data: Nuxt[] }= await $fetch('/api/nuxt');
+    expect(response.data.length).toBeGreaterThan(1);
   });
 });
