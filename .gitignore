@@ -24,3 +24,10 @@ logs
 !.env.example
 
 /app/generated/prisma
+
+/generated/prisma
+
+.agents/
+.claude/
+.windsurf/
+skills-lock.json

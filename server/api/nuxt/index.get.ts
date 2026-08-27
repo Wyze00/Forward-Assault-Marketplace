@@ -1,9 +1,9 @@
-import { Nuxt } from '@prisma/client';
-import { PrismaService } from '~~/server/util/prismaService';
+import { Nuxt } from "~~/prisma/generated/client";
+import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {
 
-  const data: Nuxt[] = await PrismaService.getInstance().nuxt.findMany();
+  const data: Nuxt[] = await prismaClient.nuxt.findMany();
 
   return {
     message: 'Data fetched securely',

@@ -10,9 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@prisma/client": "^6.18.0",
+    "@prisma/adapter-better-sqlite3": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "@tailwindcss/vite": "^4.1.16",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.4.2",
     "nuxt": "^4.2.0",
     "tailwindcss": "^4.1.16",
     "vue": "^3.5.22",
@@ -20,10 +21,12 @@
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.20.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.4.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^20.0.10",
     "playwright-core": "^1.56.1",
-    "prisma": "^6.18.0",
+    "prisma": "^7.10.0",
     "vitest": "^3.2.4"
   }
 }

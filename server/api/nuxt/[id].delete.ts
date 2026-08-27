@@ -1,12 +1,10 @@
-
-import { Nuxt } from '@prisma/client';
-import { PrismaService } from '~~/server/util/prismaService';
+import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {
 
     const nuxtID = Number(getRouterParam(event, 'id'));
 
-     await PrismaService.getInstance().nuxt.delete({
+     await prismaClient.nuxt.delete({
         where: { id: nuxtID },
     });
 
