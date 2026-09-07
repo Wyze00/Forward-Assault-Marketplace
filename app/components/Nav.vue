@@ -5,6 +5,8 @@ const isMobileMenuOpen = ref(false)
 
 const navLinks = [
   { name: 'Favorite', path: '/favorite' },
+  { name: 'Weapon', path: '/weapon' },
+  { name: 'Camo', path: '/camo' },
 ]
 
 
