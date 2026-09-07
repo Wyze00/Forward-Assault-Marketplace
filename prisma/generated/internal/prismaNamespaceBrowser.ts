@@ -51,7 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Nuxt: 'Nuxt'
+  Camo: 'Camo',
+  Weapon: 'Weapon',
+  Skin: 'Skin',
+  SkinHistory: 'SkinHistory',
+  FavoriteSkin: 'FavoriteSkin'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -67,13 +71,54 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const NuxtScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content'
+export const CamoScalarFieldEnum = {
+  uuid: 'uuid',
+  itemType: 'itemType',
+  camoID: 'camoID',
+  camoName: 'camoName'
 } as const
 
-export type NuxtScalarFieldEnum = (typeof NuxtScalarFieldEnum)[keyof typeof NuxtScalarFieldEnum]
+export type CamoScalarFieldEnum = (typeof CamoScalarFieldEnum)[keyof typeof CamoScalarFieldEnum]
+
+
+export const WeaponScalarFieldEnum = {
+  uuid: 'uuid',
+  weaponType: 'weaponType',
+  weaponName: 'weaponName'
+} as const
+
+export type WeaponScalarFieldEnum = (typeof WeaponScalarFieldEnum)[keyof typeof WeaponScalarFieldEnum]
+
+
+export const SkinScalarFieldEnum = {
+  uuid: 'uuid',
+  camoUuid: 'camoUuid',
+  weaponType: 'weaponType'
+} as const
+
+export type SkinScalarFieldEnum = (typeof SkinScalarFieldEnum)[keyof typeof SkinScalarFieldEnum]
+
+
+export const SkinHistoryScalarFieldEnum = {
+  uuid: 'uuid',
+  skinUuid: 'skinUuid',
+  offerID: 'offerID',
+  sellerID: 'sellerID',
+  sellerName: 'sellerName',
+  price: 'price',
+  listingDate: 'listingDate',
+  createdAt: 'createdAt'
+} as const
+
+export type SkinHistoryScalarFieldEnum = (typeof SkinHistoryScalarFieldEnum)[keyof typeof SkinHistoryScalarFieldEnum]
+
+
+export const FavoriteSkinScalarFieldEnum = {
+  uuid: 'uuid',
+  skinUuid: 'skinUuid'
+} as const
+
+export type FavoriteSkinScalarFieldEnum = (typeof FavoriteSkinScalarFieldEnum)[keyof typeof FavoriteSkinScalarFieldEnum]
 
 
 export const SortOrder = {

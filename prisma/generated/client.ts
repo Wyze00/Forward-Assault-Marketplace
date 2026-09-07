@@ -31,8 +31,8 @@ export * from "./enums.js"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Nuxts
- * const nuxts = await prisma.nuxt.findMany()
+ * // Fetch zero or more Camos
+ * const camos = await prisma.camo.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,27 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Nuxt
+ * Model Camo
  * 
  */
-export type Nuxt = Prisma.NuxtModel
+export type Camo = Prisma.CamoModel
+/**
+ * Model Weapon
+ * 
+ */
+export type Weapon = Prisma.WeaponModel
+/**
+ * Model Skin
+ * 
+ */
+export type Skin = Prisma.SkinModel
+/**
+ * Model SkinHistory
+ * 
+ */
+export type SkinHistory = Prisma.SkinHistoryModel
+/**
+ * Model FavoriteSkin
+ * 
+ */
+export type FavoriteSkin = Prisma.FavoriteSkinModel

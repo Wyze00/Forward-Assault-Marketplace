@@ -12,8 +12,60 @@ datasource db {
   provider = "sqlite"
 }
 
-model Nuxt {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
+enum ItemType {
+  weapon
+  glove
+  character
+}
+
+model Camo {
+  uuid String @id @default(uuid())
+  itemType ItemType
+  camoID Int
+  camoName String
+
+  skins Skin[]
+  @@unique([itemType, camoID])
+}
+
+model Weapon {
+  uuid String @id @default(uuid())
+  weaponType Int @unique
+  weaponName String
+
+  skins Skin[]
+}
+
+model Skin {
+  uuid String @id @default(uuid())
+  camoUuid String
+  weaponType Int
+
+  camo Camo @relation(fields: [camoUuid], references: [uuid])
+  weapon Weapon @relation(fields: [weaponType], references: [weaponType])
+
+  skinHistories SkinHistory[]
+  favoriteSkin FavoriteSkin?
+
+  @@unique([camoUuid, weaponType])
+}
+
+model SkinHistory {
+  uuid String @id @default(uuid())
+  skinUuid String
+  offerID String
+  sellerID String
+  sellerName String
+  price Int
+  listingDate String
+  createdAt DateTime @default(now())
+
+  skin Skin @relation(fields: [skinUuid], references: [uuid])
+}
+
+model FavoriteSkin {
+  uuid String @id @default(uuid())
+  skinUuid String @unique
+
+  skin Skin @relation(fields: [skinUuid], references: [uuid])
 }

@@ -18,7 +18,27 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
- * Model Nuxt
+ * Model Camo
  * 
  */
-export type Nuxt = Prisma.NuxtModel
+export type Camo = Prisma.CamoModel
+/**
+ * Model Weapon
+ * 
+ */
+export type Weapon = Prisma.WeaponModel
+/**
+ * Model Skin
+ * 
+ */
+export type Skin = Prisma.SkinModel
+/**
+ * Model SkinHistory
+ * 
+ */
+export type SkinHistory = Prisma.SkinHistoryModel
+/**
+ * Model FavoriteSkin
+ * 
+ */
+export type FavoriteSkin = Prisma.FavoriteSkinModel
