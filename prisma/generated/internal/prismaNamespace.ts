@@ -401,6 +401,7 @@ export const ModelName = {
   Weapon: 'Weapon',
   Skin: 'Skin',
   SkinHistory: 'SkinHistory',
+  SkinHistoryEntry: 'SkinHistoryEntry',
   FavoriteSkin: 'FavoriteSkin'
 } as const
 
@@ -417,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "favoriteSkin"
+    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "skinHistoryEntry" | "favoriteSkin"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -717,6 +718,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SkinHistoryEntry: {
+      payload: Prisma.$SkinHistoryEntryPayload<ExtArgs>
+      fields: Prisma.SkinHistoryEntryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SkinHistoryEntryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SkinHistoryEntryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        findFirst: {
+          args: Prisma.SkinHistoryEntryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SkinHistoryEntryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        findMany: {
+          args: Prisma.SkinHistoryEntryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>[]
+        }
+        create: {
+          args: Prisma.SkinHistoryEntryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        createMany: {
+          args: Prisma.SkinHistoryEntryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SkinHistoryEntryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>[]
+        }
+        delete: {
+          args: Prisma.SkinHistoryEntryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        update: {
+          args: Prisma.SkinHistoryEntryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SkinHistoryEntryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SkinHistoryEntryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SkinHistoryEntryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SkinHistoryEntryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinHistoryEntryPayload>
+        }
+        aggregate: {
+          args: Prisma.SkinHistoryEntryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSkinHistoryEntry>
+        }
+        groupBy: {
+          args: Prisma.SkinHistoryEntryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinHistoryEntryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SkinHistoryEntryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinHistoryEntryCountAggregateOutputType> | number
+        }
+      }
+    }
     FavoriteSkin: {
       payload: Prisma.$FavoriteSkinPayload<ExtArgs>
       fields: Prisma.FavoriteSkinFieldRefs
@@ -858,15 +933,23 @@ export type SkinScalarFieldEnum = (typeof SkinScalarFieldEnum)[keyof typeof Skin
 export const SkinHistoryScalarFieldEnum = {
   uuid: 'uuid',
   skinUuid: 'skinUuid',
-  offerID: 'offerID',
-  sellerID: 'sellerID',
-  sellerName: 'sellerName',
-  price: 'price',
-  listingDate: 'listingDate',
   createdAt: 'createdAt'
 } as const
 
 export type SkinHistoryScalarFieldEnum = (typeof SkinHistoryScalarFieldEnum)[keyof typeof SkinHistoryScalarFieldEnum]
+
+
+export const SkinHistoryEntryScalarFieldEnum = {
+  uuid: 'uuid',
+  skinHistoryUuid: 'skinHistoryUuid',
+  offerID: 'offerID',
+  sellerID: 'sellerID',
+  sellerName: 'sellerName',
+  price: 'price',
+  listingDate: 'listingDate'
+} as const
+
+export type SkinHistoryEntryScalarFieldEnum = (typeof SkinHistoryEntryScalarFieldEnum)[keyof typeof SkinHistoryEntryScalarFieldEnum]
 
 
 export const FavoriteSkinScalarFieldEnum = {
@@ -1080,6 +1163,7 @@ export type GlobalOmitConfig = {
   weapon?: Prisma.WeaponOmit
   skin?: Prisma.SkinOmit
   skinHistory?: Prisma.SkinHistoryOmit
+  skinHistoryEntry?: Prisma.SkinHistoryEntryOmit
   favoriteSkin?: Prisma.FavoriteSkinOmit
 }
 

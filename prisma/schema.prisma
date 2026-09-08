@@ -52,15 +52,23 @@ model Skin {
 
 model SkinHistory {
   uuid String @id @default(uuid())
-  skinUuid String
+  skinUuid String @unique
+  createdAt DateTime @unique @default(now())
+
+  skinHistoryEntries SkinHistoryEntry[]
+  skin Skin @relation(fields: [skinUuid], references: [uuid])
+}
+
+model SkinHistoryEntry {
+  uuid String @id @default(uuid())
+  skinHistoryUuid String
   offerID String
   sellerID String
   sellerName String
   price Int
   listingDate String
-  createdAt DateTime @default(now())
 
-  skin Skin @relation(fields: [skinUuid], references: [uuid])
+  skinHistory SkinHistory @relation(fields: [skinHistoryUuid], references: [uuid])
 }
 
 model FavoriteSkin {

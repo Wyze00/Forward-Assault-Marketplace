@@ -62,6 +62,11 @@ export type Skin = Prisma.SkinModel
  */
 export type SkinHistory = Prisma.SkinHistoryModel
 /**
+ * Model SkinHistoryEntry
+ * 
+ */
+export type SkinHistoryEntry = Prisma.SkinHistoryEntryModel
+/**
  * Model FavoriteSkin
  * 
  */

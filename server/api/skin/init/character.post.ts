@@ -32,12 +32,21 @@ export default defineEventHandler(async (event) => {
         })
 
         const dbCamoMap = new Map<number, Camo>(dbCamo.map((v) => [v.camoID, v]));
+        const camoSet = new Set<number>();
+
 
         const cleanedCamoIDs = camoIDs.filter((id) => {
             if (dbCamoMap.has(Number(id))) {
+
+                if (camoSet.has(Number(id))) {
+                    return false;
+                } else {
+                    camoSet.add(Number(id));
+                }
+
                 return true;
             } else {
-                console.log(`Unknown Character CamoID : ${id}`);
+                console.log(`Unknown Glove CamoID : ${id}`);
                 return false;
             }
         })

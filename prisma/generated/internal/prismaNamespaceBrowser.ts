@@ -55,6 +55,7 @@ export const ModelName = {
   Weapon: 'Weapon',
   Skin: 'Skin',
   SkinHistory: 'SkinHistory',
+  SkinHistoryEntry: 'SkinHistoryEntry',
   FavoriteSkin: 'FavoriteSkin'
 } as const
 
@@ -102,15 +103,23 @@ export type SkinScalarFieldEnum = (typeof SkinScalarFieldEnum)[keyof typeof Skin
 export const SkinHistoryScalarFieldEnum = {
   uuid: 'uuid',
   skinUuid: 'skinUuid',
-  offerID: 'offerID',
-  sellerID: 'sellerID',
-  sellerName: 'sellerName',
-  price: 'price',
-  listingDate: 'listingDate',
   createdAt: 'createdAt'
 } as const
 
 export type SkinHistoryScalarFieldEnum = (typeof SkinHistoryScalarFieldEnum)[keyof typeof SkinHistoryScalarFieldEnum]
+
+
+export const SkinHistoryEntryScalarFieldEnum = {
+  uuid: 'uuid',
+  skinHistoryUuid: 'skinHistoryUuid',
+  offerID: 'offerID',
+  sellerID: 'sellerID',
+  sellerName: 'sellerName',
+  price: 'price',
+  listingDate: 'listingDate'
+} as const
+
+export type SkinHistoryEntryScalarFieldEnum = (typeof SkinHistoryEntryScalarFieldEnum)[keyof typeof SkinHistoryEntryScalarFieldEnum]
 
 
 export const FavoriteSkinScalarFieldEnum = {
