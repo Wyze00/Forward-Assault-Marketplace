@@ -8,44 +8,42 @@ export default defineEventHandler(async (event) => {
         const weaponType = query.weaponType ? Number(query.weaponType) : undefined;
 
         if (!itemType) {
-            throw new Error('Harap isi itemType');
+            throw new Error("Harap sertakan itemType");
         }
 
         const validItemTypes = ['weapon', 'glove', 'character'];
-        
         if (!validItemTypes.includes(itemType)) {
-            throw new Error('Invalid itemType');
+            throw new Error("Invalid itemType");
         }
 
-        const skins = await prismaClient.skin.findMany({
-            where: {
-                camo: {
-                    itemType: itemType as ItemType,
-                },
-                ...(weaponType !== undefined && { weaponType }),
-            },
+        const favorites = await prismaClient.favoriteSkin.findMany({
             include: {
-                camo: true,
-                weapon: true,
-                favoriteSkin: true,
-                skinHistories: {
-                    orderBy: {
-                        createdAt: 'desc',
-                    },
-                    take: 1,
+                skin: {
                     include: {
-                        skinHistoryEntries: {
-                            orderBy: {
-                                price: 'asc',
-                            },
+                        camo: true,
+                        weapon: true,
+                        skinHistories: {
+                            orderBy: { createdAt: 'desc' },
                             take: 1,
+                            include: {
+                                skinHistoryEntries: {
+                                    orderBy: { price: 'asc' },
+                                    take: 1,
+                                }
+                            }
                         }
                     }
+                }
+            },
+            where: {
+                skin: {
+                    camo: { itemType: itemType as ItemType },
+                    ...(weaponType !== undefined && { weaponType })
                 }
             }
         });
 
-        const result = skins.map((skin) => {
+        const result = favorites.map(({ skin }) => {
             const history = skin.skinHistories[0];
             const lowestPriceEntry = history?.skinHistoryEntries[0];
 
@@ -53,10 +51,12 @@ export default defineEventHandler(async (event) => {
                 id: skin.uuid,
                 camoName: skin.camo.camoName,
                 weaponName: skin.weapon?.weaponName || '',
-                name: itemType === 'glove' || itemType === 'character' ? skin.camo.camoName : `${skin.weapon?.weaponName || ''} - ${skin.camo.camoName}`,
+                name: itemType === 'glove' || itemType === 'character'
+                    ? skin.camo.camoName
+                    : `${skin.weapon?.weaponName || ''} - ${skin.camo.camoName}`,
                 lastCaptureDate: history ? history.createdAt : '-',
                 lowestPrice: lowestPriceEntry ? lowestPriceEntry.price : 0,
-                isFavorite: !!skin.favoriteSkin,
+                isFavorite: true,
             };
         });
 
@@ -64,12 +64,11 @@ export default defineEventHandler(async (event) => {
             msg: "Success",
             data: result,
         };
+
     } catch (e: unknown) {
         setResponseStatus(event, 400);
         if (e instanceof Error) {
-            return {
-                msg: e.message
-            }
+            return { msg: e.message };
         }
     }
 });

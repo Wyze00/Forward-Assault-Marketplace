@@ -6,7 +6,7 @@ export interface FetchResponse {
 }
 
 export interface GetSellOffersResponse extends FetchResponse {
-    offers: [{
+    offers: {
         offerID: string,
         sellerID: string,
         sellerName: string,
@@ -17,16 +17,16 @@ export interface GetSellOffersResponse extends FetchResponse {
         condition: number,
         price: number,
         listingDate: string
-    }]
+    }[]
 }
 
 export interface GetUniqueItemsResponse extends FetchResponse {
-    items: [{
+    items: {
         kind: 'skin';
         itemType: ItemType;
         weaponType: number;
         camoID: number;
-    }],
+    }[],
     totalItems: number;
     currentPage: number;
     itemsPerPage: number;

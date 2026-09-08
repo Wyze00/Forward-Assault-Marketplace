@@ -116,6 +116,8 @@ export const SkinHistoryEntryScalarFieldEnum = {
   sellerID: 'sellerID',
   sellerName: 'sellerName',
   price: 'price',
+  condition: 'condition',
+  skinID: 'skinID',
   listingDate: 'listingDate'
 } as const
 

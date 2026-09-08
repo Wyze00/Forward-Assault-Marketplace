@@ -180,14 +180,14 @@ export type SkinHistoryOrderByWithRelationInput = {
 
 export type SkinHistoryWhereUniqueInput = Prisma.AtLeast<{
   uuid?: string
-  skinUuid?: string
-  createdAt?: Date | string
   AND?: Prisma.SkinHistoryWhereInput | Prisma.SkinHistoryWhereInput[]
   OR?: Prisma.SkinHistoryWhereInput[]
   NOT?: Prisma.SkinHistoryWhereInput | Prisma.SkinHistoryWhereInput[]
+  skinUuid?: Prisma.StringFilter<"SkinHistory"> | string
+  createdAt?: Prisma.DateTimeFilter<"SkinHistory"> | Date | string
   skinHistoryEntries?: Prisma.SkinHistoryEntryListRelationFilter
   skin?: Prisma.XOR<Prisma.SkinScalarRelationFilter, Prisma.SkinWhereInput>
-}, "uuid" | "skinUuid" | "createdAt">
+}, "uuid">
 
 export type SkinHistoryOrderByWithAggregationInput = {
   uuid?: Prisma.SortOrder
