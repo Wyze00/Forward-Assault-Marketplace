@@ -7,6 +7,7 @@ const navLinks = [
   { name: 'Favorite', path: '/favorite' },
   { name: 'Weapon', path: '/weapon' },
   { name: 'Camo', path: '/camo' },
+  { name: 'Skin', path: '/skin' },
 ]
 
 
