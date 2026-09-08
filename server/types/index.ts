@@ -14,6 +14,7 @@ export interface GetSellOffersResponse extends FetchResponse {
         itemType: ItemType,
         weaponType: number,
         camoID: number,
+        condition: number,
         price: number,
         listingDate: string
     }]

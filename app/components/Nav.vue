@@ -4,8 +4,11 @@ import { ref } from 'vue'
 const isMobileMenuOpen = ref(false)
 
 const navLinks = [
-  { name: 'Favorite', path: '/favorite' },
   { name: 'Weapon', path: '/weapon' },
+  { name: 'Glove', path: '/glove' },
+  { name: 'Character', path: '/character' },
+  { name: 'Favorite', path: '/favorite' },
+  { name: 'Weapon Type', path: '/weapon/type' },
   { name: 'Camo', path: '/camo' },
   { name: 'Skin', path: '/skin' },
 ]
