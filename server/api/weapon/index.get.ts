@@ -1,6 +1,7 @@
+import { GetWeaponResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetWeaponResponse  | undefined> => {
     try {
         const data = await prismaClient.weapon.findMany();
         

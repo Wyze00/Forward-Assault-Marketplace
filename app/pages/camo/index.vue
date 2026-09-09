@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import type { Camo } from '~~/prisma/generated/client'
+import type { GetCamoResponse } from '~~/server/types'
 
-const camos = ref<{ uuid: string, itemType: string, camoID: number, camoName: string }[]>([])
-const newCamo = ref({ camoID: '', camoName: '', itemType: 'weapon' })
+const camos = ref<Camo[]>([])
+const newCamo = ref<Omit<Camo,'uuid'>>({ camoID: 0, camoName: '', itemType: 'weapon' })
 const fileInput = ref<HTMLInputElement | null>(null)
 const uploadItemType = ref('weapon')
 const uploadMessage = ref('')
@@ -11,8 +13,10 @@ const insertMessage = ref('')
 
 const fetchCamos = async () => {
   try {
-    const res = await $fetch<{ msg: string, data: any[] }>('/api/camo')
-    camos.value = res.data
+    const res = await $fetch<GetCamoResponse>('/api/camo')
+    if (res.data) {
+      camos.value = res.data
+    }
   } catch (err) {
     console.error(err)
   }
@@ -24,13 +28,13 @@ const submitCamo = async () => {
     await $fetch('/api/camo', {
       method: 'POST',
       body: {
-        camoID: Number(newCamo.value.camoID),
+        camoID: newCamo.value.camoID,
         camoName: newCamo.value.camoName,
         itemType: newCamo.value.itemType
       }
     })
     insertMessage.value = 'Success!'
-    newCamo.value = { camoID: '', camoName: '', itemType: 'weapon' }
+    newCamo.value = { camoID: 0, camoName: '', itemType: 'weapon' }
     fetchCamos()
   } catch (err: any) {
     insertMessage.value = 'Failed: ' + (err.message || 'Unknown error')

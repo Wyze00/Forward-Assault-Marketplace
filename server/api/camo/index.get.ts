@@ -1,7 +1,8 @@
 import { ItemType } from "~~/prisma/generated/enums";
+import { GetCamoResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetCamoResponse | undefined> => {
     try {
         const data = await prismaClient.camo.findMany()
         

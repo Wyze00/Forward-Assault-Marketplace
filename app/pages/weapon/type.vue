@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import type { Weapon } from '~~/prisma/generated/client'
+import type { GetWeaponResponse } from '~~/server/types'
 
-const weapons = ref<{ uuid: string, weaponType: number, weaponName: string }[]>([])
+const weapons = ref<Weapon[]>([])
 const newWeapon = ref({ weaponType: '', weaponName: '' })
 const fileInput = ref<HTMLInputElement | null>(null)
 const uploadMessage = ref('')
@@ -10,8 +12,12 @@ const insertMessage = ref('')
 
 const fetchWeapons = async () => {
   try {
-    const res = await $fetch<{ msg: string, data: any[] }>('/api/weapon')
-    weapons.value = res.data
+    const res = await $fetch<GetWeaponResponse>('/api/weapon');
+
+    if (res.data) {
+      weapons.value = res.data;
+    }
+
   } catch (err) {
     console.error(err)
   }

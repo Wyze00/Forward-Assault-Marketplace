@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import type { Weapon } from '~~/prisma/generated/client'
+import type { GetSkinResponse, GetWeaponResponse } from '~~/server/types'
 
-const weapons = ref<{ uuid: string, weaponType: number, weaponName: string }[]>([])
+const weapons = ref<Weapon[]>([])
 
 // Init states
 const initWeaponType = ref('')
@@ -23,13 +25,18 @@ const isLoadingSkins = ref(false)
 
 const fetchWeapons = async () => {
   try {
-    const res = await $fetch<{ msg: string, data: any[] }>('/api/weapon')
-    weapons.value = res.data
-    if (weapons.value.length > 0) {
-      initWeaponType.value = String(weapons.value[0]?.weaponType)
-      newWeaponType.value = String(weapons.value[0]?.weaponType)
-      filterWeaponType.value = String(weapons.value[0]?.weaponType)
+    const res = await $fetch<GetWeaponResponse>('/api/weapon');
+
+    if (res.data) {
+
+      weapons.value = res.data
+      if (weapons.value.length > 0) {
+        initWeaponType.value = String(weapons.value[0]?.weaponType)
+        newWeaponType.value = String(weapons.value[0]?.weaponType)
+        filterWeaponType.value = String(weapons.value[0]?.weaponType)
+      }
     }
+
   } catch (err) {
     console.error(err)
   }
@@ -46,8 +53,12 @@ const fetchSkins = async () => {
       query.append('weaponType', filterWeaponType.value)
     }
 
-    const res = await $fetch<{ msg: string, data: any[] }>(`/api/skin?${query.toString()}`)
-    skins.value = res.data
+    const res = await $fetch<GetSkinResponse>(`/api/skin?${query.toString()}`)
+
+    if (res.data) {
+      skins.value = res.data
+    }
+    
   } catch (err) {
     console.error(err)
     skins.value = []
@@ -63,7 +74,13 @@ watch([filterItemType, filterWeaponType], () => {
 const initGlove = async () => {
   initGloveMessage.value = 'Initializing...'
   try {
-    await $fetch('/api/skin/init/glove', { method: 'POST' })
+    await $fetch('/api/skin/init', { 
+      method: 'POST',
+      body: {
+        itemType: 'glove',
+        weaponType: 0
+      }
+     })
     initGloveMessage.value = 'Success!'
     if (filterItemType.value === 'glove') fetchSkins()
   } catch (err: any) {
@@ -74,7 +91,13 @@ const initGlove = async () => {
 const initCharacter = async () => {
   initCharacterMessage.value = 'Initializing...'
   try {
-    await $fetch('/api/skin/init/character', { method: 'POST' })
+    await $fetch('/api/skin/init', { 
+      method: 'POST',
+      body: {
+        itemType: 'glove',
+        weaponType: 0
+      }
+     })
     initCharacterMessage.value = 'Success!'
     if (filterItemType.value === 'character') fetchSkins()
   } catch (err: any) {
@@ -86,9 +109,12 @@ const initWeapon = async () => {
   if (!initWeaponType.value) return
   initWeaponMessage.value = 'Initializing...'
   try {
-    await $fetch('/api/skin/init/weapon', {
+    await $fetch('/api/skin/init', {
       method: 'POST',
-      body: { weaponType: initWeaponType.value }
+      body: { 
+        itemType: 'weapon',
+        weaponType: initWeaponType.value
+       }
     })
     initWeaponMessage.value = 'Success!'
     if (filterItemType.value === 'weapon' && filterWeaponType.value === initWeaponType.value) {

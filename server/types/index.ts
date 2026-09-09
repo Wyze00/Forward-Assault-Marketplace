@@ -1,4 +1,4 @@
-import { ItemType } from "~~/prisma/generated/client";
+import { Camo, ItemType, Skin, Weapon } from "~~/prisma/generated/client";
 
 export interface FetchResponse {
     status: number;
@@ -26,6 +26,7 @@ export interface GetUniqueItemsResponse extends FetchResponse {
         itemType: ItemType;
         weaponType: number;
         camoID: number;
+        lowestPrice: number;
     }[],
     totalItems: number;
     currentPage: number;
@@ -43,3 +44,18 @@ export interface PostWeaponRequest {
     weaponType: number;
     weaponName: string;
 }
+
+interface ApiResponse<T> {
+    msg: string;
+    data?: T
+}
+
+export interface GetWeaponResponse extends ApiResponse<Weapon[]> {};
+export interface GetCamoResponse extends ApiResponse<Camo[]> {};
+
+export type SkinWithWeaponAndCamo = {
+    weapon: Weapon,
+    camo: Camo,
+} & Skin;
+
+export interface GetSkinResponse extends ApiResponse<SkinWithWeaponAndCamo[]> {};

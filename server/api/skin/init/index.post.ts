@@ -1,25 +1,21 @@
 import { Camo } from "~~/prisma/generated/client";
 import { ItemType } from "~~/prisma/generated/enums";
-import { GetUniqueItemsResponse } from "~~/server/types";
+import { GetSellOffersResponse, GetUniqueItemsResponse } from "~~/server/types";
 import { fetchUtil } from "~~/server/util/fetchUtil";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {
     try {
-        const body: { itemType: string, weaponType?: string | number } = await readBody(event);
+        const body: { itemType: ItemType, weaponType: number } = await readBody(event);
 
-        if (!body.itemType) {
+        if (!body || !body.itemType || (!body.weaponType && body.weaponType !== 0)) {
             throw new Error('Harap isi itemType');
         }
 
-        let weaponType = 0;
+        let weaponType = body.weaponType || 0;
         let extraQuery = '';
 
         if (body.itemType === 'weapon') {
-            if (!body.weaponType) {
-                throw new Error('Harap isi WeaponType');
-            }
-            weaponType = Number(body.weaponType);
 
             const weapon = await prismaClient.weapon.findUnique({
                 where: {
@@ -80,18 +76,51 @@ export default defineEventHandler(async (event) => {
             }
         })
         
-        await prismaClient.skin.createMany({
-            data: cleanedCamoIDs.map((id) => {
-                return {
-                    camoUuid: dbCamoMap.get(id)!.uuid,
-                    weaponType: weaponType,
+        for (const camoID of cleanedCamoIDs) {
+            const camo = dbCamoMap.get(camoID)!;
+
+            const skin = await prismaClient.skin.upsert({
+                where: {
+                    camoUuid_weaponType: {
+                        camoUuid: camo.uuid,
+                        weaponType: 0,
+                    }
+                },
+                update: {},
+                create: {
+                    camoUuid: camo.uuid,
+                    weaponType: 0,
                 }
-            })
-        })
+            });
+
+            const queryParams = `itemType=${camo.itemType}&weaponType=0&camoID=${camoID}&minCondition=0&maxCondition=1&page=0&limit=20`;
+            const offerResponse = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
+
+            if (offerResponse.offers && offerResponse.offers.length > 0) {
+                const offersToSave = offerResponse.offers.slice(0, 10);
+
+                await prismaClient.skinHistory.create({
+                    data: {
+                        skinUuid: skin.uuid,
+                        skinHistoryEntries: {
+                            create: offersToSave.map(offer => ({
+                                offerID: offer.offerID,
+                                sellerID: offer.sellerID,
+                                sellerName: offer.sellerName,
+                                price: offer.price,
+                                condition: offer.condition,
+                                skinID: offer.skinID,
+                                listingDate: offer.listingDate,
+                            }))
+                        }
+                    }
+                });
+            }
+        }
 
         return {
             msg: "Success",
-        }
+        };
 
     } catch (e: unknown) {
         setResponseStatus(event, 400);
