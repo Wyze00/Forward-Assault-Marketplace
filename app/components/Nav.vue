@@ -9,6 +9,7 @@ const navLinks = [
   { name: 'Glove', path: '/glove' },
   { name: 'Character', path: '/character' },
   { name: 'Favorite', path: '/favorite' },
+  { name: 'Change', path: '/change' },
   { name: 'Weapon Type', path: '/weapon/type' },
   { name: 'Camo', path: '/camo' },
   { name: 'Skin', path: '/skin' },

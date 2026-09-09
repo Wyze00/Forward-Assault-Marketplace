@@ -7,10 +7,10 @@ export interface FetchResponse {
 
 export interface GetSellOffersResponse extends FetchResponse {
     offers: {
-        offerID: string,
-        sellerID: string,
+        offerID: number,
+        sellerID: number,
         sellerName: string,
-        skinID: string,
+        skinID: number,
         itemType: ItemType,
         weaponType: number,
         camoID: number,

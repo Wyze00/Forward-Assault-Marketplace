@@ -9,7 +9,6 @@ export default defineEventHandler(async (event) => {
         const page = Number(query.page || 0);
         const capture = query.capture === 'true' || query.capture === true;
 
-        // Fetch dari marketplace API
         const marketplaceResponse = await fetchUtil<GetUniqueItemsResponse>(
             'marketplaceV3_get_unique_items.php', 
             `page=${page}&itemPerPage=20&sortBy=newest`
@@ -29,22 +28,13 @@ export default defineEventHandler(async (event) => {
             const resultData = await Promise.all(
                 marketplaceResponse.items.map(async (item) => {
                     const camo = await prismaClient.camo.findFirst({
-                        where: {
-                            camoID: item.camoID,
-                            itemType: item.itemType
-                        }
+                        where: { camoID: item.camoID, itemType: item.itemType }
                     });
 
-                    if (!camo) {
-                        console.log(`Camo ID ${item.camoID} dengan itemType ${item.itemType} belum terdaftar di database`);
-                        return null;
-                    }
+                    if (!camo) return null;
 
                     const skin = await prismaClient.skin.findFirst({
-                        where: {
-                            camoUuid: camo.uuid,
-                            weaponType: item.weaponType
-                        },
+                        where: { camoUuid: camo.uuid, weaponType: item.weaponType },
                         include: {
                             camo: true,
                             weapon: true,
@@ -62,10 +52,7 @@ export default defineEventHandler(async (event) => {
                         }
                     });
 
-                    if (!skin) {
-                        console.log(`Skin untuk camoID ${item.camoID} dan weaponType ${item.weaponType} tidak ditemukan`);
-                        return null;
-                    }
+                    if (!skin) return null;
 
                     const lastHistory = skin.skinHistories[0] || null;
                     const lowestPriceEntry = lastHistory?.skinHistoryEntries[0] || null;
@@ -101,10 +88,7 @@ export default defineEventHandler(async (event) => {
                     where: { camoID: item.camoID, itemType: item.itemType }
                 });
 
-                if (!camo) {
-                    console.log(`[Capture] Camo ID ${item.camoID} belum terdaftar`);
-                    continue;
-                }
+                if (!camo) continue;
 
                 const skin = await prismaClient.skin.findFirst({
                     where: { camoUuid: camo.uuid, weaponType: item.weaponType },
@@ -117,12 +101,8 @@ export default defineEventHandler(async (event) => {
                     }
                 });
 
-                if (!skin) {
-                    console.log(`[Capture] Skin tidak ditemukan`);
-                    continue;
-                }
+                if (!skin) continue;
 
-                // Fetch new offers
                 const queryParams = `itemType=${item.itemType}&weaponType=${item.weaponType}&camoID=${item.camoID}&minCondition=0&maxCondition=1&page=0&limit=20`;
                 const offersResponse = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
 
@@ -132,7 +112,6 @@ export default defineEventHandler(async (event) => {
                 const previousHistory = skin.skinHistories[0] || null;
                 const prevEntries = previousHistory ? previousHistory.skinHistoryEntries : [];
 
-                // Buat SkinHistory baru beserta entries
                 const newHistory = await prismaClient.skinHistory.create({
                     data: {
                         skinUuid: skin.uuid,
@@ -151,43 +130,35 @@ export default defineEventHandler(async (event) => {
                     include: { skinHistoryEntries: true }
                 });
 
-                // Bandingkan & simpan perubahan ke SkinOfferChange
-                const prevMap = new Map(prevEntries.map(e => [e.offerID, e]));
+                // Ambil maksimal 5 data dari history lama dan baru untuk dikomparasi
+                const prevEntriesTop5 = prevEntries.slice(0, 5);
+                const newEntriesTop5 = newHistory.skinHistoryEntries.slice(0, 5);
 
-                for (const newEntry of newHistory.skinHistoryEntries) {
-                    const matchedPrev = prevMap.get(newEntry.offerID);
+                const prevMap = new Map(prevEntriesTop5.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+                const newMap = new Map(newEntriesTop5.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+
+                // Cek penambahan (add) dan perubahan harga (change)
+                for (const newEntry of newEntriesTop5) {
+                    const key = `${newEntry.skinID}_${newEntry.sellerID}`;
+                    const matchedPrev = prevMap.get(key);
 
                     if (!matchedPrev) {
-                        // Tawaran baru ditambahkan
                         await prismaClient.skinOfferChange.create({
-                            data: {
-                                skinHistoryEntryUuid: newEntry.uuid,
-                                type: "add",
-                                seen: false
-                            }
+                            data: { skinHistoryEntryUuid: newEntry.uuid, type: "add", seen: false }
                         });
                     } else if (matchedPrev.price !== newEntry.price || matchedPrev.condition !== newEntry.condition) {
-                        // Perubahan harga atau kondisi
                         await prismaClient.skinOfferChange.create({
-                            data: {
-                                skinHistoryEntryUuid: newEntry.uuid,
-                                type: "change",
-                                seen: false
-                            }
+                            data: { skinHistoryEntryUuid: newEntry.uuid, type: "change", seen: false }
                         });
                     }
                 }
 
-                // Cek offer yang hilang (removed) dari capture sebelumnya
-                const newOfferIDs = new Set(newOffers.map(o => o.offerID));
-                for (const prevEntry of prevEntries) {
-                    if (!newOfferIDs.has(String(prevEntry.offerID))) {
+                // Cek item yang hilang (remove) dari 5 teratas
+                for (const prevEntry of prevEntriesTop5) {
+                    const key = `${prevEntry.skinID}_${prevEntry.sellerID}`;
+                    if (!newMap.has(key)) {
                         await prismaClient.skinOfferChange.create({
-                            data: {
-                                skinHistoryEntryUuid: prevEntry.uuid,
-                                type: "remove",
-                                seen: false
-                            }
+                            data: { skinHistoryEntryUuid: prevEntry.uuid, type: "remove", seen: false }
                         });
                     }
                 }
