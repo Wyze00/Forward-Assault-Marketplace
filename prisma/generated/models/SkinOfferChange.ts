@@ -29,6 +29,7 @@ export type SkinOfferChangeMinAggregateOutputType = {
   skinHistoryEntryUuid: string | null
   type: $Enums.SkinOfferChangeType | null
   seen: boolean | null
+  createdAt: Date | null
 }
 
 export type SkinOfferChangeMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type SkinOfferChangeMaxAggregateOutputType = {
   skinHistoryEntryUuid: string | null
   type: $Enums.SkinOfferChangeType | null
   seen: boolean | null
+  createdAt: Date | null
 }
 
 export type SkinOfferChangeCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type SkinOfferChangeCountAggregateOutputType = {
   skinHistoryEntryUuid: number
   type: number
   seen: number
+  createdAt: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type SkinOfferChangeMinAggregateInputType = {
   skinHistoryEntryUuid?: true
   type?: true
   seen?: true
+  createdAt?: true
 }
 
 export type SkinOfferChangeMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type SkinOfferChangeMaxAggregateInputType = {
   skinHistoryEntryUuid?: true
   type?: true
   seen?: true
+  createdAt?: true
 }
 
 export type SkinOfferChangeCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type SkinOfferChangeCountAggregateInputType = {
   skinHistoryEntryUuid?: true
   type?: true
   seen?: true
+  createdAt?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type SkinOfferChangeGroupByOutputType = {
   skinHistoryEntryUuid: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt: Date
   _count: SkinOfferChangeCountAggregateOutputType | null
   _min: SkinOfferChangeMinAggregateOutputType | null
   _max: SkinOfferChangeMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type SkinOfferChangeWhereInput = {
   skinHistoryEntryUuid?: Prisma.StringFilter<"SkinOfferChange"> | string
   type?: Prisma.EnumSkinOfferChangeTypeFilter<"SkinOfferChange"> | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFilter<"SkinOfferChange"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"SkinOfferChange"> | Date | string
   skinHistoryEntry?: Prisma.XOR<Prisma.SkinHistoryEntryScalarRelationFilter, Prisma.SkinHistoryEntryWhereInput>
 }
 
@@ -182,6 +190,7 @@ export type SkinOfferChangeOrderByWithRelationInput = {
   skinHistoryEntryUuid?: Prisma.SortOrder
   type?: Prisma.SortOrder
   seen?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   skinHistoryEntry?: Prisma.SkinHistoryEntryOrderByWithRelationInput
 }
 
@@ -193,6 +202,7 @@ export type SkinOfferChangeWhereUniqueInput = Prisma.AtLeast<{
   skinHistoryEntryUuid?: Prisma.StringFilter<"SkinOfferChange"> | string
   type?: Prisma.EnumSkinOfferChangeTypeFilter<"SkinOfferChange"> | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFilter<"SkinOfferChange"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"SkinOfferChange"> | Date | string
   skinHistoryEntry?: Prisma.XOR<Prisma.SkinHistoryEntryScalarRelationFilter, Prisma.SkinHistoryEntryWhereInput>
 }, "uuid">
 
@@ -201,6 +211,7 @@ export type SkinOfferChangeOrderByWithAggregationInput = {
   skinHistoryEntryUuid?: Prisma.SortOrder
   type?: Prisma.SortOrder
   seen?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   _count?: Prisma.SkinOfferChangeCountOrderByAggregateInput
   _max?: Prisma.SkinOfferChangeMaxOrderByAggregateInput
   _min?: Prisma.SkinOfferChangeMinOrderByAggregateInput
@@ -214,12 +225,14 @@ export type SkinOfferChangeScalarWhereWithAggregatesInput = {
   skinHistoryEntryUuid?: Prisma.StringWithAggregatesFilter<"SkinOfferChange"> | string
   type?: Prisma.EnumSkinOfferChangeTypeWithAggregatesFilter<"SkinOfferChange"> | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolWithAggregatesFilter<"SkinOfferChange"> | boolean
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"SkinOfferChange"> | Date | string
 }
 
 export type SkinOfferChangeCreateInput = {
   uuid?: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
   skinHistoryEntry: Prisma.SkinHistoryEntryCreateNestedOneWithoutSkinOfferChangesInput
 }
 
@@ -228,12 +241,14 @@ export type SkinOfferChangeUncheckedCreateInput = {
   skinHistoryEntryUuid: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
 }
 
 export type SkinOfferChangeUpdateInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skinHistoryEntry?: Prisma.SkinHistoryEntryUpdateOneRequiredWithoutSkinOfferChangesNestedInput
 }
 
@@ -242,6 +257,7 @@ export type SkinOfferChangeUncheckedUpdateInput = {
   skinHistoryEntryUuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SkinOfferChangeCreateManyInput = {
@@ -249,12 +265,14 @@ export type SkinOfferChangeCreateManyInput = {
   skinHistoryEntryUuid: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
 }
 
 export type SkinOfferChangeUpdateManyMutationInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SkinOfferChangeUncheckedUpdateManyInput = {
@@ -262,6 +280,7 @@ export type SkinOfferChangeUncheckedUpdateManyInput = {
   skinHistoryEntryUuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SkinOfferChangeListRelationFilter = {
@@ -279,6 +298,7 @@ export type SkinOfferChangeCountOrderByAggregateInput = {
   skinHistoryEntryUuid?: Prisma.SortOrder
   type?: Prisma.SortOrder
   seen?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type SkinOfferChangeMaxOrderByAggregateInput = {
@@ -286,6 +306,7 @@ export type SkinOfferChangeMaxOrderByAggregateInput = {
   skinHistoryEntryUuid?: Prisma.SortOrder
   type?: Prisma.SortOrder
   seen?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type SkinOfferChangeMinOrderByAggregateInput = {
@@ -293,6 +314,7 @@ export type SkinOfferChangeMinOrderByAggregateInput = {
   skinHistoryEntryUuid?: Prisma.SortOrder
   type?: Prisma.SortOrder
   seen?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type SkinOfferChangeCreateNestedManyWithoutSkinHistoryEntryInput = {
@@ -349,12 +371,14 @@ export type SkinOfferChangeCreateWithoutSkinHistoryEntryInput = {
   uuid?: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
 }
 
 export type SkinOfferChangeUncheckedCreateWithoutSkinHistoryEntryInput = {
   uuid?: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
 }
 
 export type SkinOfferChangeCreateOrConnectWithoutSkinHistoryEntryInput = {
@@ -390,30 +414,35 @@ export type SkinOfferChangeScalarWhereInput = {
   skinHistoryEntryUuid?: Prisma.StringFilter<"SkinOfferChange"> | string
   type?: Prisma.EnumSkinOfferChangeTypeFilter<"SkinOfferChange"> | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFilter<"SkinOfferChange"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"SkinOfferChange"> | Date | string
 }
 
 export type SkinOfferChangeCreateManySkinHistoryEntryInput = {
   uuid?: string
   type: $Enums.SkinOfferChangeType
   seen: boolean
+  createdAt?: Date | string
 }
 
 export type SkinOfferChangeUpdateWithoutSkinHistoryEntryInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SkinOfferChangeUncheckedUpdateWithoutSkinHistoryEntryInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SkinOfferChangeUncheckedUpdateManyWithoutSkinHistoryEntryInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumSkinOfferChangeTypeFieldUpdateOperationsInput | $Enums.SkinOfferChangeType
   seen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -423,6 +452,7 @@ export type SkinOfferChangeSelect<ExtArgs extends runtime.Types.Extensions.Inter
   skinHistoryEntryUuid?: boolean
   type?: boolean
   seen?: boolean
+  createdAt?: boolean
   skinHistoryEntry?: boolean | Prisma.SkinHistoryEntryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["skinOfferChange"]>
 
@@ -431,6 +461,7 @@ export type SkinOfferChangeSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   skinHistoryEntryUuid?: boolean
   type?: boolean
   seen?: boolean
+  createdAt?: boolean
   skinHistoryEntry?: boolean | Prisma.SkinHistoryEntryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["skinOfferChange"]>
 
@@ -439,6 +470,7 @@ export type SkinOfferChangeSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   skinHistoryEntryUuid?: boolean
   type?: boolean
   seen?: boolean
+  createdAt?: boolean
   skinHistoryEntry?: boolean | Prisma.SkinHistoryEntryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["skinOfferChange"]>
 
@@ -447,9 +479,10 @@ export type SkinOfferChangeSelectScalar = {
   skinHistoryEntryUuid?: boolean
   type?: boolean
   seen?: boolean
+  createdAt?: boolean
 }
 
-export type SkinOfferChangeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uuid" | "skinHistoryEntryUuid" | "type" | "seen", ExtArgs["result"]["skinOfferChange"]>
+export type SkinOfferChangeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uuid" | "skinHistoryEntryUuid" | "type" | "seen" | "createdAt", ExtArgs["result"]["skinOfferChange"]>
 export type SkinOfferChangeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   skinHistoryEntry?: boolean | Prisma.SkinHistoryEntryDefaultArgs<ExtArgs>
 }
@@ -470,6 +503,7 @@ export type $SkinOfferChangePayload<ExtArgs extends runtime.Types.Extensions.Int
     skinHistoryEntryUuid: string
     type: $Enums.SkinOfferChangeType
     seen: boolean
+    createdAt: Date
   }, ExtArgs["result"]["skinOfferChange"]>
   composites: {}
 }
@@ -898,6 +932,7 @@ export interface SkinOfferChangeFieldRefs {
   readonly skinHistoryEntryUuid: Prisma.FieldRef<"SkinOfferChange", 'String'>
   readonly type: Prisma.FieldRef<"SkinOfferChange", 'SkinOfferChangeType'>
   readonly seen: Prisma.FieldRef<"SkinOfferChange", 'Boolean'>
+  readonly createdAt: Prisma.FieldRef<"SkinOfferChange", 'DateTime'>
 }
     
 

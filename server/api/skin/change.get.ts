@@ -20,12 +20,8 @@ export default defineEventHandler(async (event) => {
                 }
             },
             orderBy: {
-                skinHistoryEntry: {
-                    skinHistory: {
-                        createdAt: 'desc'
-                    }
-                }
-            }
+                createdAt: 'desc'
+            }   
         });
 
         const data = changes.map((change) => {

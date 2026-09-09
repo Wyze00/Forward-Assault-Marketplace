@@ -93,6 +93,7 @@ model SkinOfferChange {
   skinHistoryEntryUuid String
   type SkinOfferChangeType 
   seen Boolean
+  createdAt DateTime @default(now())
 
   skinHistoryEntry SkinHistoryEntry @relation(fields: [skinHistoryEntryUuid], references: [uuid])
 }

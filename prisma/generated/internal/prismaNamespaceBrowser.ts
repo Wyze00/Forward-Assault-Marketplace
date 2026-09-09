@@ -137,7 +137,8 @@ export const SkinOfferChangeScalarFieldEnum = {
   uuid: 'uuid',
   skinHistoryEntryUuid: 'skinHistoryEntryUuid',
   type: 'type',
-  seen: 'seen'
+  seen: 'seen',
+  createdAt: 'createdAt'
 } as const
 
 export type SkinOfferChangeScalarFieldEnum = (typeof SkinOfferChangeScalarFieldEnum)[keyof typeof SkinOfferChangeScalarFieldEnum]

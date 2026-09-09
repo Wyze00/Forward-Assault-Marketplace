@@ -31,14 +31,14 @@ export default defineEventHandler(async (event) => {
         });
         const prevEntries = previousHistory ? previousHistory.skinHistoryEntries : [];
 
+        // Ambil response penawaran dari API marketplace
         const queryParams = `itemType=${itemType}&weaponType=${weaponType}&camoID=${camoID}&minCondition=0&maxCondition=1&page=0&limit=20`;
-        const response = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
+        const offersResponse = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
 
-        if (!response.offers || response.offers.length === 0) {
-            throw new Error("Tidak ada penawaran (offer) yang ditemukan dari marketplace");
-        }
+        const fullApiOffersMap = new Map(offersResponse.offers.map(o => [`${o.skinID}_${o.sellerID}`, o]));
 
-        const offersToSave = response.offers.slice(0, 10);
+        // 2. Simpan 10 teratas ke history database
+        const offersToSave = offersResponse.offers.slice(0, 10);
 
         const newHistory = await prismaClient.skinHistory.create({
             data: {
@@ -55,20 +55,18 @@ export default defineEventHandler(async (event) => {
                     }))
                 }
             },
-            include: {
-                skinHistoryEntries: true
-            }
+            include: { skinHistoryEntries: true }
         });
 
-        // Ambil maksimal 5 data teratas untuk komparasi
-        const prevEntriesTop5 = prevEntries.slice(0, 5);
-        const newEntriesTop5 = newHistory.skinHistoryEntries.slice(0, 5);
+        // Ambil 10 data dari history lama dan baru untuk dikomparasi
+        const prevEntriesTop10 = prevEntries.slice(0, 10);
+        const newEntriesTop10 = newHistory.skinHistoryEntries.slice(0, 10);
 
-        const prevMap = new Map(prevEntriesTop5.map(e => [`${e.skinID}_${e.sellerID}`, e]));
-        const newMap = new Map(newEntriesTop5.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+        const prevMap = new Map(prevEntriesTop10.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+        const newMap = new Map(newEntriesTop10.map(e => [`${e.skinID}_${e.sellerID}`, e]));
 
-        // Cek penambahan (add) dan perubahan (change)
-        for (const newEntry of newEntriesTop5) {
+        // 3. Cek penambahan (add) dan perubahan harga (change) pada 10 data teratas
+        for (const newEntry of newEntriesTop10) {
             const key = `${newEntry.skinID}_${newEntry.sellerID}`;
             const matchedPrev = prevMap.get(key);
 
@@ -83,10 +81,20 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        // Cek item yang hilang (remove) dari top 5
-        for (const prevEntry of prevEntriesTop5) {
+        // 4. Cek item yang hilang (remove) dengan VALIDASI EKSTRA
+        for (const prevEntry of prevEntriesTop10) {
             const key = `${prevEntry.skinID}_${prevEntry.sellerID}`;
+            
+            // Jika item tidak ditemukan di 10 data terbaru...
             if (!newMap.has(key)) {
+                // ...cek apakah item tersebut ADA di daftar API yang utuh
+                if (fullApiOffersMap.has(key)) {
+                    // Jika ADA, berarti item hanya tergeser ke bawah (misal urutan ke-11).
+                    // JANGAN catat sebagai "remove" dan lewati saja.
+                    continue; 
+                }
+
+                // Jika TIDAK ADA di full API, barulah item tersebut benar-benar terjual/ditarik penjual.
                 await prismaClient.skinOfferChange.create({
                     data: { skinHistoryEntryUuid: prevEntry.uuid, type: "remove", seen: false }
                 });
