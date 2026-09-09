@@ -47,3 +47,8 @@ export type SkinHistoryEntry = Prisma.SkinHistoryEntryModel
  * 
  */
 export type FavoriteSkin = Prisma.FavoriteSkinModel
+/**
+ * Model SkinOfferChange
+ * 
+ */
+export type SkinOfferChange = Prisma.SkinOfferChangeModel

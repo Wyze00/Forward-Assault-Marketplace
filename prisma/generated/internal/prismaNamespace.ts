@@ -402,7 +402,8 @@ export const ModelName = {
   Skin: 'Skin',
   SkinHistory: 'SkinHistory',
   SkinHistoryEntry: 'SkinHistoryEntry',
-  FavoriteSkin: 'FavoriteSkin'
+  FavoriteSkin: 'FavoriteSkin',
+  SkinOfferChange: 'SkinOfferChange'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "skinHistoryEntry" | "favoriteSkin"
+    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "skinHistoryEntry" | "favoriteSkin" | "skinOfferChange"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -866,6 +867,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SkinOfferChange: {
+      payload: Prisma.$SkinOfferChangePayload<ExtArgs>
+      fields: Prisma.SkinOfferChangeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SkinOfferChangeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SkinOfferChangeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        findFirst: {
+          args: Prisma.SkinOfferChangeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SkinOfferChangeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        findMany: {
+          args: Prisma.SkinOfferChangeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>[]
+        }
+        create: {
+          args: Prisma.SkinOfferChangeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        createMany: {
+          args: Prisma.SkinOfferChangeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SkinOfferChangeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>[]
+        }
+        delete: {
+          args: Prisma.SkinOfferChangeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        update: {
+          args: Prisma.SkinOfferChangeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        deleteMany: {
+          args: Prisma.SkinOfferChangeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SkinOfferChangeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SkinOfferChangeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>[]
+        }
+        upsert: {
+          args: Prisma.SkinOfferChangeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinOfferChangePayload>
+        }
+        aggregate: {
+          args: Prisma.SkinOfferChangeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSkinOfferChange>
+        }
+        groupBy: {
+          args: Prisma.SkinOfferChangeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinOfferChangeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SkinOfferChangeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinOfferChangeCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -962,6 +1037,16 @@ export const FavoriteSkinScalarFieldEnum = {
 export type FavoriteSkinScalarFieldEnum = (typeof FavoriteSkinScalarFieldEnum)[keyof typeof FavoriteSkinScalarFieldEnum]
 
 
+export const SkinOfferChangeScalarFieldEnum = {
+  uuid: 'uuid',
+  skinHistoryEntryUuid: 'skinHistoryEntryUuid',
+  type: 'type',
+  seen: 'seen'
+} as const
+
+export type SkinOfferChangeScalarFieldEnum = (typeof SkinOfferChangeScalarFieldEnum)[keyof typeof SkinOfferChangeScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1008,6 +1093,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'SkinOfferChangeType'
+ */
+export type EnumSkinOfferChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SkinOfferChangeType'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 /**
@@ -1167,6 +1266,7 @@ export type GlobalOmitConfig = {
   skinHistory?: Prisma.SkinHistoryOmit
   skinHistoryEntry?: Prisma.SkinHistoryEntryOmit
   favoriteSkin?: Prisma.FavoriteSkinOmit
+  skinOfferChange?: Prisma.SkinOfferChangeOmit
 }
 
 /* Types for Logging */

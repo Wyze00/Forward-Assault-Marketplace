@@ -56,7 +56,8 @@ export const ModelName = {
   Skin: 'Skin',
   SkinHistory: 'SkinHistory',
   SkinHistoryEntry: 'SkinHistoryEntry',
-  FavoriteSkin: 'FavoriteSkin'
+  FavoriteSkin: 'FavoriteSkin',
+  SkinOfferChange: 'SkinOfferChange'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -130,6 +131,16 @@ export const FavoriteSkinScalarFieldEnum = {
 } as const
 
 export type FavoriteSkinScalarFieldEnum = (typeof FavoriteSkinScalarFieldEnum)[keyof typeof FavoriteSkinScalarFieldEnum]
+
+
+export const SkinOfferChangeScalarFieldEnum = {
+  uuid: 'uuid',
+  skinHistoryEntryUuid: 'skinHistoryEntryUuid',
+  type: 'type',
+  seen: 'seen'
+} as const
+
+export type SkinOfferChangeScalarFieldEnum = (typeof SkinOfferChangeScalarFieldEnum)[keyof typeof SkinOfferChangeScalarFieldEnum]
 
 
 export const SortOrder = {

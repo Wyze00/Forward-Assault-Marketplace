@@ -264,6 +264,7 @@ export type SkinHistoryEntryWhereInput = {
   condition?: Prisma.FloatFilter<"SkinHistoryEntry"> | number
   skinID?: Prisma.IntFilter<"SkinHistoryEntry"> | number
   listingDate?: Prisma.StringFilter<"SkinHistoryEntry"> | string
+  skinOfferChanges?: Prisma.SkinOfferChangeListRelationFilter
   skinHistory?: Prisma.XOR<Prisma.SkinHistoryScalarRelationFilter, Prisma.SkinHistoryWhereInput>
 }
 
@@ -277,6 +278,7 @@ export type SkinHistoryEntryOrderByWithRelationInput = {
   condition?: Prisma.SortOrder
   skinID?: Prisma.SortOrder
   listingDate?: Prisma.SortOrder
+  skinOfferChanges?: Prisma.SkinOfferChangeOrderByRelationAggregateInput
   skinHistory?: Prisma.SkinHistoryOrderByWithRelationInput
 }
 
@@ -293,6 +295,7 @@ export type SkinHistoryEntryWhereUniqueInput = Prisma.AtLeast<{
   condition?: Prisma.FloatFilter<"SkinHistoryEntry"> | number
   skinID?: Prisma.IntFilter<"SkinHistoryEntry"> | number
   listingDate?: Prisma.StringFilter<"SkinHistoryEntry"> | string
+  skinOfferChanges?: Prisma.SkinOfferChangeListRelationFilter
   skinHistory?: Prisma.XOR<Prisma.SkinHistoryScalarRelationFilter, Prisma.SkinHistoryWhereInput>
 }, "uuid">
 
@@ -337,6 +340,7 @@ export type SkinHistoryEntryCreateInput = {
   condition: number
   skinID: number
   listingDate: string
+  skinOfferChanges?: Prisma.SkinOfferChangeCreateNestedManyWithoutSkinHistoryEntryInput
   skinHistory: Prisma.SkinHistoryCreateNestedOneWithoutSkinHistoryEntriesInput
 }
 
@@ -350,6 +354,7 @@ export type SkinHistoryEntryUncheckedCreateInput = {
   condition: number
   skinID: number
   listingDate: string
+  skinOfferChanges?: Prisma.SkinOfferChangeUncheckedCreateNestedManyWithoutSkinHistoryEntryInput
 }
 
 export type SkinHistoryEntryUpdateInput = {
@@ -361,6 +366,7 @@ export type SkinHistoryEntryUpdateInput = {
   condition?: Prisma.FloatFieldUpdateOperationsInput | number
   skinID?: Prisma.IntFieldUpdateOperationsInput | number
   listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+  skinOfferChanges?: Prisma.SkinOfferChangeUpdateManyWithoutSkinHistoryEntryNestedInput
   skinHistory?: Prisma.SkinHistoryUpdateOneRequiredWithoutSkinHistoryEntriesNestedInput
 }
 
@@ -374,6 +380,7 @@ export type SkinHistoryEntryUncheckedUpdateInput = {
   condition?: Prisma.FloatFieldUpdateOperationsInput | number
   skinID?: Prisma.IntFieldUpdateOperationsInput | number
   listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+  skinOfferChanges?: Prisma.SkinOfferChangeUncheckedUpdateManyWithoutSkinHistoryEntryNestedInput
 }
 
 export type SkinHistoryEntryCreateManyInput = {
@@ -473,6 +480,11 @@ export type SkinHistoryEntrySumOrderByAggregateInput = {
   skinID?: Prisma.SortOrder
 }
 
+export type SkinHistoryEntryScalarRelationFilter = {
+  is?: Prisma.SkinHistoryEntryWhereInput
+  isNot?: Prisma.SkinHistoryEntryWhereInput
+}
+
 export type SkinHistoryEntryCreateNestedManyWithoutSkinHistoryInput = {
   create?: Prisma.XOR<Prisma.SkinHistoryEntryCreateWithoutSkinHistoryInput, Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinHistoryInput> | Prisma.SkinHistoryEntryCreateWithoutSkinHistoryInput[] | Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinHistoryInput[]
   connectOrCreate?: Prisma.SkinHistoryEntryCreateOrConnectWithoutSkinHistoryInput | Prisma.SkinHistoryEntryCreateOrConnectWithoutSkinHistoryInput[]
@@ -523,6 +535,20 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type SkinHistoryEntryCreateNestedOneWithoutSkinOfferChangesInput = {
+  create?: Prisma.XOR<Prisma.SkinHistoryEntryCreateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinOfferChangesInput>
+  connectOrCreate?: Prisma.SkinHistoryEntryCreateOrConnectWithoutSkinOfferChangesInput
+  connect?: Prisma.SkinHistoryEntryWhereUniqueInput
+}
+
+export type SkinHistoryEntryUpdateOneRequiredWithoutSkinOfferChangesNestedInput = {
+  create?: Prisma.XOR<Prisma.SkinHistoryEntryCreateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinOfferChangesInput>
+  connectOrCreate?: Prisma.SkinHistoryEntryCreateOrConnectWithoutSkinOfferChangesInput
+  upsert?: Prisma.SkinHistoryEntryUpsertWithoutSkinOfferChangesInput
+  connect?: Prisma.SkinHistoryEntryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SkinHistoryEntryUpdateToOneWithWhereWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUpdateWithoutSkinOfferChangesInput>, Prisma.SkinHistoryEntryUncheckedUpdateWithoutSkinOfferChangesInput>
+}
+
 export type SkinHistoryEntryCreateWithoutSkinHistoryInput = {
   uuid?: string
   offerID: number
@@ -532,6 +558,7 @@ export type SkinHistoryEntryCreateWithoutSkinHistoryInput = {
   condition: number
   skinID: number
   listingDate: string
+  skinOfferChanges?: Prisma.SkinOfferChangeCreateNestedManyWithoutSkinHistoryEntryInput
 }
 
 export type SkinHistoryEntryUncheckedCreateWithoutSkinHistoryInput = {
@@ -543,6 +570,7 @@ export type SkinHistoryEntryUncheckedCreateWithoutSkinHistoryInput = {
   condition: number
   skinID: number
   listingDate: string
+  skinOfferChanges?: Prisma.SkinOfferChangeUncheckedCreateNestedManyWithoutSkinHistoryEntryInput
 }
 
 export type SkinHistoryEntryCreateOrConnectWithoutSkinHistoryInput = {
@@ -585,6 +613,70 @@ export type SkinHistoryEntryScalarWhereInput = {
   listingDate?: Prisma.StringFilter<"SkinHistoryEntry"> | string
 }
 
+export type SkinHistoryEntryCreateWithoutSkinOfferChangesInput = {
+  uuid?: string
+  offerID: number
+  sellerID: number
+  sellerName: string
+  price: number
+  condition: number
+  skinID: number
+  listingDate: string
+  skinHistory: Prisma.SkinHistoryCreateNestedOneWithoutSkinHistoryEntriesInput
+}
+
+export type SkinHistoryEntryUncheckedCreateWithoutSkinOfferChangesInput = {
+  uuid?: string
+  skinHistoryUuid: string
+  offerID: number
+  sellerID: number
+  sellerName: string
+  price: number
+  condition: number
+  skinID: number
+  listingDate: string
+}
+
+export type SkinHistoryEntryCreateOrConnectWithoutSkinOfferChangesInput = {
+  where: Prisma.SkinHistoryEntryWhereUniqueInput
+  create: Prisma.XOR<Prisma.SkinHistoryEntryCreateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinOfferChangesInput>
+}
+
+export type SkinHistoryEntryUpsertWithoutSkinOfferChangesInput = {
+  update: Prisma.XOR<Prisma.SkinHistoryEntryUpdateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedUpdateWithoutSkinOfferChangesInput>
+  create: Prisma.XOR<Prisma.SkinHistoryEntryCreateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedCreateWithoutSkinOfferChangesInput>
+  where?: Prisma.SkinHistoryEntryWhereInput
+}
+
+export type SkinHistoryEntryUpdateToOneWithWhereWithoutSkinOfferChangesInput = {
+  where?: Prisma.SkinHistoryEntryWhereInput
+  data: Prisma.XOR<Prisma.SkinHistoryEntryUpdateWithoutSkinOfferChangesInput, Prisma.SkinHistoryEntryUncheckedUpdateWithoutSkinOfferChangesInput>
+}
+
+export type SkinHistoryEntryUpdateWithoutSkinOfferChangesInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  offerID?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerID?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerName?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  condition?: Prisma.FloatFieldUpdateOperationsInput | number
+  skinID?: Prisma.IntFieldUpdateOperationsInput | number
+  listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+  skinHistory?: Prisma.SkinHistoryUpdateOneRequiredWithoutSkinHistoryEntriesNestedInput
+}
+
+export type SkinHistoryEntryUncheckedUpdateWithoutSkinOfferChangesInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  skinHistoryUuid?: Prisma.StringFieldUpdateOperationsInput | string
+  offerID?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerID?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerName?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  condition?: Prisma.FloatFieldUpdateOperationsInput | number
+  skinID?: Prisma.IntFieldUpdateOperationsInput | number
+  listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type SkinHistoryEntryCreateManySkinHistoryInput = {
   uuid?: string
   offerID: number
@@ -605,6 +697,7 @@ export type SkinHistoryEntryUpdateWithoutSkinHistoryInput = {
   condition?: Prisma.FloatFieldUpdateOperationsInput | number
   skinID?: Prisma.IntFieldUpdateOperationsInput | number
   listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+  skinOfferChanges?: Prisma.SkinOfferChangeUpdateManyWithoutSkinHistoryEntryNestedInput
 }
 
 export type SkinHistoryEntryUncheckedUpdateWithoutSkinHistoryInput = {
@@ -616,6 +709,7 @@ export type SkinHistoryEntryUncheckedUpdateWithoutSkinHistoryInput = {
   condition?: Prisma.FloatFieldUpdateOperationsInput | number
   skinID?: Prisma.IntFieldUpdateOperationsInput | number
   listingDate?: Prisma.StringFieldUpdateOperationsInput | string
+  skinOfferChanges?: Prisma.SkinOfferChangeUncheckedUpdateManyWithoutSkinHistoryEntryNestedInput
 }
 
 export type SkinHistoryEntryUncheckedUpdateManyWithoutSkinHistoryInput = {
@@ -630,6 +724,35 @@ export type SkinHistoryEntryUncheckedUpdateManyWithoutSkinHistoryInput = {
 }
 
 
+/**
+ * Count Type SkinHistoryEntryCountOutputType
+ */
+
+export type SkinHistoryEntryCountOutputType = {
+  skinOfferChanges: number
+}
+
+export type SkinHistoryEntryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  skinOfferChanges?: boolean | SkinHistoryEntryCountOutputTypeCountSkinOfferChangesArgs
+}
+
+/**
+ * SkinHistoryEntryCountOutputType without action
+ */
+export type SkinHistoryEntryCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SkinHistoryEntryCountOutputType
+   */
+  select?: Prisma.SkinHistoryEntryCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * SkinHistoryEntryCountOutputType without action
+ */
+export type SkinHistoryEntryCountOutputTypeCountSkinOfferChangesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SkinOfferChangeWhereInput
+}
+
 
 export type SkinHistoryEntrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   uuid?: boolean
@@ -641,7 +764,9 @@ export type SkinHistoryEntrySelect<ExtArgs extends runtime.Types.Extensions.Inte
   condition?: boolean
   skinID?: boolean
   listingDate?: boolean
+  skinOfferChanges?: boolean | Prisma.SkinHistoryEntry$skinOfferChangesArgs<ExtArgs>
   skinHistory?: boolean | Prisma.SkinHistoryDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.SkinHistoryEntryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["skinHistoryEntry"]>
 
 export type SkinHistoryEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -684,7 +809,9 @@ export type SkinHistoryEntrySelectScalar = {
 
 export type SkinHistoryEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uuid" | "skinHistoryUuid" | "offerID" | "sellerID" | "sellerName" | "price" | "condition" | "skinID" | "listingDate", ExtArgs["result"]["skinHistoryEntry"]>
 export type SkinHistoryEntryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  skinOfferChanges?: boolean | Prisma.SkinHistoryEntry$skinOfferChangesArgs<ExtArgs>
   skinHistory?: boolean | Prisma.SkinHistoryDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.SkinHistoryEntryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SkinHistoryEntryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   skinHistory?: boolean | Prisma.SkinHistoryDefaultArgs<ExtArgs>
@@ -696,6 +823,7 @@ export type SkinHistoryEntryIncludeUpdateManyAndReturn<ExtArgs extends runtime.T
 export type $SkinHistoryEntryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SkinHistoryEntry"
   objects: {
+    skinOfferChanges: Prisma.$SkinOfferChangePayload<ExtArgs>[]
     skinHistory: Prisma.$SkinHistoryPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1102,6 +1230,7 @@ readonly fields: SkinHistoryEntryFieldRefs;
  */
 export interface Prisma__SkinHistoryEntryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  skinOfferChanges<T extends Prisma.SkinHistoryEntry$skinOfferChangesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SkinHistoryEntry$skinOfferChangesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SkinOfferChangePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   skinHistory<T extends Prisma.SkinHistoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SkinHistoryDefaultArgs<ExtArgs>>): Prisma.Prisma__SkinHistoryClient<runtime.Types.Result.GetResult<Prisma.$SkinHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1537,6 +1666,30 @@ export type SkinHistoryEntryDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many SkinHistoryEntries to delete.
    */
   limit?: number
+}
+
+/**
+ * SkinHistoryEntry.skinOfferChanges
+ */
+export type SkinHistoryEntry$skinOfferChangesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SkinOfferChange
+   */
+  select?: Prisma.SkinOfferChangeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SkinOfferChange
+   */
+  omit?: Prisma.SkinOfferChangeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SkinOfferChangeInclude<ExtArgs> | null
+  where?: Prisma.SkinOfferChangeWhereInput
+  orderBy?: Prisma.SkinOfferChangeOrderByWithRelationInput | Prisma.SkinOfferChangeOrderByWithRelationInput[]
+  cursor?: Prisma.SkinOfferChangeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SkinOfferChangeScalarFieldEnum | Prisma.SkinOfferChangeScalarFieldEnum[]
 }
 
 /**

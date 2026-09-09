@@ -16,3 +16,12 @@ export const ItemType = {
 } as const
 
 export type ItemType = (typeof ItemType)[keyof typeof ItemType]
+
+
+export const SkinOfferChangeType = {
+  add: 'add',
+  remove: 'remove',
+  change: 'change'
+} as const
+
+export type SkinOfferChangeType = (typeof SkinOfferChangeType)[keyof typeof SkinOfferChangeType]

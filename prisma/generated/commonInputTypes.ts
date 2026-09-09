@@ -141,6 +141,36 @@ export type FloatWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedFloatFilter<$PrismaModel>
 }
 
+export type EnumSkinOfferChangeTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SkinOfferChangeType | Prisma.EnumSkinOfferChangeTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SkinOfferChangeType[]
+  notIn?: $Enums.SkinOfferChangeType[]
+  not?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel> | $Enums.SkinOfferChangeType
+}
+
+export type BoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type EnumSkinOfferChangeTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SkinOfferChangeType | Prisma.EnumSkinOfferChangeTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SkinOfferChangeType[]
+  notIn?: $Enums.SkinOfferChangeType[]
+  not?: Prisma.NestedEnumSkinOfferChangeTypeWithAggregatesFilter<$PrismaModel> | $Enums.SkinOfferChangeType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel>
+}
+
+export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[]
@@ -266,6 +296,36 @@ export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatFilter<$PrismaModel>
   _min?: Prisma.NestedFloatFilter<$PrismaModel>
   _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type NestedEnumSkinOfferChangeTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SkinOfferChangeType | Prisma.EnumSkinOfferChangeTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SkinOfferChangeType[]
+  notIn?: $Enums.SkinOfferChangeType[]
+  not?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel> | $Enums.SkinOfferChangeType
+}
+
+export type NestedBoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedEnumSkinOfferChangeTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SkinOfferChangeType | Prisma.EnumSkinOfferChangeTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.SkinOfferChangeType[]
+  notIn?: $Enums.SkinOfferChangeType[]
+  not?: Prisma.NestedEnumSkinOfferChangeTypeWithAggregatesFilter<$PrismaModel> | $Enums.SkinOfferChangeType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSkinOfferChangeTypeFilter<$PrismaModel>
+}
+
+export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
 
