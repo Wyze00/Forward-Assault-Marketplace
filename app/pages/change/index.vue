@@ -139,7 +139,11 @@ const filterSeen = ref('all')
 const filterType = ref('all')
 const updatingUuids = reactive(new Set())
 
-const { data: response, pending, error, refresh } = await useFetch('/api/skin/change')
+const { data: response, pending, error, refresh } = await useFetch('/api/skin/change');
+
+setInterval(async () => {
+  await refresh();
+}, 1 * 60 * 1000);
 
 const changes = computed(() => response.value?.data || [])
 

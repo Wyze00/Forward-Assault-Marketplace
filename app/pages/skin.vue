@@ -94,7 +94,7 @@ const initCharacter = async () => {
     await $fetch('/api/skin/init', { 
       method: 'POST',
       body: {
-        itemType: 'glove',
+        itemType: 'character',
         weaponType: 0
       }
      })

@@ -5,7 +5,6 @@ export default defineEventHandler(async (event) => {
         const query = getQuery(event);
         const skinUuid = query.skinUuid as string;
         
-        // Also support itemType and weaponType if provided, though skinUuid is mainly used
         const itemType = query.itemType as string;
         const weaponType = query.weaponType ? Number(query.weaponType) : undefined;
 
@@ -13,7 +12,6 @@ export default defineEventHandler(async (event) => {
             throw new Error("Harap sertakan skinUuid");
         }
 
-        // Fetch up to 6 captures to be able to compare the 5 latest properly
         const histories = await prismaClient.skinHistory.findMany({
             where: {
                 skinUuid: skinUuid
@@ -38,7 +36,7 @@ export default defineEventHandler(async (event) => {
                 msg: "Success",
                 data: [],
                 skinInfo: null
-            }
+            };
         }
 
         const skinInfo = {
@@ -49,47 +47,59 @@ export default defineEventHandler(async (event) => {
             itemType: histories[0].skin.camo.itemType
         };
 
-        // Reverse to chronological order (oldest first)
         histories.reverse();
 
         const resultCaptures = [];
 
         for (let i = 0; i < histories.length; i++) {
             const currentHistory = histories[i];
-            const currentEntries = currentHistory.skinHistoryEntries;
+            
+            // 1. Urutkan seluruh entri berdasarkan harga terendah
+            const currentEntriesAll = [...currentHistory.skinHistoryEntries].sort((a, b) => a.price - b.price);
             
             const prevHistory = i > 0 ? histories[i - 1] : null;
-            const prevEntries = prevHistory ? prevHistory.skinHistoryEntries : [];
-            
-            const prevMap = new Map(prevEntries.map(e => [`${e.skinID}_${e.sellerID}`, e]));
-            const currMap = new Map(currentEntries.map(e => [`${e.skinID}_${e.sellerID}`, e]));
-            
+            const prevEntriesAll = prevHistory 
+                ? [...prevHistory.skinHistoryEntries].sort((a, b) => a.price - b.price) 
+                : [];
+
+            // 2. Map seluruh data (s/d 20 item) sebagai buffer pembanding
+            const prevMapAll = new Map(prevEntriesAll.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+            const currMapAll = new Map(currentEntriesAll.map(e => [`${e.skinID}_${e.sellerID}`, e]));
+
+            // 3. Ambil 10 data teratas untuk dievaluasi
+            const currentTop10 = currentEntriesAll.slice(0, 10);
+            const prevTop10 = prevEntriesAll.slice(0, 10);
+
             const processedEntries = [];
 
-            // Find new, changed, unchanged
-            for (const curr of currentEntries) {
-                const key = `${curr.skinID}_${curr.sellerID}`;
-                const prev = prevMap.get(key);
-                
-                let status = 'unchanged';
-                if (!prev) {
-                    status = 'new';
-                } else if (prev.price !== curr.price) {
-                    status = 'changed';
-                }
-                
-                processedEntries.push({
-                    ...curr,
-                    status,
-                    prevPrice: prev ? prev.price : null
-                });
-            }
-
-            // Find removed
             if (prevHistory) {
-                for (const prev of prevEntries) {
+                // Cek item baru / berubah harga pada 10 data teratas baru
+                for (const curr of currentTop10) {
+                    const key = `${curr.skinID}_${curr.sellerID}`;
+                    const prev = prevMapAll.get(key); // Cek ke seluruh 20 data lama
+                    
+                    let status = 'unchanged';
+                    if (!prev) {
+                        // Jika tidak ada di seluruh 20 data lama, berarti item baru
+                        status = 'new';
+                    } else if (prev.price !== curr.price || prev.condition !== curr.condition) {
+                        status = 'changed';
+                    }
+                    
+                    processedEntries.push({
+                        ...curr,
+                        status,
+                        prevPrice: prev ? prev.price : null
+                    });
+                }
+
+                // Cek item hilang (removed) dari 10 data teratas lama
+                for (const prev of prevTop10) {
                     const key = `${prev.skinID}_${prev.sellerID}`;
-                    if (!currMap.has(key)) {
+                    
+                    // Cek apakah item dari top 10 lama ada di SELURUH 20 data baru
+                    if (!currMapAll.has(key)) {
+                        // Jika tidak ada di seluruh data baru, berarti benar-benar hilang/terjual
                         processedEntries.push({
                             ...prev,
                             status: 'removed',
@@ -98,7 +108,14 @@ export default defineEventHandler(async (event) => {
                     }
                 }
             } else {
-                 processedEntries.forEach(e => e.status = 'unchanged');
+                // Untuk capture terawal, jadikan top 10 sebagai 'unchanged'
+                currentTop10.forEach(e => {
+                    processedEntries.push({
+                        ...e,
+                        status: 'unchanged',
+                        prevPrice: null
+                    });
+                });
             }
 
             processedEntries.sort((a, b) => a.price - b.price);
@@ -110,9 +127,8 @@ export default defineEventHandler(async (event) => {
             });
         }
 
-        // Return only the last 5 captures (the newest 5)
         const latest5 = resultCaptures.slice(-5);
-        latest5.reverse(); // Display newest first
+        latest5.reverse();
 
         return {
             msg: "Success",
