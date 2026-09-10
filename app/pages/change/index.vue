@@ -141,9 +141,19 @@ const updatingUuids = reactive(new Set())
 
 const { data: response, pending, error, refresh } = await useFetch('/api/skin/change');
 
-setInterval(async () => {
-  await refresh();
-}, 1 * 60 * 1000);
+let intervalId = null;
+
+onMounted(() => {
+  // Jalankan interval hanya di browser (client-side)
+  intervalId = setInterval(() => {
+    refresh();
+  }, 60 * 1000);
+});
+
+onUnmounted(() => {
+  // Bersihkan interval saat komponen dihancurkan atau pindah halaman
+  if (intervalId) clearInterval(intervalId);
+});
 
 const changes = computed(() => response.value?.data || [])
 
