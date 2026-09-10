@@ -127,12 +127,9 @@ export default defineEventHandler(async (event) => {
             });
         }
 
-        const latest5 = resultCaptures.slice(-5);
-        latest5.reverse();
-
         return {
             msg: "Success",
-            data: latest5,
+            data: resultCaptures.reverse(),
             skinInfo
         };
 
