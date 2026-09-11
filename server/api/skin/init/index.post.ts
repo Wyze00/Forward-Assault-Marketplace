@@ -37,7 +37,8 @@ export default defineEventHandler(async (event) => {
         const camoIDs: number[] = []
         let page = 0;
 
-        console.log(extraQuery):
+        console.log(body);
+        console.log(extraQuery);
         console.log(weaponType);
         throw new Error('5');
         
