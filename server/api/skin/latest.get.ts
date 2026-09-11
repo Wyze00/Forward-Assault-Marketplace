@@ -45,7 +45,8 @@ export default defineEventHandler(async (event) => {
                     camoUuid: camo.uuid,
                     weaponType: item.weaponType
                 },
-                include: {
+                include: { 
+                    camo: true,
                     skinHistories: {
                         orderBy: {
                             createdAt: 'desc'
@@ -53,7 +54,9 @@ export default defineEventHandler(async (event) => {
                         include: {
                             skinHistoryEntries: true,
                         }
-                    }
+                    },
+                    weapon: true,
+                    favoriteSkin: true,
                 }
             });
 
