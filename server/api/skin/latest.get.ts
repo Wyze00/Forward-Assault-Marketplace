@@ -33,24 +33,29 @@ export default defineEventHandler(async (event) => {
 
                     if (!camo) return null;
 
-                    const skin = await prismaClient.skin.findFirst({
-                        where: { camoUuid: camo.uuid, weaponType: item.weaponType },
+                    const skin = await prismaClient.skin.upsert({
+                where: {
+                    camoUuid_weaponType: {
+                        camoUuid: camo.uuid,
+                        weaponType
+                    }
+                },
+                update: {},
+                create: {
+                    camoUuid: camo.uuid,
+                    weaponType
+                },
+                include: {
+                    skinHistories: {
+                        orderBy: {
+                            createdAt: 'desc'
+                        },
                         include: {
-                            camo: true,
-                            weapon: true,
-                            favoriteSkin: true,
-                            skinHistories: {
-                                orderBy: { createdAt: 'desc' },
-                                take: 1,
-                                include: {
-                                    skinHistoryEntries: {
-                                        orderBy: { price: 'asc' },
-                                        take: 1
-                                    }
-                                }
-                            }
+                            skinHistoryEntries: true,
                         }
-                    });
+                    }
+                }
+            });
 
                     if (!skin) return null;
 
