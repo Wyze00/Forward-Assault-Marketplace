@@ -54,19 +54,36 @@ export default defineNitroPlugin((nitroApp) => {
                         where: { camoID: item.camoID, itemType: item.itemType }
                     }); //[cite: 1]
 
-                    if (!camo) continue; //[cite: 1]
+                    if (!camo) {
+                        console.log(`Unknown camo ${item.camoID}`);
+                        continue;
+
+                    }
 
                     // Ambil referensi skin dan history sebelumnya[cite: 1]
-                    const skin = await prismaClient.skin.findFirst({
-                        where: { camoUuid: camo.uuid, weaponType: item.weaponType },
+                    const skin = await prismaClient.skin.upsert({
+                where: {
+                    camoUuid_weaponType: {
+                        camoUuid: camo.uuid,
+                        weaponType: itwem.weaponType
+                    }
+                },
+                update: {},
+                create: {
+                    camoUuid: camo.uuid,
+                    weaponType
+                },
+                include: {
+                    skinHistories: {
+                        orderBy: {
+                            createdAt: 'desc'
+                        },
                         include: {
-                            skinHistories: {
-                                orderBy: { createdAt: 'desc' },
-                                take: 1,
-                                include: { skinHistoryEntries: true }
-                            }
+                            skinHistoryEntries: true,
                         }
-                    }); //[cite: 1]
+                    }
+                }
+            });
 
                     if (!skin) continue; //[cite: 1]
 
