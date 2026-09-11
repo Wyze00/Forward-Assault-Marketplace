@@ -113,7 +113,7 @@ const initWeapon = async () => {
       method: 'POST',
       body: { 
         itemType: 'weapon',
-        weaponType: initWeaponType.value
+        weaponType: Number(initWeaponType.value)
        }
     })
     initWeaponMessage.value = 'Success!'
