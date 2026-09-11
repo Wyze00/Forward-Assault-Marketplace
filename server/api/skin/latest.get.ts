@@ -37,13 +37,13 @@ export default defineEventHandler(async (event) => {
                 where: {
                     camoUuid_weaponType: {
                         camoUuid: camo.uuid,
-                        weaponType
+                        weaponType: item.weaponType
                     }
                 },
                 update: {},
                 create: {
                     camoUuid: camo.uuid,
-                    weaponType
+                    weaponType: item.weaponType
                 },
                 include: {
                     skinHistories: {
