@@ -36,11 +36,6 @@ export default defineEventHandler(async (event) => {
 
         const camoIDs: number[] = []
         let page = 0;
-
-        console.log(body);
-        console.log(extraQuery);
-        console.log(weaponType);
-        throw new Error('5');
         
         while (true) {
             const response = await fetchUtil<GetUniqueItemsResponse>('marketplaceV3_get_unique_items.php', `page=${page}&itemPerPage=20&sortBy=price_asc&itemType=${body.itemType}${extraQuery}`);
@@ -88,13 +83,13 @@ export default defineEventHandler(async (event) => {
                 where: {
                     camoUuid_weaponType: {
                         camoUuid: camo.uuid,
-                        weaponType: 0,
+                        weaponType
                     }
                 },
                 update: {},
                 create: {
                     camoUuid: camo.uuid,
-                    weaponType: 0,
+                    weaponType
                 },
                 include: {
                     skinHistories: {
