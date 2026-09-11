@@ -65,7 +65,7 @@ export default defineNitroPlugin((nitroApp) => {
                 where: {
                     camoUuid_weaponType: {
                         camoUuid: camo.uuid,
-                        weaponType: itwem.weaponType
+                        weaponType: item.weaponType
                     }
                 },
                 update: {},
