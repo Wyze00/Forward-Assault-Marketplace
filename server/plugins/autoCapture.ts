@@ -71,7 +71,7 @@ export default defineNitroPlugin((nitroApp) => {
                 update: {},
                 create: {
                     camoUuid: camo.uuid,
-                    weaponType
+                    weaponType: item.weaponType
                 },
                 include: {
                     skinHistories: {
