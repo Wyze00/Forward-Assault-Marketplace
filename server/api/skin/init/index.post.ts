@@ -93,6 +93,9 @@ export default defineEventHandler(async (event) => {
                 },
                 include: {
                     skinHistories: {
+                        orderBy: {
+                            createdAt: 'desc'
+                        },
                         include: {
                             skinHistoryEntries: true,
                         }

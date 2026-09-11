@@ -21,7 +21,8 @@ export default defineEventHandler(async (event) => {
             },
             orderBy: {
                 createdAt: 'desc'
-            }   
+            },
+            take: 100, 
         });
 
         const data = changes.map((change) => {
