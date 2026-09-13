@@ -52,3 +52,8 @@ export type FavoriteSkin = Prisma.FavoriteSkinModel
  * 
  */
 export type SkinOfferChange = Prisma.SkinOfferChangeModel
+/**
+ * Model SkinIdealPrice
+ * 
+ */
+export type SkinIdealPrice = Prisma.SkinIdealPriceModel

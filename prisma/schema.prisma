@@ -46,6 +46,7 @@ model Skin {
 
   skinHistories SkinHistory[]
   favoriteSkin FavoriteSkin?
+  skinIdealPrice SkinIdealPrice?
 
   @@unique([camoUuid, weaponType])
 }
@@ -96,4 +97,13 @@ model SkinOfferChange {
   createdAt DateTime @default(now())
 
   skinHistoryEntry SkinHistoryEntry @relation(fields: [skinHistoryEntryUuid], references: [uuid])
+}
+
+model SkinIdealPrice {
+  uuid String @id @default(uuid())
+  idealPrice Int?
+  shopPrice Int?
+  skinUuid String @unique
+
+  skin Skin @relation(fields: [skinUuid], references: [uuid])
 }

@@ -204,6 +204,7 @@ export type SkinWhereInput = {
   weapon?: Prisma.XOR<Prisma.WeaponScalarRelationFilter, Prisma.WeaponWhereInput>
   skinHistories?: Prisma.SkinHistoryListRelationFilter
   favoriteSkin?: Prisma.XOR<Prisma.FavoriteSkinNullableScalarRelationFilter, Prisma.FavoriteSkinWhereInput> | null
+  skinIdealPrice?: Prisma.XOR<Prisma.SkinIdealPriceNullableScalarRelationFilter, Prisma.SkinIdealPriceWhereInput> | null
 }
 
 export type SkinOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type SkinOrderByWithRelationInput = {
   weapon?: Prisma.WeaponOrderByWithRelationInput
   skinHistories?: Prisma.SkinHistoryOrderByRelationAggregateInput
   favoriteSkin?: Prisma.FavoriteSkinOrderByWithRelationInput
+  skinIdealPrice?: Prisma.SkinIdealPriceOrderByWithRelationInput
 }
 
 export type SkinWhereUniqueInput = Prisma.AtLeast<{
@@ -228,6 +230,7 @@ export type SkinWhereUniqueInput = Prisma.AtLeast<{
   weapon?: Prisma.XOR<Prisma.WeaponScalarRelationFilter, Prisma.WeaponWhereInput>
   skinHistories?: Prisma.SkinHistoryListRelationFilter
   favoriteSkin?: Prisma.XOR<Prisma.FavoriteSkinNullableScalarRelationFilter, Prisma.FavoriteSkinWhereInput> | null
+  skinIdealPrice?: Prisma.XOR<Prisma.SkinIdealPriceNullableScalarRelationFilter, Prisma.SkinIdealPriceWhereInput> | null
 }, "uuid" | "camoUuid_weaponType">
 
 export type SkinOrderByWithAggregationInput = {
@@ -256,6 +259,7 @@ export type SkinCreateInput = {
   weapon: Prisma.WeaponCreateNestedOneWithoutSkinsInput
   skinHistories?: Prisma.SkinHistoryCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUncheckedCreateInput = {
@@ -264,6 +268,7 @@ export type SkinUncheckedCreateInput = {
   weaponType: number
   skinHistories?: Prisma.SkinHistoryUncheckedCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUpdateInput = {
@@ -272,6 +277,7 @@ export type SkinUpdateInput = {
   weapon?: Prisma.WeaponUpdateOneRequiredWithoutSkinsNestedInput
   skinHistories?: Prisma.SkinHistoryUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateInput = {
@@ -280,6 +286,7 @@ export type SkinUncheckedUpdateInput = {
   weaponType?: Prisma.IntFieldUpdateOperationsInput | number
   skinHistories?: Prisma.SkinHistoryUncheckedUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinCreateManyInput = {
@@ -456,11 +463,26 @@ export type SkinUpdateOneRequiredWithoutFavoriteSkinNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SkinUpdateToOneWithWhereWithoutFavoriteSkinInput, Prisma.SkinUpdateWithoutFavoriteSkinInput>, Prisma.SkinUncheckedUpdateWithoutFavoriteSkinInput>
 }
 
+export type SkinCreateNestedOneWithoutSkinIdealPriceInput = {
+  create?: Prisma.XOR<Prisma.SkinCreateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedCreateWithoutSkinIdealPriceInput>
+  connectOrCreate?: Prisma.SkinCreateOrConnectWithoutSkinIdealPriceInput
+  connect?: Prisma.SkinWhereUniqueInput
+}
+
+export type SkinUpdateOneRequiredWithoutSkinIdealPriceNestedInput = {
+  create?: Prisma.XOR<Prisma.SkinCreateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedCreateWithoutSkinIdealPriceInput>
+  connectOrCreate?: Prisma.SkinCreateOrConnectWithoutSkinIdealPriceInput
+  upsert?: Prisma.SkinUpsertWithoutSkinIdealPriceInput
+  connect?: Prisma.SkinWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SkinUpdateToOneWithWhereWithoutSkinIdealPriceInput, Prisma.SkinUpdateWithoutSkinIdealPriceInput>, Prisma.SkinUncheckedUpdateWithoutSkinIdealPriceInput>
+}
+
 export type SkinCreateWithoutCamoInput = {
   uuid?: string
   weapon: Prisma.WeaponCreateNestedOneWithoutSkinsInput
   skinHistories?: Prisma.SkinHistoryCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUncheckedCreateWithoutCamoInput = {
@@ -468,6 +490,7 @@ export type SkinUncheckedCreateWithoutCamoInput = {
   weaponType: number
   skinHistories?: Prisma.SkinHistoryUncheckedCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedCreateNestedOneWithoutSkinInput
 }
 
 export type SkinCreateOrConnectWithoutCamoInput = {
@@ -509,6 +532,7 @@ export type SkinCreateWithoutWeaponInput = {
   camo: Prisma.CamoCreateNestedOneWithoutSkinsInput
   skinHistories?: Prisma.SkinHistoryCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUncheckedCreateWithoutWeaponInput = {
@@ -516,6 +540,7 @@ export type SkinUncheckedCreateWithoutWeaponInput = {
   camoUuid: string
   skinHistories?: Prisma.SkinHistoryUncheckedCreateNestedManyWithoutSkinInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedCreateNestedOneWithoutSkinInput
 }
 
 export type SkinCreateOrConnectWithoutWeaponInput = {
@@ -548,6 +573,7 @@ export type SkinCreateWithoutSkinHistoriesInput = {
   camo: Prisma.CamoCreateNestedOneWithoutSkinsInput
   weapon: Prisma.WeaponCreateNestedOneWithoutSkinsInput
   favoriteSkin?: Prisma.FavoriteSkinCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUncheckedCreateWithoutSkinHistoriesInput = {
@@ -555,6 +581,7 @@ export type SkinUncheckedCreateWithoutSkinHistoriesInput = {
   camoUuid: string
   weaponType: number
   favoriteSkin?: Prisma.FavoriteSkinUncheckedCreateNestedOneWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedCreateNestedOneWithoutSkinInput
 }
 
 export type SkinCreateOrConnectWithoutSkinHistoriesInput = {
@@ -578,6 +605,7 @@ export type SkinUpdateWithoutSkinHistoriesInput = {
   camo?: Prisma.CamoUpdateOneRequiredWithoutSkinsNestedInput
   weapon?: Prisma.WeaponUpdateOneRequiredWithoutSkinsNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateWithoutSkinHistoriesInput = {
@@ -585,6 +613,7 @@ export type SkinUncheckedUpdateWithoutSkinHistoriesInput = {
   camoUuid?: Prisma.StringFieldUpdateOperationsInput | string
   weaponType?: Prisma.IntFieldUpdateOperationsInput | number
   favoriteSkin?: Prisma.FavoriteSkinUncheckedUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinCreateWithoutFavoriteSkinInput = {
@@ -592,6 +621,7 @@ export type SkinCreateWithoutFavoriteSkinInput = {
   camo: Prisma.CamoCreateNestedOneWithoutSkinsInput
   weapon: Prisma.WeaponCreateNestedOneWithoutSkinsInput
   skinHistories?: Prisma.SkinHistoryCreateNestedManyWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceCreateNestedOneWithoutSkinInput
 }
 
 export type SkinUncheckedCreateWithoutFavoriteSkinInput = {
@@ -599,6 +629,7 @@ export type SkinUncheckedCreateWithoutFavoriteSkinInput = {
   camoUuid: string
   weaponType: number
   skinHistories?: Prisma.SkinHistoryUncheckedCreateNestedManyWithoutSkinInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedCreateNestedOneWithoutSkinInput
 }
 
 export type SkinCreateOrConnectWithoutFavoriteSkinInput = {
@@ -622,6 +653,7 @@ export type SkinUpdateWithoutFavoriteSkinInput = {
   camo?: Prisma.CamoUpdateOneRequiredWithoutSkinsNestedInput
   weapon?: Prisma.WeaponUpdateOneRequiredWithoutSkinsNestedInput
   skinHistories?: Prisma.SkinHistoryUpdateManyWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateWithoutFavoriteSkinInput = {
@@ -629,6 +661,55 @@ export type SkinUncheckedUpdateWithoutFavoriteSkinInput = {
   camoUuid?: Prisma.StringFieldUpdateOperationsInput | string
   weaponType?: Prisma.IntFieldUpdateOperationsInput | number
   skinHistories?: Prisma.SkinHistoryUncheckedUpdateManyWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedUpdateOneWithoutSkinNestedInput
+}
+
+export type SkinCreateWithoutSkinIdealPriceInput = {
+  uuid?: string
+  camo: Prisma.CamoCreateNestedOneWithoutSkinsInput
+  weapon: Prisma.WeaponCreateNestedOneWithoutSkinsInput
+  skinHistories?: Prisma.SkinHistoryCreateNestedManyWithoutSkinInput
+  favoriteSkin?: Prisma.FavoriteSkinCreateNestedOneWithoutSkinInput
+}
+
+export type SkinUncheckedCreateWithoutSkinIdealPriceInput = {
+  uuid?: string
+  camoUuid: string
+  weaponType: number
+  skinHistories?: Prisma.SkinHistoryUncheckedCreateNestedManyWithoutSkinInput
+  favoriteSkin?: Prisma.FavoriteSkinUncheckedCreateNestedOneWithoutSkinInput
+}
+
+export type SkinCreateOrConnectWithoutSkinIdealPriceInput = {
+  where: Prisma.SkinWhereUniqueInput
+  create: Prisma.XOR<Prisma.SkinCreateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedCreateWithoutSkinIdealPriceInput>
+}
+
+export type SkinUpsertWithoutSkinIdealPriceInput = {
+  update: Prisma.XOR<Prisma.SkinUpdateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedUpdateWithoutSkinIdealPriceInput>
+  create: Prisma.XOR<Prisma.SkinCreateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedCreateWithoutSkinIdealPriceInput>
+  where?: Prisma.SkinWhereInput
+}
+
+export type SkinUpdateToOneWithWhereWithoutSkinIdealPriceInput = {
+  where?: Prisma.SkinWhereInput
+  data: Prisma.XOR<Prisma.SkinUpdateWithoutSkinIdealPriceInput, Prisma.SkinUncheckedUpdateWithoutSkinIdealPriceInput>
+}
+
+export type SkinUpdateWithoutSkinIdealPriceInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  camo?: Prisma.CamoUpdateOneRequiredWithoutSkinsNestedInput
+  weapon?: Prisma.WeaponUpdateOneRequiredWithoutSkinsNestedInput
+  skinHistories?: Prisma.SkinHistoryUpdateManyWithoutSkinNestedInput
+  favoriteSkin?: Prisma.FavoriteSkinUpdateOneWithoutSkinNestedInput
+}
+
+export type SkinUncheckedUpdateWithoutSkinIdealPriceInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  camoUuid?: Prisma.StringFieldUpdateOperationsInput | string
+  weaponType?: Prisma.IntFieldUpdateOperationsInput | number
+  skinHistories?: Prisma.SkinHistoryUncheckedUpdateManyWithoutSkinNestedInput
+  favoriteSkin?: Prisma.FavoriteSkinUncheckedUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinCreateManyCamoInput = {
@@ -641,6 +722,7 @@ export type SkinUpdateWithoutCamoInput = {
   weapon?: Prisma.WeaponUpdateOneRequiredWithoutSkinsNestedInput
   skinHistories?: Prisma.SkinHistoryUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateWithoutCamoInput = {
@@ -648,6 +730,7 @@ export type SkinUncheckedUpdateWithoutCamoInput = {
   weaponType?: Prisma.IntFieldUpdateOperationsInput | number
   skinHistories?: Prisma.SkinHistoryUncheckedUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateManyWithoutCamoInput = {
@@ -665,6 +748,7 @@ export type SkinUpdateWithoutWeaponInput = {
   camo?: Prisma.CamoUpdateOneRequiredWithoutSkinsNestedInput
   skinHistories?: Prisma.SkinHistoryUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateWithoutWeaponInput = {
@@ -672,6 +756,7 @@ export type SkinUncheckedUpdateWithoutWeaponInput = {
   camoUuid?: Prisma.StringFieldUpdateOperationsInput | string
   skinHistories?: Prisma.SkinHistoryUncheckedUpdateManyWithoutSkinNestedInput
   favoriteSkin?: Prisma.FavoriteSkinUncheckedUpdateOneWithoutSkinNestedInput
+  skinIdealPrice?: Prisma.SkinIdealPriceUncheckedUpdateOneWithoutSkinNestedInput
 }
 
 export type SkinUncheckedUpdateManyWithoutWeaponInput = {
@@ -718,6 +803,7 @@ export type SkinSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   weapon?: boolean | Prisma.WeaponDefaultArgs<ExtArgs>
   skinHistories?: boolean | Prisma.Skin$skinHistoriesArgs<ExtArgs>
   favoriteSkin?: boolean | Prisma.Skin$favoriteSkinArgs<ExtArgs>
+  skinIdealPrice?: boolean | Prisma.Skin$skinIdealPriceArgs<ExtArgs>
   _count?: boolean | Prisma.SkinCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["skin"]>
 
@@ -749,6 +835,7 @@ export type SkinInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   weapon?: boolean | Prisma.WeaponDefaultArgs<ExtArgs>
   skinHistories?: boolean | Prisma.Skin$skinHistoriesArgs<ExtArgs>
   favoriteSkin?: boolean | Prisma.Skin$favoriteSkinArgs<ExtArgs>
+  skinIdealPrice?: boolean | Prisma.Skin$skinIdealPriceArgs<ExtArgs>
   _count?: boolean | Prisma.SkinCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SkinIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -767,6 +854,7 @@ export type $SkinPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     weapon: Prisma.$WeaponPayload<ExtArgs>
     skinHistories: Prisma.$SkinHistoryPayload<ExtArgs>[]
     favoriteSkin: Prisma.$FavoriteSkinPayload<ExtArgs> | null
+    skinIdealPrice: Prisma.$SkinIdealPricePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     uuid: string
@@ -1170,6 +1258,7 @@ export interface Prisma__SkinClient<T, Null = never, ExtArgs extends runtime.Typ
   weapon<T extends Prisma.WeaponDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WeaponDefaultArgs<ExtArgs>>): Prisma.Prisma__WeaponClient<runtime.Types.Result.GetResult<Prisma.$WeaponPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   skinHistories<T extends Prisma.Skin$skinHistoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Skin$skinHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SkinHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   favoriteSkin<T extends Prisma.Skin$favoriteSkinArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Skin$favoriteSkinArgs<ExtArgs>>): Prisma.Prisma__FavoriteSkinClient<runtime.Types.Result.GetResult<Prisma.$FavoriteSkinPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  skinIdealPrice<T extends Prisma.Skin$skinIdealPriceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Skin$skinIdealPriceArgs<ExtArgs>>): Prisma.Prisma__SkinIdealPriceClient<runtime.Types.Result.GetResult<Prisma.$SkinIdealPricePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1641,6 +1730,25 @@ export type Skin$favoriteSkinArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.FavoriteSkinInclude<ExtArgs> | null
   where?: Prisma.FavoriteSkinWhereInput
+}
+
+/**
+ * Skin.skinIdealPrice
+ */
+export type Skin$skinIdealPriceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SkinIdealPrice
+   */
+  select?: Prisma.SkinIdealPriceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SkinIdealPrice
+   */
+  omit?: Prisma.SkinIdealPriceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SkinIdealPriceInclude<ExtArgs> | null
+  where?: Prisma.SkinIdealPriceWhereInput
 }
 
 /**

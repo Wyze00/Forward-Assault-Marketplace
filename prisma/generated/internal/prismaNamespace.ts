@@ -403,7 +403,8 @@ export const ModelName = {
   SkinHistory: 'SkinHistory',
   SkinHistoryEntry: 'SkinHistoryEntry',
   FavoriteSkin: 'FavoriteSkin',
-  SkinOfferChange: 'SkinOfferChange'
+  SkinOfferChange: 'SkinOfferChange',
+  SkinIdealPrice: 'SkinIdealPrice'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "skinHistoryEntry" | "favoriteSkin" | "skinOfferChange"
+    modelProps: "camo" | "weapon" | "skin" | "skinHistory" | "skinHistoryEntry" | "favoriteSkin" | "skinOfferChange" | "skinIdealPrice"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -941,6 +942,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SkinIdealPrice: {
+      payload: Prisma.$SkinIdealPricePayload<ExtArgs>
+      fields: Prisma.SkinIdealPriceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SkinIdealPriceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SkinIdealPriceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        findFirst: {
+          args: Prisma.SkinIdealPriceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SkinIdealPriceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        findMany: {
+          args: Prisma.SkinIdealPriceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>[]
+        }
+        create: {
+          args: Prisma.SkinIdealPriceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        createMany: {
+          args: Prisma.SkinIdealPriceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SkinIdealPriceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>[]
+        }
+        delete: {
+          args: Prisma.SkinIdealPriceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        update: {
+          args: Prisma.SkinIdealPriceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        deleteMany: {
+          args: Prisma.SkinIdealPriceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SkinIdealPriceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SkinIdealPriceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>[]
+        }
+        upsert: {
+          args: Prisma.SkinIdealPriceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SkinIdealPricePayload>
+        }
+        aggregate: {
+          args: Prisma.SkinIdealPriceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSkinIdealPrice>
+        }
+        groupBy: {
+          args: Prisma.SkinIdealPriceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinIdealPriceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SkinIdealPriceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SkinIdealPriceCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1048,12 +1123,30 @@ export const SkinOfferChangeScalarFieldEnum = {
 export type SkinOfferChangeScalarFieldEnum = (typeof SkinOfferChangeScalarFieldEnum)[keyof typeof SkinOfferChangeScalarFieldEnum]
 
 
+export const SkinIdealPriceScalarFieldEnum = {
+  uuid: 'uuid',
+  idealPrice: 'idealPrice',
+  shopPrice: 'shopPrice',
+  skinUuid: 'skinUuid'
+} as const
+
+export type SkinIdealPriceScalarFieldEnum = (typeof SkinIdealPriceScalarFieldEnum)[keyof typeof SkinIdealPriceScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -1268,6 +1361,7 @@ export type GlobalOmitConfig = {
   skinHistoryEntry?: Prisma.SkinHistoryEntryOmit
   favoriteSkin?: Prisma.FavoriteSkinOmit
   skinOfferChange?: Prisma.SkinOfferChangeOmit
+  skinIdealPrice?: Prisma.SkinIdealPriceOmit
 }
 
 /* Types for Logging */
