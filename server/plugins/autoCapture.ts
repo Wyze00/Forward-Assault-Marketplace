@@ -172,5 +172,5 @@ export default defineNitroPlugin((nitroApp) => {
         } catch (error) {
             console.error("Gagal melakukan auto-capture:", error);
         }
-    }, 1234 * 60 * 1000); 
+    }, 1 * 60 * 1000); 
 });

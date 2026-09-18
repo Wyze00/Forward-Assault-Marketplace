@@ -1,18 +1,17 @@
 <template>
   <Layout>
-    <div class="min-h-screen p-6 font-quicksand" style="background-color: #fff5f7; color: #4a4a4a;">
-      <div class="container mx-auto">
+    <div class="min-h-screen bg-[#F4F4F0] p-6 font-grotesk text-black">
+      <div class="container mx-auto max-w-7xl">
         <!-- Header & Action Bar -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4 border-b-4 border-black pb-6">
           <div>
-            <h1 class="text-3xl font-bold" style="color: #4a4a4a;">Latest Marketplace Skins ✨</h1>
-            <p class="mt-1 text-sm font-medium" style="color: #8e8e8e;">Halaman {{ currentPage + 1 }}</p>
+            <h1 class="text-4xl font-black uppercase tracking-tight">Latest Marketplace Skins</h1>
+            <p class="mt-2 text-lg font-bold">Halaman {{ currentPage + 1 }}</p>
           </div>
 
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-4">
             <button
-              class="px-6 py-2.5 rounded-2xl font-bold text-sm transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-              style="background-color: #ffc5d3; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+              class="px-6 py-3 border-4 border-black bg-[#FF5757] text-white font-black uppercase shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
               :disabled="isCapturing"
               @click="handleCaptureAll"
             >
@@ -22,86 +21,94 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="pending" class="text-center py-16" style="color: #8e8e8e;">
-          <span class="text-xl font-medium animate-pulse">Memuat data skin... 🌸</span>
+        <div v-if="pending" class="text-center py-16">
+          <span class="text-2xl font-black uppercase tracking-widest animate-pulse">Memuat data skin... 🌸</span>
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="text-center py-16 font-medium" style="color: #ffb3b3;">
-          Terjadi kesalahan saat memuat data: {{ error.message }}
+        <div v-else-if="error" class="text-center py-16 bg-[#FF5757] border-4 border-black shadow-[8px_8px_0px_#000000] text-white">
+          <span class="text-2xl font-black uppercase">Terjadi kesalahan saat memuat data: {{ error.message }}</span>
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="!skins || skins.length === 0" class="text-center py-16 font-medium" style="color: #8e8e8e;">
-          <p class="text-5xl mb-4">(⁠´⁠∩⁠｡⁠•⁠ ⁠ᵕ⁠ ⁠•⁠｡⁠∩⁠`⁠)</p>
-          <p class="text-xl">Tidak ada skin ditemukan pada halaman ini.</p>
+        <div v-else-if="!skins || skins.length === 0" class="text-center py-16 bg-white border-4 border-black shadow-[8px_8px_0px_#000000]">
+          <p class="text-6xl mb-6">(⁠´⁠∩⁠｡⁠•⁠ ⁠ᵕ⁠ ⁠•⁠｡⁠∩⁠`⁠)</p>
+          <p class="text-2xl font-black uppercase">Tidak ada skin ditemukan pada halaman ini.</p>
         </div>
 
         <!-- Skins Grid -->
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           <div
             v-for="skin in skins"
             :key="skin.id"
-            class="rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 card-hover relative"
-            style="background-color: #fefefe; box-shadow: 0 8px 24px rgba(255, 197, 211, 0.4); border: 2px solid #ffc5d3;"
+            class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_#000000] relative cursor-pointer hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_#000000] transition-all duration-75 flex flex-col justify-between"
             @click="goToDetail(skin)"
           >
             <!-- Favorite Tag -->
-            <span v-if="skin.isFavorite" class="absolute top-4 right-4 text-xl" title="Favorit">
+            <span v-if="skin.isFavorite" class="absolute top-4 right-4 text-3xl z-10 text-[#FF5757]" title="Favorit">
               ♥
             </span>
 
-            <span
-              class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mb-3"
-              :style="getTypeBadgeStyle(skin.itemType)"
-            >
-              {{ skin.itemType ? skin.itemType.toUpperCase() : 'SKIN' }}
-            </span>
+            <div>
+              <span
+                class="inline-block px-3 py-1 border-2 border-black text-xs font-black uppercase mb-4 shadow-[2px_2px_0px_#000000]"
+                :class="getTypeBadgeClass(skin.itemType)"
+              >
+                {{ skin.itemType ? skin.itemType : 'SKIN' }}
+              </span>
 
-            <h2 class="text-xl font-bold mb-4 pr-6" style="color: #4a4a4a;">{{ skin.name }}</h2>
+              <h2 class="text-2xl font-black mb-4 pr-8 uppercase tracking-tight leading-tight">{{ skin.name }}</h2>
+            </div>
 
-            <div class="text-sm flex flex-col gap-2" style="color: #8e8e8e;">
+            <div class="text-sm flex flex-col gap-3 mt-4 border-t-4 border-black pt-4">
               <p>
-                <span class="font-semibold" style="color: #4a4a4a;">Last Capture:</span><br>
-                {{ formatDate(skin.lastCaptureDate) }}
+                <span class="font-black uppercase">Last Capture:</span><br>
+                <span class="font-bold text-lg">{{ formatDate(skin.lastCaptureDate) }}</span>
               </p>
               
-              <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-pink-100">
+              <div class="grid grid-cols-2 gap-4 mt-2 pt-4 border-t-4 border-black">
                 <div>
-                  <span class="text-xs font-semibold" style="color: #8e8e8e;">Last Lowest:</span>
-                  <span class="font-bold text-base block" style="color: #ffb0c2;">
+                  <span class="text-xs font-black uppercase">Last Lowest:</span>
+                  <span class="font-black text-2xl block text-[#FF5757] mt-1">
                     {{ skin.lowestPrice ? `${skin.lowestPrice} G` : '-' }}
                   </span>
                 </div>
                 <div>
-                  <span class="text-xs font-semibold" style="color: #8e8e8e;">Latest Fetch:</span>
-                  <span class="font-bold text-base block" style="color: #4a4a4a;">
+                  <span class="text-xs font-black uppercase">Latest Fetch:</span>
+                  <span class="font-black text-2xl block mt-1">
                     {{ skin.latestFetchLowestPrice }} G
                   </span>
                 </div>
               </div>
+
+              <!-- Single Capture Button -->
+              <button
+                class="mt-4 w-full py-3 border-4 border-black font-black uppercase tracking-wider text-black bg-[#FFD23F] shadow-[4px_4px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_#000000]"
+                :disabled="capturingIds.has(skin.id)"
+                @click.stop="captureSingle($event, skin)"
+              >
+                {{ capturingIds.has(skin.id) ? 'Capturing...' : '📸 Capture' }}
+              </button>
             </div>
           </div>
         </div>
 
         <!-- Pagination Controls -->
-        <div class="flex justify-center items-center gap-4 mt-12 mb-6">
+        <div class="flex justify-center items-center gap-6 mt-16 mb-8">
           <button
-            class="px-5 py-2.5 rounded-2xl font-bold text-sm transition-all hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
-            style="background-color: #fefefe; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+            class="px-6 py-3 border-4 border-black bg-white text-black font-black uppercase shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none hover:bg-[#FFD23F] transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
             :disabled="currentPage === 0 || pending"
             @click="prevPage"
           >
             ← Prev
           </button>
 
-          <span class="font-bold text-sm px-3" style="color: #4a4a4a;">
+          <span class="font-black text-xl uppercase bg-black text-white px-6 py-3 border-4 border-black">
             Page {{ currentPage + 1 }}
           </span>
 
           <button
-            class="px-5 py-2.5 rounded-2xl font-bold text-sm transition-all hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
-            style="background-color: #fefefe; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+            class="px-6 py-3 border-4 border-black bg-white text-black font-black uppercase shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none hover:bg-[#FFD23F] transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed rounded-none"
             :disabled="!hasMore || pending"
             @click="nextPage"
           >
@@ -114,12 +121,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const currentPage = ref(0)
 const isCapturing = ref(false)
+const capturingIds = reactive(new Set())
 
 const { data: response, pending, error, refresh } = await useFetch('/api/skin/latest', {
   query: computed(() => ({
@@ -158,8 +166,26 @@ const handleCaptureAll = async () => {
   }
 }
 
+const captureSingle = async (event, skin) => {
+  event.stopPropagation()
+  if (capturingIds.has(skin.id)) return
+  capturingIds.add(skin.id)
+  try {
+    await $fetch('/api/skin/capture', {
+      method: 'POST',
+      body: { skinUuid: skin.id }
+    })
+    await refresh()
+  } catch (err) {
+    alert('Gagal capture: ' + (err.data?.msg || err.message))
+  } finally {
+    capturingIds.delete(skin.id)
+  }
+}
+
 const goToDetail = (skin) => {
-  router.push(`/${skin.itemType || 'skin'}/${skin.id}`)
+  const type = skin.itemType || 'weapon'
+  router.push(`/weapon/${type}/${skin.id}`)
 }
 
 const formatDate = (dateStr) => {
@@ -173,21 +199,9 @@ const formatDate = (dateStr) => {
   })
 }
 
-const getTypeBadgeStyle = (itemType) => {
-  if (itemType === 'glove') return 'background-color: #e2d9f3; color: #5e35b1;'
-  if (itemType === 'character') return 'background-color: #d1ecf1; color: #0c5460;'
-  return 'background-color: #fff3cd; color: #856404;'
+const getTypeBadgeClass = (itemType) => {
+  if (itemType === 'glove') return 'bg-[#FFD23F] text-black'
+  if (itemType === 'character') return 'bg-[#4D96FF] text-white'
+  return 'bg-[#FF5757] text-white'
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
-
-.font-quicksand {
-  font-family: 'Quicksand', sans-serif;
-}
-
-.card-hover:hover {
-  box-shadow: 0 12px 32px rgba(255, 197, 211, 0.6) !important;
-}
-</style>

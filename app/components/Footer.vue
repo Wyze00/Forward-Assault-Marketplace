@@ -1,14 +1,16 @@
 <template>
-  <footer class="bg-bg-light border-t border-primary/20 py-6 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="text-text-sub text-sm">
+  <footer class="bg-white border-t-4 border-black py-8 mt-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="text-black font-bold text-base border-2 border-black px-4 py-2 bg-[#FFD23F] shadow-[4px_4px_0px_#000000]">
         &copy; {{ new Date().getFullYear() }} Wyze. All rights reserved.
       </div>
       <div class="flex space-x-4">
-        <a href="https://github.com/wyze00" class="text-text-sub hover:text-primary transition-colors text-sm font-medium">Github</a>
+        <a href="https://github.com/wyze00" class="text-black font-bold border-2 border-black px-6 py-2 bg-white shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 uppercase tracking-wide">
+          Github
+        </a>
       </div>
       <!-- Maskot Chibi / Ikon Tema -->
-      <div class="text-primary opacity-70 hover:opacity-100 transition-opacity cursor-pointer font-bold select-none text-lg">
+      <div class="text-black font-bold text-xl border-2 border-black px-4 py-2 bg-[#4D96FF] shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 cursor-pointer select-none">
         (🌸◕‿◕)
       </div>
     </div>

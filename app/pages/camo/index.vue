@@ -77,87 +77,87 @@ onMounted(() => {
 <template>
   <Layout>
     <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-text-main mb-8">Camos</h1>
+    <h1 class="text-4xl font-black text-black mb-8 uppercase tracking-tight">Camos</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
       <!-- Insert Form -->
-      <div class="bg-white p-6 rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)]">
-        <h2 class="text-xl font-semibold text-text-main mb-4">Add Single Camo</h2>
-        <form @submit.prevent="submitCamo" class="space-y-4">
+      <div class="bg-white p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Add Single Camo</h2>
+        <form @submit.prevent="submitCamo" class="space-y-5">
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Item Type</label>
-            <select v-model="newCamo.itemType" class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main bg-white">
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Item Type</label>
+            <select v-model="newCamo.itemType" class="w-full px-4 py-3 border-4 border-black text-black font-bold bg-white focus:outline-none focus:ring-0 shadow-[4px_4px_0px_#000000] appearance-none rounded-none">
               <option value="weapon">Weapon</option>
               <option value="glove">Glove</option>
               <option value="character">Character</option>
             </select>
           </div>
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Camo ID</label>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Camo ID</label>
             <input v-model="newCamo.camoID" type="number" required
-              class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main" />
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 shadow-[4px_4px_0px_#000000] rounded-none" />
           </div>
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Camo Name</label>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Camo Name</label>
             <input v-model="newCamo.camoName" type="text" required
-              class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main" />
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 shadow-[4px_4px_0px_#000000] rounded-none" />
           </div>
-          <button type="submit" class="w-full py-2 px-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-colors">
+          <button type="submit" class="w-full py-3 px-4 bg-[#FF5757] text-white border-4 border-black font-black uppercase tracking-wider shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 rounded-none">
             Add Camo
           </button>
-          <p v-if="insertMessage" class="text-sm mt-2 font-medium" :class="insertMessage.startsWith('Failed') ? 'text-danger' : 'text-primary'">{{ insertMessage }}</p>
+          <p v-if="insertMessage" class="text-sm mt-2 font-bold uppercase" :class="insertMessage.startsWith('Failed') ? 'text-[#FF5757]' : 'text-black'">{{ insertMessage }}</p>
         </form>
       </div>
 
       <!-- Upload Form -->
-      <div class="bg-white p-6 rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)]">
-        <h2 class="text-xl font-semibold text-text-main mb-4">Bulk Upload CSV</h2>
-        <div class="space-y-4">
-          <p class="text-sm text-text-secondary">Format CSV: <code>camoID,camoName</code> (No Headers)</p>
+      <div class="bg-[#FFD23F] p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Bulk Upload CSV</h2>
+        <div class="space-y-5">
+          <p class="text-sm font-bold text-black uppercase">Format CSV: <code>camoID,camoName</code> (No Headers)</p>
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Item Type for this CSV</label>
-            <select v-model="uploadItemType" class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main bg-white">
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Item Type for this CSV</label>
+            <select v-model="uploadItemType" class="w-full px-4 py-3 border-4 border-black text-black font-bold bg-white focus:outline-none focus:ring-0 shadow-[4px_4px_0px_#000000] appearance-none rounded-none">
               <option value="weapon">Weapon</option>
               <option value="glove">Glove</option>
               <option value="character">Character</option>
             </select>
           </div>
           <input type="file" accept=".csv" @change="handleFileUpload" ref="fileInput"
-            class="block w-full text-sm text-text-secondary
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-xl file:border-0
-              file:text-sm file:font-semibold
-              file:bg-primary/10 file:text-text-main
-              hover:file:bg-primary/20 cursor-pointer mt-2" />
-          <p v-if="uploadMessage" class="text-sm mt-2 font-medium" :class="uploadMessage.startsWith('Upload failed') ? 'text-danger' : 'text-primary'">{{ uploadMessage }}</p>
+            class="block w-full text-black font-bold border-4 border-black bg-white shadow-[4px_4px_0px_#000000] cursor-pointer mt-4 rounded-none
+              file:mr-4 file:py-3 file:px-4
+              file:border-r-4 file:border-black file:border-y-0 file:border-l-0
+              file:font-bold file:uppercase
+              file:bg-[#4D96FF] file:text-black
+              hover:file:bg-white transition-all" />
+          <p v-if="uploadMessage" class="text-sm mt-2 font-bold uppercase" :class="uploadMessage.startsWith('Upload failed') ? 'text-[#FF5757]' : 'text-black'">{{ uploadMessage }}</p>
         </div>
       </div>
     </div>
 
     <!-- Data Table -->
-    <div class="bg-white rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)] overflow-hidden">
-      <div class="p-6 border-b border-primary/20">
-        <h2 class="text-xl font-semibold text-text-main">Camo List</h2>
+    <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] overflow-hidden">
+      <div class="p-6 border-b-4 border-black bg-[#4D96FF]">
+        <h2 class="text-2xl font-black text-black uppercase tracking-tight">Camo List</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-primary/5 border-b border-primary/20">
-              <th class="px-6 py-4 font-medium text-text-secondary">UUID</th>
-              <th class="px-6 py-4 font-medium text-text-secondary">Item Type</th>
-              <th class="px-6 py-4 font-medium text-text-secondary">Camo ID</th>
-              <th class="px-6 py-4 font-medium text-text-secondary">Camo Name</th>
+            <tr class="bg-white border-b-4 border-black">
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">UUID</th>
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">Item Type</th>
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">Camo ID</th>
+              <th class="px-6 py-4 font-black text-black uppercase">Camo Name</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-primary/10">
-            <tr v-for="c in camos" :key="c.uuid" class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4 text-sm text-text-secondary font-mono">{{ c.uuid }}</td>
-              <td class="px-6 py-4 text-text-main font-medium capitalize">{{ c.itemType }}</td>
-              <td class="px-6 py-4 text-text-main font-medium">{{ c.camoID }}</td>
-              <td class="px-6 py-4 text-text-main">{{ c.camoName }}</td>
+          <tbody class="divide-y-4 divide-black">
+            <tr v-for="c in camos" :key="c.uuid" class="hover:bg-[#F4F4F0] transition-colors">
+              <td class="px-6 py-4 text-sm font-bold text-black border-r-4 border-black break-all">{{ c.uuid }}</td>
+              <td class="px-6 py-4 font-black text-black border-r-4 border-black uppercase">{{ c.itemType }}</td>
+              <td class="px-6 py-4 font-black text-black border-r-4 border-black">{{ c.camoID }}</td>
+              <td class="px-6 py-4 font-black text-black">{{ c.camoName }}</td>
             </tr>
             <tr v-if="camos.length === 0">
-              <td colspan="4" class="px-6 py-8 text-center text-text-secondary">No camos found.</td>
+              <td colspan="4" class="px-6 py-8 text-center font-bold text-black uppercase">No camos found.</td>
             </tr>
           </tbody>
         </table>

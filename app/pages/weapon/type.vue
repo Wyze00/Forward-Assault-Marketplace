@@ -76,69 +76,69 @@ onMounted(() => {
 <template>
   <Layout>
     <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-text-main mb-8">Weapons</h1>
+    <h1 class="text-4xl font-black text-black mb-8 uppercase tracking-tight">Weapons</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
       <!-- Insert Form -->
-      <div class="bg-white p-6 rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)]">
-        <h2 class="text-xl font-semibold text-text-main mb-4">Add Single Weapon</h2>
-        <form @submit.prevent="submitWeapon" class="space-y-4">
+      <div class="bg-white p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Add Single Weapon</h2>
+        <form @submit.prevent="submitWeapon" class="space-y-5">
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Weapon Type (ID)</label>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Weapon Type (ID)</label>
             <input v-model="newWeapon.weaponType" type="number" required
-              class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main" />
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 focus:border-black shadow-[4px_4px_0px_#000000] transition-all rounded-none" />
           </div>
           <div>
-            <label class="block text-text-secondary text-sm font-medium mb-1">Weapon Name</label>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Weapon Name</label>
             <input v-model="newWeapon.weaponName" type="text" required
-              class="w-full px-4 py-2 rounded-xl border border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-main" />
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 focus:border-black shadow-[4px_4px_0px_#000000] transition-all rounded-none" />
           </div>
-          <button type="submit" class="w-full py-2 px-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-colors">
+          <button type="submit" class="w-full py-3 px-4 bg-[#FFD23F] text-black border-4 border-black font-black uppercase tracking-wider shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 rounded-none">
             Add Weapon
           </button>
-          <p v-if="insertMessage" class="text-sm mt-2 font-medium" :class="insertMessage.startsWith('Failed') ? 'text-danger' : 'text-primary'">{{ insertMessage }}</p>
+          <p v-if="insertMessage" class="text-sm mt-2 font-bold uppercase" :class="insertMessage.startsWith('Failed') ? 'text-[#FF5757]' : 'text-black'">{{ insertMessage }}</p>
         </form>
       </div>
 
       <!-- Upload Form -->
-      <div class="bg-white p-6 rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)]">
-        <h2 class="text-xl font-semibold text-text-main mb-4">Bulk Upload CSV</h2>
-        <div class="space-y-4">
-          <p class="text-sm text-text-secondary">Format CSV: <code>weaponType,weaponName</code> (No Headers)</p>
+      <div class="bg-[#4D96FF] p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Bulk Upload CSV</h2>
+        <div class="space-y-5">
+          <p class="text-sm font-bold text-black uppercase">Format CSV: <code>weaponType,weaponName</code> (No Headers)</p>
           <input type="file" accept=".csv" @change="handleFileUpload" ref="fileInput"
-            class="block w-full text-sm text-text-secondary
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-xl file:border-0
-              file:text-sm file:font-semibold
-              file:bg-primary/10 file:text-text-main
-              hover:file:bg-primary/20 cursor-pointer" />
-          <p v-if="uploadMessage" class="text-sm mt-2 font-medium" :class="uploadMessage.startsWith('Upload failed') ? 'text-danger' : 'text-primary'">{{ uploadMessage }}</p>
+            class="block w-full text-black font-bold border-4 border-black bg-white shadow-[4px_4px_0px_#000000] cursor-pointer rounded-none
+              file:mr-4 file:py-3 file:px-4
+              file:border-r-4 file:border-black file:border-y-0 file:border-l-0
+              file:font-bold file:uppercase
+              file:bg-[#FFD23F] file:text-black
+              hover:file:bg-[#FF5757] transition-all" />
+          <p v-if="uploadMessage" class="text-sm mt-2 font-bold uppercase" :class="uploadMessage.startsWith('Upload failed') ? 'text-white' : 'text-black'">{{ uploadMessage }}</p>
         </div>
       </div>
     </div>
 
     <!-- Data Table -->
-    <div class="bg-white rounded-2xl shadow-[0_8px_24px_rgba(255,197,211,0.4)] overflow-hidden">
-      <div class="p-6 border-b border-primary/20">
-        <h2 class="text-xl font-semibold text-text-main">Weapon List</h2>
+    <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] overflow-hidden">
+      <div class="p-6 border-b-4 border-black bg-[#FFD23F]">
+        <h2 class="text-2xl font-black text-black uppercase tracking-tight">Weapon List</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-primary/5 border-b border-primary/20">
-              <th class="px-6 py-4 font-medium text-text-secondary">UUID</th>
-              <th class="px-6 py-4 font-medium text-text-secondary">Type</th>
-              <th class="px-6 py-4 font-medium text-text-secondary">Name</th>
+            <tr class="bg-white border-b-4 border-black">
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">UUID</th>
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">Type</th>
+              <th class="px-6 py-4 font-black text-black uppercase">Name</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-primary/10">
-            <tr v-for="w in weapons" :key="w.uuid" class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4 text-sm text-text-secondary font-mono">{{ w.uuid }}</td>
-              <td class="px-6 py-4 text-text-main font-medium">{{ w.weaponType }}</td>
-              <td class="px-6 py-4 text-text-main">{{ w.weaponName }}</td>
+          <tbody class="divide-y-4 divide-black">
+            <tr v-for="w in weapons" :key="w.uuid" class="hover:bg-[#F4F4F0] transition-colors">
+              <td class="px-6 py-4 text-sm font-bold text-black border-r-4 border-black break-all">{{ w.uuid }}</td>
+              <td class="px-6 py-4 font-black text-black border-r-4 border-black">{{ w.weaponType }}</td>
+              <td class="px-6 py-4 font-black text-black">{{ w.weaponName }}</td>
             </tr>
             <tr v-if="weapons.length === 0">
-              <td colspan="3" class="px-6 py-8 text-center text-text-secondary">No weapons found.</td>
+              <td colspan="3" class="px-6 py-8 text-center font-bold text-black uppercase">No weapons found.</td>
             </tr>
           </tbody>
         </table>

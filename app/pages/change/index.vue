@@ -1,21 +1,20 @@
 <template>
   <Layout>
-    <div class="min-h-screen p-6 font-quicksand" style="background-color: #fff5f7; color: #4a4a4a;">
-      <div class="container mx-auto max-w-6xl">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div class="min-h-screen bg-[#F4F4F0] p-6 font-grotesk text-black">
+      <div class="container mx-auto max-w-7xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4 border-b-4 border-black pb-6">
           <div>
-            <h1 class="text-3xl font-bold" style="color: #4a4a4a;">Skin Offer Changes 🔔</h1>
-            <p class="mt-1 text-sm font-medium" style="color: #8e8e8e;">
+            <h1 class="text-4xl font-black uppercase tracking-tight">Skin Offer Changes</h1>
+            <p class="mt-2 text-lg font-bold">
               {{ filteredChanges.length }} perubahan tercatat
             </p>
           </div>
 
           <!-- Filter Controls -->
-          <div class="flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-4">
             <select
               v-model="filterSeen"
-              class="px-5 py-2.5 rounded-2xl border-none outline-none cursor-pointer font-semibold transition-all"
-              style="background-color: #fefefe; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+              class="px-5 py-3 border-4 border-black bg-white text-black font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#FFD23F] transition-colors"
             >
               <option value="all">Semua Status</option>
               <option value="unseen">Belum Dilihat (Unseen)</option>
@@ -24,8 +23,7 @@
 
             <select
               v-model="filterType"
-              class="px-5 py-2.5 rounded-2xl border-none outline-none cursor-pointer font-semibold transition-all"
-              style="background-color: #ffc5d3; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+              class="px-5 py-3 border-4 border-black bg-[#4D96FF] text-white font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#FFD23F] hover:text-black transition-colors"
             >
               <option value="all">Semua Perubahan</option>
               <option value="add">Added (+)</option>
@@ -36,86 +34,84 @@
         </div>
 
         <!-- State Handling -->
-        <div v-if="pending" class="text-center py-10" style="color: #8e8e8e;">
-          <span class="text-xl font-medium animate-pulse">Memuat data perubahan... ✨</span>
+        <div v-if="pending" class="text-center py-16">
+          <span class="text-2xl font-black uppercase tracking-widest animate-pulse">Memuat data perubahan...</span>
         </div>
-        <div v-else-if="error" class="text-center py-10 font-medium" style="color: #ffb3b3;">
-          Gagal memuat data: {{ error.message }}
+        <div v-else-if="error" class="text-center py-16 bg-[#FF5757] border-4 border-black shadow-[8px_8px_0px_#000000] text-white">
+          <span class="text-2xl font-black uppercase">Gagal memuat data: {{ error.message }}</span>
         </div>
-        <div v-else-if="filteredChanges.length === 0" class="text-center py-16 font-medium" style="color: #8e8e8e;">
-          <p class="text-5xl mb-4">(=^・^=)</p>
-          <p class="text-xl">Tidak ada data perubahan ditemukan.</p>
+        <div v-else-if="filteredChanges.length === 0" class="text-center py-16 bg-white border-4 border-black shadow-[8px_8px_0px_#000000]">
+          <p class="text-6xl mb-6">(=^・^=)</p>
+          <p class="text-2xl font-black uppercase">Tidak ada data perubahan ditemukan.</p>
         </div>
 
         <!-- Table Container -->
         <div
           v-else
-          class="rounded-3xl p-6 overflow-hidden"
-          style="background-color: #fefefe; box-shadow: 0 8px 24px rgba(255, 197, 211, 0.4);"
+          class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] overflow-hidden"
         >
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr style="color: #8e8e8e; border-bottom: 2px solid #fff5f7;">
-                  <th class="py-4 px-4 font-bold">Item Skin</th>
-                  <th class="py-4 px-4 font-bold">Penjual</th>
-                  <th class="py-4 px-4 font-bold">Kondisi</th>
-                  <th class="py-4 px-4 font-bold">Harga</th>
-                  <th class="py-4 px-4 font-bold">Tanggal</th>
-                  <th class="py-4 px-4 font-bold text-center">Aksi</th>
+                <tr class="bg-black text-white">
+                  <th class="py-4 px-6 font-black uppercase border-r-4 border-black border-b-4">Item Skin</th>
+                  <th class="py-4 px-6 font-black uppercase border-r-4 border-black border-b-4">Penjual</th>
+                  <th class="py-4 px-6 font-black uppercase border-r-4 border-black border-b-4">Kondisi</th>
+                  <th class="py-4 px-6 font-black uppercase border-r-4 border-black border-b-4">Harga</th>
+                  <th class="py-4 px-6 font-black uppercase border-r-4 border-black border-b-4">Tanggal</th>
+                  <th class="py-4 px-6 font-black uppercase text-center border-b-4 border-black">Aksi</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y-4 divide-black">
                 <tr
                   v-for="item in filteredChanges"
                   :key="item.uuid"
-                  class="border-b transition-colors cursor-pointer hover:brightness-95"
-                  :style="getRowBgStyle(item)"
+                  class="transition-colors cursor-pointer hover:opacity-90"
+                  :class="getRowBgClass(item)"
                   @click="goToDetail(item)"
                 >
                   <!-- Skin Info -->
-                  <td class="py-4 px-4">
+                  <td class="py-4 px-6 border-r-4 border-black">
                     <span
-                      class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-1"
-                      :style="getTypeBadgeStyle(item.itemType)"
+                      class="inline-block px-2 py-1 border-2 border-black text-[10px] font-black uppercase mb-2 shadow-[2px_2px_0px_#000000] bg-white text-black"
                     >
-                      {{ item.itemType.toUpperCase() }}
+                      {{ item.itemType }}
                     </span>
-                    <p class="font-bold text-base" style="color: #4a4a4a;">{{ item.name }}</p>
+                    <p class="font-black text-lg uppercase leading-tight">{{ item.name }}</p>
                   </td>
 
                   <!-- Seller -->
-                  <td class="py-4 px-4 font-medium">{{ item.sellerName }}</td>
+                  <td class="py-4 px-6 font-bold border-r-4 border-black">{{ item.sellerName }}</td>
 
                   <!-- Condition -->
-                  <td class="py-4 px-4">
+                  <td class="py-4 px-6 border-r-4 border-black">
                     <span
-                      class="px-2.5 py-1 rounded-xl text-xs font-bold whitespace-nowrap"
-                      :style="getConditionStyle(item.condition)"
+                      class="inline-block px-3 py-1 border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_#000000] whitespace-nowrap"
+                      :class="getConditionClass(item.condition)"
                     >
                       {{ item.condition }}
                     </span>
                   </td>
 
                   <!-- Price -->
-                  <td class="py-4 px-4 font-bold text-lg whitespace-nowrap" style="color: #ffb0c2;">
+                  <td class="py-4 px-6 font-black text-2xl whitespace-nowrap border-r-4 border-black">
                     {{ item.price }} G
                   </td>
 
                   <!-- Date -->
-                  <td class="py-4 px-4 text-xs font-medium" style="color: #8e8e8e;">
+                  <td class="py-4 px-6 text-sm font-bold border-r-4 border-black">
                     {{ formatDate(item.createdAt) }}
                   </td>
 
                   <!-- Action Toggle Seen -->
-                  <td class="py-4 px-4 text-center" @click.stopPropagation>
+                  <td class="py-4 px-6 text-center">
                     <button
-                      class="px-4 py-1.5 rounded-2xl text-xs font-bold transition-all hover:-translate-y-0.5 disabled:opacity-50"
-                      :style="item.seen 
-                        ? 'background-color: #fefefe; color: #8e8e8e; border: 1px solid #ffc5d3;' 
-                        : 'background-color: #ffc5d3; color: #4a4a4a; box-shadow: 0 4px 10px rgba(255, 197, 211, 0.5);'"
+                      class="w-full px-4 py-3 border-4 border-black font-black uppercase text-xs tracking-wider transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed"
+                      :class="item.seen 
+                        ? 'bg-gray-300 text-black shadow-none translate-x-[4px] translate-y-[4px]' 
+                        : 'bg-[#FFD23F] text-black shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none'"
                       :disabled="updatingUuids.has(item.uuid)"
-                      @click="toggleSeen(item)"
+                      @click.stop="toggleSeen(item)"
                     >
                       {{ updatingUuids.has(item.uuid) ? '...' : (item.seen ? '✓ Seen' : 'Mark Seen') }}
                     </button>
@@ -131,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -171,7 +167,8 @@ const filteredChanges = computed(() => {
 })
 
 const goToDetail = (item) => {
-  router.push(`/${item.itemType}/${item.skinUuid}`)
+  const type = item.itemType || 'weapon'
+  router.push(`/weapon/${type}/${item.skinUuid}`)
 }
 
 const toggleSeen = async (item) => {
@@ -206,42 +203,18 @@ const formatDate = (dateStr) => {
 }
 
 // Mengatur warna background baris tabel berdasarkan tipe perubahan
-const getRowBgStyle = (item) => {
-  let bgColor = '#ffffff'
-  if (item.type === 'add') bgColor = '#e6f4ea'      // Hijau pastel lembut untuk penambahan
-  else if (item.type === 'remove') bgColor = '#fce8e6' // Merah pastel lembut untuk penghapusan
-  else if (item.type === 'change') bgColor = '#fef7e0' // Kuning pastel lembut untuk perubahan harga/kondisi
+const getRowBgClass = (item) => {
+  if (item.type === 'add') return 'bg-[#4D96FF] text-white' // Blue for add
+  else if (item.type === 'remove') return 'bg-[#FF5757] text-white' // Red for remove
+  else if (item.type === 'change') return 'bg-[#FFD23F] text-black' // Yellow for change
 
-  return `background-color: ${bgColor}; border-bottom: 2px solid #fff5f7;`
+  return 'bg-white text-black'
 }
 
-const getTypeBadgeStyle = (itemType) => {
-  if (itemType === 'glove') return 'background-color: #e2d9f3; color: #5e35b1;'
-  if (itemType === 'character') return 'background-color: #d1ecf1; color: #0c5460;'
-  return 'background-color: #fff3cd; color: #856404;'
-}
-
-const getConditionStyle = (cond) => {
-  if (cond == 0) return 'background-color: #d1ecf1; color: #0c5460;'
-  if (cond < 0.15) return 'background-color: #e2d9f3; color: #5e35b1;'
-  if (cond < 0.35) return 'background-color: #fff3cd; color: #856404;'
-  return 'background-color: #ffb3b3; color: #900;'
+const getConditionClass = (cond) => {
+  if (cond == 0) return 'bg-[#4D96FF] text-white'
+  if (cond < 0.15) return 'bg-[#FFD23F] text-black'
+  if (cond < 0.35) return 'bg-white text-black'
+  return 'bg-[#FF5757] text-white'
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap');
-
-.font-quicksand {
-  font-family: 'Quicksand', sans-serif;
-}
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a4a4a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1.25rem center;
-  background-size: 1.2em;
-  padding-right: 3rem;
-}
-</style>

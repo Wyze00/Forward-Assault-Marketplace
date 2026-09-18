@@ -1,19 +1,18 @@
 <template>
   <Layout>
-    <div class="min-h-screen p-6 font-quicksand" style="background-color: #fff5f7; color: #4a4a4a;">
-      <div class="container mx-auto">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div class="min-h-screen bg-[#F4F4F0] p-6 font-grotesk text-black">
+      <div class="container mx-auto max-w-7xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-4 border-b-4 border-black pb-6">
           <div>
-            <h1 class="text-3xl font-bold" style="color: #4a4a4a;">My Favorites ♥</h1>
-            <p class="mt-1 text-sm font-medium" style="color: #8e8e8e;">{{ skins.length }} skin tersimpan</p>
+            <h1 class="text-4xl font-black uppercase tracking-tight">My Favorites ♥</h1>
+            <p class="mt-2 text-lg font-bold">{{ skins.length }} skin tersimpan</p>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row gap-4">
             <!-- Item Type Filter -->
             <select
               v-model="filterType"
-              class="px-5 py-2.5 rounded-2xl border-none outline-none cursor-pointer transition-all font-semibold"
-              style="background-color: #fefefe; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+              class="px-5 py-3 border-4 border-black bg-white text-black font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#FFD23F] transition-colors"
             >
               <option value="all">Semua Tipe</option>
               <option value="glove">Glove</option>
@@ -24,8 +23,7 @@
             <!-- Price Sort -->
             <select
               v-model="sortOrder"
-              class="px-5 py-2.5 rounded-2xl border-none outline-none cursor-pointer transition-all font-semibold"
-              style="background-color: #ffc5d3; color: #4a4a4a; box-shadow: 0 4px 12px rgba(255, 197, 211, 0.4);"
+              class="px-5 py-3 border-4 border-black bg-[#FF5757] text-white font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#4D96FF] transition-colors"
             >
               <option value="asc">Harga Terendah</option>
               <option value="desc">Harga Tertinggi</option>
@@ -33,55 +31,56 @@
           </div>
         </div>
 
-        <div v-if="pending" class="text-center py-10" style="color: #8e8e8e;">
-          <span class="text-xl font-medium animate-pulse">Loading favorites ✨...</span>
+        <div v-if="pending" class="text-center py-16">
+          <span class="text-2xl font-black uppercase tracking-widest animate-pulse">Loading favorites...</span>
         </div>
-        <div v-else-if="error" class="text-center py-10 font-medium" style="color: #ffb3b3;">
-          Error loading data: {{ error.message }}
+        <div v-else-if="error" class="text-center py-16 bg-[#FF5757] border-4 border-black shadow-[8px_8px_0px_#000000] text-white">
+          <span class="text-2xl font-black uppercase">Error loading data: {{ error.message }}</span>
         </div>
-        <div v-else-if="skins.length === 0" class="text-center py-16 font-medium" style="color: #8e8e8e;">
-          <p class="text-5xl mb-4">♡</p>
-          <p class="text-xl">Belum ada skin yang difavoritkan.</p>
+        <div v-else-if="skins.length === 0" class="text-center py-16 bg-white border-4 border-black shadow-[8px_8px_0px_#000000]">
+          <p class="text-6xl mb-6">♡</p>
+          <p class="text-2xl font-black uppercase">Belum ada skin yang difavoritkan.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           <div
             v-for="skin in skins"
             :key="skin.id"
-            class="rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 card-hover relative"
-            style="background-color: #fefefe; box-shadow: 0 8px 24px rgba(255, 197, 211, 0.4); border: 2px solid #ffc5d3;"
+            class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_#000000] relative cursor-pointer hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_#000000] transition-all duration-75 flex flex-col justify-between"
             @click="goToDetail(skin)"
           >
             <!-- Favorite Button -->
             <button
-              class="absolute top-4 right-4 text-2xl leading-none transition-transform hover:scale-125"
+              class="absolute top-4 right-4 text-3xl leading-none hover:text-[#FF5757] hover:scale-110 transition-transform z-10"
               title="Remove from favorite"
               @click="removeFavorite($event, skin)"
             >
               ♥
             </button>
 
-            <!-- Item Type Badge -->
-            <span
-              class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold mb-3"
-              :style="getTypeBadgeStyle(skin.itemType)"
-            >
-              {{ skin.itemType.toUpperCase() }}
-            </span>
+            <div>
+              <!-- Item Type Badge -->
+              <span
+                class="inline-block px-3 py-1 border-2 border-black text-xs font-black uppercase mb-4 shadow-[2px_2px_0px_#000000]"
+                :class="getTypeBadgeClass(skin.itemType)"
+              >
+                {{ skin.itemType }}
+              </span>
 
-            <h2 class="text-xl font-bold mb-4 pr-8" style="color: #4a4a4a;">{{ skin.name }}</h2>
-            <div class="text-sm flex flex-col gap-2" style="color: #8e8e8e;">
+              <h2 class="text-2xl font-black mb-4 pr-8 uppercase tracking-tight leading-tight">{{ skin.name }}</h2>
+            </div>
+            
+            <div class="text-sm flex flex-col gap-3 mt-4 border-t-4 border-black pt-4">
               <p>
-                <span class="font-semibold" style="color: #4a4a4a;">Last Capture:</span><br>
-                {{ formatDate(skin.lastCaptureDate) }}
+                <span class="font-black uppercase">Last Capture:</span><br>
+                <span class="font-bold text-lg">{{ formatDate(skin.lastCaptureDate) }}</span>
               </p>
               <p>
-                <span class="font-semibold" style="color: #4a4a4a;">Lowest Price:</span><br>
-                <span class="font-bold text-xl mt-1 block" style="color: #ffb0c2;">{{ skin.lowestPrice }} G</span>
+                <span class="font-black uppercase">Lowest Price:</span><br>
+                <span class="font-black text-3xl block text-[#FF5757]">{{ skin.lowestPrice }} G</span>
               </p>
               <button
-                class="mt-3 w-full py-2 rounded-2xl font-bold text-sm transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                style="background-color: #ffb0c2; color: #fefefe; box-shadow: 0 4px 10px rgba(255, 176, 194, 0.4);"
+                class="mt-4 w-full py-3 border-4 border-black font-black uppercase tracking-wider text-black bg-[#FFD23F] shadow-[4px_4px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_#000000]"
                 :disabled="capturingIds.has(skin.id)"
                 @click="captureNow($event, skin)"
               >
@@ -117,7 +116,8 @@ const skins = computed(() => {
 })
 
 const goToDetail = (skin) => {
-  router.push(`/${skin.itemType}/${skin.id}`)
+  const type = skin.itemType || 'weapon'
+  router.push(`/weapon/${type}/${skin.id}`)
 }
 
 const removeFavorite = async (event, skin) => {
@@ -157,38 +157,9 @@ const formatDate = (dateStr) => {
   })
 }
 
-const getTypeBadgeStyle = (itemType) => {
-  if (itemType === 'glove') return 'background-color: #e2d9f3; color: #5e35b1;'
-  if (itemType === 'character') return 'background-color: #d1ecf1; color: #0c5460;'
-  return 'background-color: #fff3cd; color: #856404;'
+const getTypeBadgeClass = (itemType) => {
+  if (itemType === 'glove') return 'bg-[#FFD23F] text-black'
+  if (itemType === 'character') return 'bg-[#4D96FF] text-white'
+  return 'bg-[#FF5757] text-white'
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
-
-.font-quicksand {
-  font-family: 'Quicksand', sans-serif;
-}
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a4a4a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1.25rem center;
-  background-size: 1.2em;
-  padding-right: 3rem;
-}
-
-select:hover {
-  background-color: #ffb0c2 !important;
-}
-
-select[style*="background-color: #fefefe"]:hover {
-  background-color: #fff0f3 !important;
-}
-
-.card-hover:hover {
-  box-shadow: 0 12px 32px rgba(255, 176, 194, 0.6) !important;
-}
-</style>

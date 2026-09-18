@@ -122,7 +122,7 @@ export default defineEventHandler(async (event) => {
                 entryChanges;
             }
 
-            if (entryChanges === 0){
+            if (entryChanges === 0 && i != histories.length-1){
                 continue;
             }
 

@@ -6,15 +6,12 @@ const isMobileMenuOpen = ref(false)
 const navLinks = [
   { name: 'Latest', path: '/latest' },
   { name: 'Weapon', path: '/weapon' },
-  { name: 'Glove', path: '/glove' },
-  { name: 'Character', path: '/character' },
   { name: 'Favorite', path: '/favorite' },
   { name: 'Change', path: '/change' },
   { name: 'Weapon Type', path: '/weapon/type' },
   { name: 'Camo', path: '/camo' },
   { name: 'Skin', path: '/skin' },
 ]
-
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -27,45 +24,45 @@ const closeMobileMenu = () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-primary/20 transition-all duration-300">
+  <header class="sticky top-0 z-50 bg-[#F4F4F0] border-b-4 border-black relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center justify-between h-20">
         
         <!-- Left: Brand / Logo -->
         <NuxtLink 
           to="/" 
-          class="text-xl font-bold text-text-main hover:opacity-80 transition-opacity tracking-wide"
+          class="text-xl md:text-2xl font-black text-black bg-[#FFD23F] border-2 border-black px-4 py-2 shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 tracking-wider uppercase z-50"
           @click="closeMobileMenu"
         >
           Marketplace
         </NuxtLink>
 
         <!-- Center: Desktop Links -->
-        <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+        <nav class="hidden lg:flex items-center space-x-3 flex-wrap justify-end">
           <NuxtLink
             v-for="link in navLinks"
             :key="link.path"
             :to="link.path"
-            class="px-4 py-2 rounded-full text-sm font-medium text-text-main hover:bg-primary transition-colors duration-200"
-            active-class="bg-primary font-semibold"
+            class="px-3 py-2 font-bold text-black bg-white border-2 border-black shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 uppercase text-sm"
+            active-class="bg-[#FF5757] text-white"
           >
             {{ link.name }}
           </NuxtLink>
         </nav>
 
         <!-- Mobile: Hamburger Button -->
-        <div class="flex md:hidden">
+        <div class="flex lg:hidden z-50">
           <button
             type="button"
-            class="p-2 rounded-full text-text-main hover:bg-primary/50 focus:outline-none transition-colors"
+            class="p-2 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 focus:outline-none"
             aria-label="Toggle Navigation Menu"
             @click="toggleMobileMenu"
           >
-            <svg v-if="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <svg v-if="!isMobileMenuOpen" class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="3" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg v-else class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -75,30 +72,21 @@ const closeMobileMenu = () => {
 
     <!-- Mobile Menu Overlay -->
     <Teleport to="body">
-      <Transition
-        enter-active-class="transition duration-300 ease-out"
-        enter-from-class="opacity-0 scale-95"
-        enter-to-class="opacity-100 scale-100"
-        leave-active-class="transition duration-200 ease-in"
-        leave-from-class="opacity-100 scale-100"
-        leave-to-class="opacity-0 scale-95"
+      <div 
+        v-if="isMobileMenuOpen"
+        class="fixed inset-0 top-20 z-40 bg-[#FFD23F] border-t-4 border-black lg:hidden flex flex-col items-center justify-start pt-8 pb-20 px-6 space-y-4 overflow-y-auto"
       >
-        <div 
-          v-if="isMobileMenuOpen"
-          class="fixed inset-0 top-16 z-40 bg-white/60 backdrop-blur-lg md:hidden flex flex-col items-center justify-center p-6 space-y-6"
+        <NuxtLink
+          v-for="link in navLinks"
+          :key="link.path"
+          :to="link.path"
+          class="w-full text-center text-xl font-bold text-black bg-white border-4 border-black px-6 py-4 shadow-[6px_6px_0px_#000000] hover:translate-x-[6px] hover:translate-y-[6px] hover:shadow-none transition-all duration-75 uppercase"
+          active-class="bg-[#FF5757] text-white"
+          @click="closeMobileMenu"
         >
-          <NuxtLink
-            v-for="link in navLinks"
-            :key="link.path"
-            :to="link.path"
-            class="text-2xl font-bold text-text-main hover:opacity-75 transition-opacity px-6 py-2 rounded-full"
-            active-class="bg-white/40 shadow-sm"
-            @click="closeMobileMenu"
-          >
-            {{ link.name }}
-          </NuxtLink>
-        </div>
-      </Transition>
+          {{ link.name }}
+        </NuxtLink>
+      </div>
     </Teleport>
   </header>
 </template>
