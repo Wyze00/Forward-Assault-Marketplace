@@ -198,20 +198,11 @@ const { data: response, pending, error, refresh } = await useFetch('/api/skin/hi
   query: { skinUuid }
 })
 
-const { data: favoriteData, refresh: refreshFavorite } = await useFetch('/api/skin/isfavorite', {
-  query: { skinUuid }
-})
-
-// Fetch Data Harga
-const { data: priceData, refresh: refreshPrice } = await useFetch('/api/skin/price', {
-  query: { skinUuid }
-})
-
 // --- Computed ---
-const isFavorite = computed(() => favoriteData.value?.isFavorite ?? false)
+const isFavorite = computed(() => response.value?.skinInfo.isFavorite ?? false)
 const captures = computed(() => response.value?.data || [])
 const skinInfo = computed(() => response.value?.skinInfo || null)
-const currentPrices = computed(() => priceData.value?.data || { idealPrice: null, shopPrice: null })
+const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
 
 // --- Functions ---
 const toggleFavorite = async () => {

@@ -1,10 +1,11 @@
 import { ItemType } from "~~/prisma/generated/enums";
+import { GetSkinInfoResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | undefined> => {
     try {
         const query = getQuery(event);
-        const itemType = query.itemType as string;
+        const itemType = query.itemType as ItemType;
         const weaponType = query.weaponType ? Number(query.weaponType) : undefined;
 
         if (!itemType) {
@@ -41,7 +42,8 @@ export default defineEventHandler(async (event) => {
                             take: 1,
                         }
                     }
-                }
+                },
+                skinIdealPrice: true,
             }
         });
 
@@ -51,12 +53,15 @@ export default defineEventHandler(async (event) => {
 
             return {
                 id: skin.uuid,
+                itemType,
                 camoName: skin.camo.camoName,
                 weaponName: skin.weapon?.weaponName || '',
                 name: itemType === 'glove' || itemType === 'character' ? skin.camo.camoName : `${skin.weapon?.weaponName || ''} - ${skin.camo.camoName}`,
                 lastCaptureDate: history ? history.createdAt : '-',
                 lowestPrice: lowestPriceEntry ? lowestPriceEntry.price : 0,
                 isFavorite: !!skin.favoriteSkin,
+                idealPrice: skin.skinIdealPrice?.idealPrice,
+                shopPrice: skin.skinIdealPrice?.shopPrice,
             };
         });
 

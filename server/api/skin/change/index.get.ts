@@ -1,6 +1,7 @@
+import { GetSkinOfferChangeResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetSkinOfferChangeResponse | undefined> => {
     try {
         const changes = await prismaClient.skinOfferChange.findMany({
             include: {

@@ -1,7 +1,8 @@
 import { ItemType } from "~~/prisma/generated/enums";
+import { GetSkinResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetSkinResponse | undefined> => {
     try {
         const query = getQuery(event);
         const itemType = query.itemType as ItemType;

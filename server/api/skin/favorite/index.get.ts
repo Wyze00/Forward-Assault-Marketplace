@@ -1,21 +1,8 @@
-import { ItemType } from "~~/prisma/generated/enums";
+import { GetSkinInfoResponse } from "~~/server/types";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | undefined> => {
     try {
-        const query = getQuery(event);
-        const itemType = query.itemType as string;
-        const weaponType = query.weaponType ? Number(query.weaponType) : undefined;
-
-        if (!itemType) {
-            throw new Error("Harap sertakan itemType");
-        }
-
-        const validItemTypes = ['weapon', 'glove', 'character'];
-        if (!validItemTypes.includes(itemType)) {
-            throw new Error("Invalid itemType");
-        }
-
         const favorites = await prismaClient.favoriteSkin.findMany({
             include: {
                 skin: {
@@ -31,14 +18,9 @@ export default defineEventHandler(async (event) => {
                                     take: 1,
                                 }
                             }
-                        }
+                        },
+                        skinIdealPrice: true,
                     }
-                }
-            },
-            where: {
-                skin: {
-                    camo: { itemType: itemType as ItemType },
-                    ...(weaponType !== undefined && { weaponType })
                 }
             }
         });
@@ -46,9 +28,11 @@ export default defineEventHandler(async (event) => {
         const result = favorites.map(({ skin }) => {
             const history = skin.skinHistories[0];
             const lowestPriceEntry = history?.skinHistoryEntries[0];
+            const itemType = skin.camo.itemType;
 
             return {
                 id: skin.uuid,
+                itemType,
                 camoName: skin.camo.camoName,
                 weaponName: skin.weapon?.weaponName || '',
                 name: itemType === 'glove' || itemType === 'character'
@@ -57,6 +41,8 @@ export default defineEventHandler(async (event) => {
                 lastCaptureDate: history ? history.createdAt : '-',
                 lowestPrice: lowestPriceEntry ? lowestPriceEntry.price : 0,
                 isFavorite: true,
+                idealPrice: skin.skinIdealPrice?.idealPrice,
+                shopPrice: skin.skinIdealPrice?.shopPrice,
             };
         });
 

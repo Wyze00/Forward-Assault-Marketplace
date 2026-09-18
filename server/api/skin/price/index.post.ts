@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
         if (!body.skinUuid) {
             throw new Error("Harap sertakan skinUuid");
         }
-
+        
         const idealPrice = await prismaClient.skinIdealPrice.update({
             where: { 
                 skinUuid: body.skinUuid,

@@ -104,7 +104,7 @@ const sortOrder = ref('asc')
 const filterType = ref('all')
 const capturingIds = reactive(new Set())
 
-const { data: response, pending, error, refresh } = await useFetch('/api/skin/allfavorite')
+const { data: response, pending, error, refresh } = await useFetch('/api/skin/favorite')
 
 const skins = computed(() => {
   const data = response.value?.data || []
