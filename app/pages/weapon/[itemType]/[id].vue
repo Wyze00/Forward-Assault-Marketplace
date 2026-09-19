@@ -28,7 +28,7 @@
                   @click="openPriceModal"
                   class="px-5 py-3 border-4 border-black font-black uppercase text-white bg-[#4D96FF] shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 flex items-center gap-2"
                 >
-                  ✏️ Update Price
+                  Update Price
                 </button>
               </div>
             </div>
@@ -49,7 +49,7 @@
                 :disabled="isCapturing" 
                 class="px-6 py-4 border-4 border-black font-black uppercase text-black bg-[#FFD23F] shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {{ isCapturing ? 'Capturing...' : '📸 Capture Now' }}
+                {{ isCapturing ? 'Capturing...' : 'Capture Now' }}
               </button>
             </div>
           </div>

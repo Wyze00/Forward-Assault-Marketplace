@@ -119,10 +119,10 @@ export default defineEventHandler(async (event) => {
                         prevPrice: null
                     });
                 });
-                entryChanges;
+                entryChanges++;
             }
 
-            if (entryChanges === 0 && i != histories.length-1){
+            if (entryChanges === 0 && i !== histories.length-1 && histories.length !== 0){
                 continue;
             }
 

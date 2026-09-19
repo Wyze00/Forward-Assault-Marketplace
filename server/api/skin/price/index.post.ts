@@ -8,14 +8,17 @@ export default defineEventHandler(async (event) => {
             throw new Error("Harap sertakan skinUuid");
         }
         
-        const idealPrice = await prismaClient.skinIdealPrice.update({
-            where: { 
-                skinUuid: body.skinUuid,
-             },
-             data: {
+        const idealPrice = await prismaClient.skinIdealPrice.upsert({
+            update: {
                 idealPrice: body.idealPrice,
-                shopPrice: body.shopPrice,
-             }
+                shopPrice: body.shopPrice
+            },
+            where: { skinUuid: body.skinUuid },
+            create: {
+                skinUuid: body.skinUuid,
+                idealPrice: body.idealPrice,
+                shopPrice: body.shopPrice
+            }
         });
 
         return {

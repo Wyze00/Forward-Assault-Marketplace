@@ -85,7 +85,7 @@
                 :disabled="capturingIds.has(skin.id)"
                 @click="captureNow($event, skin)"
               >
-                {{ capturingIds.has(skin.id) ? 'Capturing...' : '📸 Capture' }}
+                {{ capturingIds.has(skin.id) ? 'Capturing...' : 'Capture' }}
               </button>
             </div>
           </div>

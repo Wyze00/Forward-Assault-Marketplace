@@ -44,7 +44,7 @@ const closeMobileMenu = () => {
             :key="link.path"
             :to="link.path"
             class="px-3 py-2 font-bold text-black bg-white border-2 border-black shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 uppercase text-sm"
-            active-class="bg-[#FF5757] text-white"
+            active-class="!bg-[#FFD23F]"
           >
             {{ link.name }}
           </NuxtLink>

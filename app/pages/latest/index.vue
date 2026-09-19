@@ -15,7 +15,7 @@
               :disabled="isCapturing"
               @click="handleCaptureAll"
             >
-              {{ isCapturing ? '📸 Capturing All...' : '📸 Capture All Page' }}
+              {{ isCapturing ? 'Capturing All...' : 'Capture All Page' }}
             </button>
           </div>
         </div>
@@ -87,7 +87,7 @@
                 :disabled="capturingIds.has(skin.id)"
                 @click.stop="captureSingle($event, skin)"
               >
-                {{ capturingIds.has(skin.id) ? 'Capturing...' : '📸 Capture' }}
+                {{ capturingIds.has(skin.id) ? 'Capturing...' : 'Capture' }}
               </button>
             </div>
           </div>

@@ -27,7 +27,7 @@ const router = useRouter()
           
           <div class="flex flex-col sm:flex-row justify-center gap-6">
             <button 
-              @click="router.push('/test')" 
+              @click="router.push('/weapon')" 
               class="px-8 py-4 bg-[#FFD23F] text-black border-4 border-black font-black uppercase text-xl shadow-[8px_8px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_#000000] transition-all duration-75"
             >
               Browse Skins
