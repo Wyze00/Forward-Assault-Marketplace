@@ -1,75 +1,52 @@
-# Nuxt Minimal Starter
+# FA Marketplace Tracker
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+FA Marketplace Tracker is an application for monitoring the Forward Assault marketplace. It helps users view skin prices, save favorite items, record capture history, and track marketplace listing changes.
 
-## Setup
+# OVERVIEW
 
-Make sure to install dependencies:
+![FA Marketplace Tracker home page](./img/img1.png)
+
+The home page provides navigation to marketplace categories such as latest offers, weapons, favorites, changes, weapon types, camos, and skins. From this page, users can quickly access the skins or marketplace changes they want to monitor.
+
+![Main feature overview](./img/img2.png)
+
+The feature overview highlights the application's three main functions: monitoring the lowest skin prices in real time, saving favorite items for quick access, and detecting listing changes such as new items, sold items, removed items, or price changes.
+
+# FEATURES
+
+![Skin list and price monitoring](./img/img3.png)
+
+The browse page displays a list of skins by category. Users can search for skins, filter by category, view the latest capture time, check the lowest price, and run a capture to retrieve the latest marketplace data.
+
+![Price history and skin details](./img/img4.png)
+
+The skin detail page displays previous capture history. Each capture includes the seller, item condition, and price, allowing users to compare price changes over time. Items can also be marked as favorites and their prices can be updated.
+
+![Marketplace changes list](./img/img5.png)
+
+The skin offer changes page summarizes changes occurring in the marketplace. Users can filter by status or change type, view the item, seller, condition, price, and change time, and mark changes as seen.
+
+# CLONE & RUN
+
+Clone the repository:
 
 ```bash
-# npm
+git clone <url-repository>
+cd <folder-name>
+```
+
+Install the dependencies:
+
+```bash
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+Copy `.env.example` to `.env`, then fill in the required configuration.
 
-Start the development server on `http://localhost:3000`:
+Run the application:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+The application will be available at `http://localhost:3000`.
