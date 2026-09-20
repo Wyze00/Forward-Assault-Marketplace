@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'Weapon Type', path: '/weapon/type' },
   { name: 'Camo', path: '/camo' },
   { name: 'Skin', path: '/skin' },
+  { name: 'Code', path: '/try' },
 ]
 
 const toggleMobileMenu = () => {
