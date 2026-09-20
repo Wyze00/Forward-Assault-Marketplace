@@ -130,7 +130,7 @@ const pythonCode = computed(() => {
       const label = card.itemType === 'weapon'
         ? weapons.value.find((weapon) => weapon.weaponType === card.weaponType)?.weaponName || 'Weapon'
         : itemTypes.find((type) => type.value === card.itemType)?.label
-      return `            # ${label}\n            ${condition}\n                \n                flow.response.content = flow.response.content.replace(\n                    b'\"ownedSkins\":[]',\n                    b'\"ownedSkins\":[${selectedSkins.map((skin) => pythonObject(card, skin)).join(',')}]')`
+      return `            # ${label}\n            ${condition}\n                \n                flow.response.content = __import__('re').sub(\n                    rb'\"ownedSkins\":\\[[^\\]]*\\]',\n                    b'\"ownedSkins\":[${selectedSkins.map((skin) => pythonObject(card, skin)).join(',')}]',\n                    flow.response.content)`
     })
 
   return `class ModifyHttp:\n    def done(self):\n        pass\n\n    def response(self, flow):\n        if flow.request.pretty_url == \"https://fa.blayzegames.com/OnlineAccountSystem_NewFPS//get_player_skins.php\":\n            req_body = flow.request.content or b\"\"\n\n${blocks.length ? `${blocks.join('\n\n')}\n` : '            # Add a skin selection to generate a response block.\n'}\naddons = [ModifyHttp()]`
