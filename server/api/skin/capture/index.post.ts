@@ -1,6 +1,7 @@
 import { GetSellOffersResponse } from "~~/server/types";
 import { fetchUtil } from "~~/server/util/fetchUtil";
 import { prismaClient } from "~~/server/util/prismaService";
+import { sendDiscordAlert } from "~~/server/util/discord";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
         const skin = await prismaClient.skin.findUnique({
             where: { uuid: body.skinUuid },
-            include: { camo: true, weapon: true }
+            include: { camo: true, weapon: true, skinIdealPrice: true }
         });
 
         if (!skin) {
@@ -61,6 +62,52 @@ export default defineEventHandler(async (event) => {
             },
             include: { skinHistoryEntries: true }
         });
+
+        const idealPrice = skin.skinIdealPrice?.idealPrice;
+        const alertThreshold = idealPrice !== null && idealPrice !== undefined
+            ? idealPrice * 0.8
+            : null;
+
+        if (alertThreshold !== null) {
+            const alerts = currentHistory.skinHistoryEntries.flatMap((currentEntry) => {
+                if (currentEntry.price > alertThreshold) {
+                    return [];
+                }
+
+                const previousEntry = lastHistoryEntriesMap.get(`${currentEntry.skinID}_${currentEntry.sellerID}`);
+                const isNewListing = !previousEntry;
+                const isPriceDrop = previousEntry && currentEntry.price < previousEntry.price;
+
+                if (!isNewListing && !isPriceDrop) {
+                    return [];
+                }
+
+                return [{
+                    type: isNewListing ? 'New listing' : 'Price drop',
+                    entry: currentEntry,
+                    previousPrice: previousEntry?.price ?? null,
+                }];
+            });
+
+            for (const alert of alerts) {
+                try {
+                    await sendDiscordAlert({
+                        title: `${alert.type}: ${skin.camo.camoName}`,
+                        description: `A market opportunity was detected for ${skin.camo.camoName}.`,
+                        fields: [
+                            { name: 'Price', value: `${alert.entry.price} G`, inline: true },
+                            { name: 'Break-even threshold', value: `${alertThreshold} G`, inline: true },
+                            { name: 'Seller', value: alert.entry.sellerName || String(alert.entry.sellerID), inline: true },
+                            ...(alert.previousPrice !== null
+                                ? [{ name: 'Previous price', value: `${alert.previousPrice} G`, inline: true }]
+                                : []),
+                        ],
+                    });
+                } catch (discordError) {
+                    console.error('Discord alert failed:', discordError);
+                }
+            }
+        }
 
         /**
          * Cek untuk mengetahui skin Add / Change
