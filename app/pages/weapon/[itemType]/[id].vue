@@ -66,6 +66,153 @@
         </div>
         
         <div v-else class="flex flex-col gap-12">
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+              <div class="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-xs font-black uppercase tracking-[0.2em] text-black/70">Trend</p>
+                  <h3 class="text-2xl font-black uppercase mt-2">Floor Price Movement</h3>
+                </div>
+                <span :class="trendBadgeClass" class="inline-flex items-center border-4 border-black px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]">
+                  {{ trendLabel }}
+                </span>
+              </div>
+
+              <div v-if="trendLoading" class="text-sm font-bold uppercase">Loading trend...</div>
+              <div v-else-if="trendError" class="text-sm font-bold uppercase text-[#FF5757]">Trend unavailable</div>
+              <div v-else>
+                <div class="mb-3 flex items-center justify-between gap-3 border-4 border-black bg-[#F4F4F0] p-3 shadow-[3px_3px_0px_#000000] transition-transform duration-200 hover:-translate-y-1">
+                  <span class="text-[10px] font-black uppercase tracking-[0.2em] text-black/70">Market Direction</span>
+                  <span :class="trendBadgeClass" class="border-2 border-black px-2 py-1 text-[10px] font-black uppercase transition-all duration-200 hover:scale-105 hover:shadow-[3px_3px_0px_#000000]">
+                    {{ marketDirectionText }}
+                  </span>
+                </div>
+
+                <div class="h-72 rounded-none border-4 border-black bg-[#F4F4F0] p-3">
+                  <svg viewBox="0 0 620 220" class="w-full h-full" role="img" aria-label="Price trend chart">
+                    <defs>
+                      <linearGradient id="floorGradient" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#FF5757" stop-opacity="0.35" />
+                        <stop offset="100%" stop-color="#FF5757" stop-opacity="0.05" />
+                      </linearGradient>
+                    </defs>
+                    <g v-for="tick in 5" :key="tick">
+                      <line
+                        :x1="20"
+                        :x2="600"
+                        :y1="20 + ((tick - 1) * 40)"
+                        :y2="20 + ((tick - 1) * 40)"
+                        stroke="#000"
+                        stroke-width="1"
+                        stroke-dasharray="4 6"
+                        opacity="0.25"
+                      />
+                    </g>
+                    <path d="M 20 180 L 600 180" stroke="#000" stroke-width="3" fill="none" />
+                    <path d="M 20 20 L 20 180" stroke="#000" stroke-width="3" fill="none" />
+                    <path
+                      :d="floorAreaPath"
+                      fill="url(#floorGradient)"
+                      opacity="0.9"
+                    />
+                    <path
+                      :d="trendPath" 
+                      fill="none"
+                      stroke="#FF5757"
+                      stroke-width="4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      :d="avgTrendPath"
+                      fill="none"
+                      stroke="#4D96FF"
+                      stroke-width="4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-dasharray="8 8"
+                    />
+                    <g v-for="(point, index) in trendPoints" :key="index" @mouseenter="hoveredPointIndex = index" @mouseleave="hoveredPointIndex = null">
+                    <circle
+                      :cx="point.x"
+                      :cy="point.y"
+                      r="14"
+                      fill="transparent"
+                      class="cursor-pointer"
+                    />
+                    <circle
+                      :cx="point.x"
+                      :cy="point.y"
+                      :r="hoveredPointIndex === index ? 7 : 5"
+                      fill="#000"
+                      class="transition-all duration-200 ease-out"
+                    />
+                    <circle
+                      :cx="point.avgX"
+                      :cy="point.avgY"
+                      :r="hoveredPointIndex === index ? 7 : 5"
+                      fill="#4D96FF"
+                      class="transition-all duration-200 ease-out"
+                    />
+                    </g>
+                    <g v-if="hoveredTrendPoint" class="pointer-events-none">
+                      <rect
+                        :x="tooltipX"
+                        y="28"
+                        width="170"
+                        height="72"
+                        fill="#FFFFFF"
+                        stroke="#000000"
+                        stroke-width="3"
+                        class="drop-shadow-[3px_3px_0px_#000000]"
+                      />
+                      <text :x="tooltipX + 10" y="45" font-size="10" font-weight="900" fill="#000000">{{ formatDate(hoveredTrendPoint.capturedAt) }}</text>
+                      <text :x="tooltipX + 10" y="63" font-size="11" font-weight="900" fill="#FF5757">Floor {{ formatPrice(hoveredTrendPoint.floorPrice) }}</text>
+                      <text :x="tooltipX + 10" y="81" font-size="11" font-weight="900" fill="#4D96FF">Avg {{ formatPrice(hoveredTrendPoint.avgPrice) }}</text>
+                    </g>
+                    <text v-if="lastTrendPoint" :x="lastTrendPoint.x + 10" :y="lastTrendPoint.y - 10" font-size="12" font-weight="900" fill="#000">Floor {{ formatPrice(lastTrendPoint.floorPrice) }}</text>
+                    <text v-if="lastAveragePoint" :x="lastAveragePoint.avgX + 10" :y="lastAveragePoint.avgY - 12" font-size="12" font-weight="900" fill="#4D96FF">Avg {{ formatPrice(lastAveragePoint.avgPrice) }}</text>
+                  </svg>
+                </div>
+
+                <div class="mt-4 flex flex-wrap items-center gap-3">
+                  <div class="inline-flex items-center gap-2 border-4 border-black bg-[#FF5757] px-3 py-2 shadow-[3px_3px_0px_#000000] text-white transition-transform duration-200 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#000000]" title="Harga terendah pada setiap capture">
+                    <span class="inline-block w-3 h-3 border-2 border-black bg-[#FF5757]"></span>
+                    <span class="text-[10px] font-black uppercase">Floor</span>
+                  </div>
+                  <div class="inline-flex items-center gap-2 border-4 border-black bg-[#4D96FF] px-3 py-2 shadow-[3px_3px_0px_#000000] text-white transition-transform duration-200 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#000000]" title="Rata-rata harga yang masuk pada rentang data">
+                    <span class="inline-block w-3 h-3 border-2 border-black bg-[#4D96FF]"></span>
+                    <span class="text-[10px] font-black uppercase">Average</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
+              <div class="mb-4">
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-black/70">Sales Velocity</p>
+                <h3 class="text-2xl font-black uppercase mt-2">Time On Market</h3>
+              </div>
+
+              <div v-if="velocityLoading" class="text-sm font-bold uppercase">Loading velocity...</div>
+              <div v-else-if="velocityError" class="text-sm font-bold uppercase text-[#FF5757]">Velocity unavailable</div>
+              <div v-else class="space-y-4">
+                <div class="flex items-center justify-between border-4 border-black p-4 bg-[#FFD23F] shadow-[4px_4px_0px_#000000]">
+                  <span class="font-black uppercase">Avg. Sold Time</span>
+                  <span class="text-2xl font-black">{{ velocityData?.averageHours != null ? velocityData.averageHours + ' h' : 'N/A' }}</span>
+                </div>
+                <div class="flex items-center justify-between border-4 border-black p-4 bg-white shadow-[4px_4px_0px_#000000]">
+                  <span class="font-black uppercase">Avg. Minutes</span>
+                  <span class="text-2xl font-black">{{ velocityData?.averageMinutes != null ? velocityData.averageMinutes + ' min' : 'N/A' }}</span>
+                </div>
+                <div class="flex items-center justify-between border-4 border-black p-4 bg-[#4D96FF] text-white shadow-[4px_4px_0px_#000000]">
+                  <span class="font-black uppercase">Detected Events</span>
+                  <span class="text-2xl font-black">{{ velocityData?.count ?? 0 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div 
             v-for="(capture, index) in captures" 
             :key="capture.uuid"
@@ -176,6 +323,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const skinUuid = route.params.id
+const hoveredPointIndex = ref(null)
 
 // --- State History & Action ---
 const isCapturing = ref(false)
@@ -192,11 +340,88 @@ const { data: response, pending, error, refresh } = await useFetch('/api/skin/hi
   query: { skinUuid }
 })
 
+const { data: trendResponse, pending: trendLoading, error: trendError } = await useFetch('/api/skin/trend', {
+  query: { skinUuid }
+})
+
+const { data: velocityResponse, pending: velocityLoading, error: velocityError } = await useFetch('/api/skin/velocity', {
+  query: { skinUuid }
+})
+
 // --- Computed ---
 const isFavorite = computed(() => response.value?.skinInfo.isFavorite ?? false)
 const captures = computed(() => response.value?.data || [])
 const skinInfo = computed(() => response.value?.skinInfo || null)
 const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
+const trendData = computed(() => trendResponse.value?.data || [])
+const velocityData = computed(() => velocityResponse.value?.data || null)
+const trendSummary = computed(() => trendResponse.value?.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 })
+const trendLabel = computed(() => trendSummary.value.label || 'sideways')
+const marketDirectionText = computed(() => {
+  if (trendLabel.value === 'uptrend') return 'Uptrend'
+  if (trendLabel.value === 'downtrend') return 'Downtrend'
+  return 'Sideways'
+})
+const trendBadgeClass = computed(() => {
+  if (trendLabel.value === 'uptrend') return 'bg-[#4D96FF] text-white'
+  if (trendLabel.value === 'downtrend') return 'bg-[#FF5757] text-white'
+  return 'bg-[#FFD23F] text-black'
+})
+
+const trendPoints = computed(() => {
+  const values = trendData.value.filter((item) => item.floorPrice !== null && item.avgPrice !== null)
+  if (!values.length) return []
+
+  const minPrice = Math.min(...values.flatMap((item) => [item.floorPrice, item.avgPrice]))
+  const maxPrice = Math.max(...values.flatMap((item) => [item.floorPrice, item.avgPrice]))
+  const minMaxRange = maxPrice - minPrice || 1
+
+  return values.map((item, index) => {
+    const x = 20 + (index * (560 / Math.max(1, values.length - 1)))
+    const floorY = 180 - ((item.floorPrice - minPrice) / minMaxRange) * 140
+    const avgY = 180 - ((item.avgPrice - minPrice) / minMaxRange) * 140
+
+    return {
+      ...item,
+      x,
+      y: floorY,
+      avgX: x,
+      avgY,
+    }
+  })
+})
+
+const lastTrendPoint = computed(() => trendPoints.value[trendPoints.value.length - 1] || null)
+const lastAveragePoint = computed(() => trendPoints.value[trendPoints.value.length - 1] || null)
+const hoveredTrendPoint = computed(() => {
+  if (hoveredPointIndex.value === null) return null
+  return trendPoints.value[hoveredPointIndex.value] || null
+})
+const tooltipX = computed(() => {
+  if (!hoveredTrendPoint.value) return 20
+  return Math.min(Math.max(20, hoveredTrendPoint.value.x - 85), 430)
+})
+
+const trendPath = computed(() => {
+  return trendPoints.value.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ')
+})
+
+const avgTrendPath = computed(() => {
+  return trendPoints.value.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.avgX} ${point.avgY}`).join(' ')
+})
+
+const floorAreaPath = computed(() => {
+  if (!trendPoints.value.length) return ''
+
+  const line = trendPath.value
+  const last = trendPoints.value[trendPoints.value.length - 1]
+  return `${line} L ${last.x} 180 L 20 180 Z`
+})
+
+const formatPrice = (value) => {
+  if (value === null || value === undefined || Number.isNaN(value)) return 'N/A'
+  return `${Number(value).toLocaleString('id-ID')} G`
+}
 
 // --- Functions ---
 const toggleFavorite = async () => {
@@ -219,6 +444,7 @@ const toggleFavorite = async () => {
 const refreshFavorite = async () => {
   await refresh()
 }
+
 
 // Same for refreshPrice
 const refreshPrice = async () => {
