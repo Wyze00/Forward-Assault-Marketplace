@@ -3,6 +3,14 @@ import { fetchUtil } from "~~/server/util/fetchUtil";
 import { prismaClient } from "~~/server/util/prismaService";
 import { sendDiscordAlert } from "~~/server/util/discord";
 
+const getConditionGroup = (condition: number) => {
+    if (condition < 0.01) return { key: 'factory-new', name: 'Factory New' };
+    if (condition < 0.15) return { key: 'minimal-wear', name: 'Minimal Wear' };
+    if (condition < 0.35) return { key: 'field-tested', name: 'Field Tested' };
+    if (condition < 0.45) return { key: 'well-worn', name: 'Well Worn' };
+    return { key: 'battle-scarred', name: 'Battle Scarred' };
+};
+
 export default defineEventHandler(async (event) => {
     try {
         /**
@@ -86,21 +94,25 @@ export default defineEventHandler(async (event) => {
                     type: isNewListing ? 'New listing' : 'Price drop',
                     entry: currentEntry,
                     previousPrice: previousEntry?.price ?? null,
+                    condition: currentEntry.condition,
                 }];
             });
 
             for (const alert of alerts) {
                 try {
                     await sendDiscordAlert({
-                        title: `${alert.type}: ${skin.camo.camoName}`,
-                        description: `A market opportunity was detected for ${skin.camo.camoName}.`,
+                        title: `${skin.camo.itemType === 'weapon' ? skin.weapon.weaponName.toUpperCase() : skin.camo.itemType.toUpperCase()} - ${skin.camo.camoName.toUpperCase()}`,
+                        description: `Umm... hmm.. buy`,
                         fields: [
+                            { name: 'Condition', value: `${getConditionGroup(alert.condition).name}`, inline: true },
                             { name: 'Price', value: `${alert.entry.price} G`, inline: true },
-                            { name: 'Break-even threshold', value: `${alertThreshold} G`, inline: true },
-                            { name: 'Seller', value: alert.entry.sellerName || String(alert.entry.sellerID), inline: true },
                             ...(alert.previousPrice !== null
-                                ? [{ name: 'Previous price', value: `${alert.previousPrice} G`, inline: true }]
+                                ? [{ name: 'Previous Price', value: `${alert.previousPrice} G`, inline: true }]
                                 : []),
+                            { name: 'Ideal Price', value: `${skin.skinIdealPrice?.idealPrice} G`, inline: false },
+                            { name: 'Threshold Price', value: `${alertThreshold} G`, inline: true },
+                            { name: 'Profit', value: `${alertThreshold - alert.entry.price} G`, inline: true },
+                            { name: 'Seller', value: alert.entry.sellerName || String(alert.entry.sellerID), inline: false },
                         ],
                     });
                 } catch (discordError) {

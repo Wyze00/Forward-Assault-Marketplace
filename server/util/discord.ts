@@ -18,25 +18,41 @@ type DiscordAlert = {
 };
 
 const webhookUrl = getEnvOrExit('DISCORD_WEBHOOK_URL');
+const webhookTimeoutMs = 10_000;
 
-export async function sendDiscordAlert(alert: DiscordAlert): Promise<boolean> {
+const isTimeoutError = (error: unknown) => {
+    if (!error || typeof error !== 'object') return false;
 
-    if (!webhookUrl) {
-        return false;
-    }
+    const timeoutError = error as { name?: string; code?: string; message?: string };
+    const errorText = `${timeoutError.name ?? ''} ${timeoutError.code ?? ''} ${timeoutError.message ?? ''}`.toLowerCase();
 
-    await $fetch(webhookUrl, {
+    return errorText.includes('timeout')
+        || errorText.includes('etimedout')
+        || errorText.includes('abort');
+};
+
+const postWebhook = async (alert: DiscordAlert) => {
+    return $fetch(webhookUrl, {
         method: 'POST',
+        timeout: webhookTimeoutMs,
         body: {
-            username: 'FA Market Alert',
             embeds: [{
                 title: alert.title,
                 description: alert.description,
-                color: 0xFFD23F,
+                color: Math.floor(Math.random() * 0x1000000),
                 fields: alert.fields,
             } satisfies DiscordEmbed],
         },
     });
+};
+
+export async function sendDiscordAlert(alert: DiscordAlert): Promise<boolean> {
+    try {
+        await postWebhook(alert);
+    } catch (error) {
+        if (!isTimeoutError(error)) throw error;
+        await postWebhook(alert);
+    }
 
     return true;
 }
