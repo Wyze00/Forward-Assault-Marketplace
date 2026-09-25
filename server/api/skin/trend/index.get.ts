@@ -35,8 +35,8 @@ export default defineEventHandler(async (event) => {
 
             const floorPrice = entries[0].price;
 
-            const trimmed = entries.length > 4
-                ? entries.slice(Math.max(1, Math.floor(entries.length * 0.1)), Math.ceil(entries.length * 0.9))
+            const trimmed = entries.length > 5
+                ? entries.slice(0,5)
                 : entries;
 
             const avgPrice = trimmed.length
