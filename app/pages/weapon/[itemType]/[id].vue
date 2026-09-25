@@ -66,13 +66,23 @@
         </div>
         
         <div v-else class="flex flex-col gap-12">
-          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1  gap-8">
             <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
               <div class="mb-4 flex items-start justify-between gap-3">
                 <div>
                   <p class="text-xs font-black uppercase tracking-[0.2em] text-black/70">Trend</p>
                   <h3 class="text-2xl font-black uppercase mt-2">Floor Price Movement</h3>
                 </div>
+                <select
+                  v-if="availableConditions.length"
+                  v-model="selectedCondition"
+                  class="border-4 border-black bg-[#FFD23F] px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]"
+                  aria-label="Pilih kondisi skin"
+                >
+                  <option v-for="condition in availableConditions" :key="condition.conditionGroup" :value="condition.conditionGroup">
+                    {{ condition.conditionName }}
+                  </option>
+                </select>
                 <span :class="trendBadgeClass" class="inline-flex items-center border-4 border-black px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]">
                   {{ trendLabel }}
                 </span>
@@ -183,6 +193,36 @@
                   <div class="inline-flex items-center gap-2 border-4 border-black bg-[#4D96FF] px-3 py-2 shadow-[3px_3px_0px_#000000] text-white transition-transform duration-200 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#000000]" title="Rata-rata harga yang masuk pada rentang data">
                     <span class="inline-block w-3 h-3 border-2 border-black bg-[#4D96FF]"></span>
                     <span class="text-[10px] font-black uppercase">Average</span>
+                  </div>
+                </div>
+
+                <div class="mt-5 border-4 border-black bg-[#FFD23F] p-4 shadow-[4px_4px_0px_#000000]">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <p class="text-[10px] font-black uppercase tracking-[0.2em]">Inferred Sales</p>
+                      <p class="mt-1 text-xs font-bold uppercase">Offer hilang pada capture berikutnya</p>
+                    </div>
+                    <span class="border-2 border-black bg-white px-2 py-1 text-xs font-black uppercase">
+                      {{ trendSummary.inferredSoldCount ?? 0 }} detected
+                    </span>
+                  </div>
+                  <div class="flex items-end justify-between gap-3">
+                    <span class="text-sm font-black uppercase">Estimated Avg Sold</span>
+                    <span class="text-2xl font-black">{{ formatPrice(trendSummary.estimatedSoldAverage) }}</span>
+                  </div>
+                  <p class="mt-2 text-[10px] font-bold uppercase leading-tight">
+                    Estimasi memakai harga terakhir sebelum offer menghilang; bisa berarti terjual atau dihapus penjual.
+                  </p>
+                  <div v-if="inferredSoldOffers.length" class="mt-4 space-y-2 border-t-2 border-black pt-3">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em]">Latest detected offers</p>
+                    <div
+                      v-for="offer in inferredSoldOffers.slice(0, 3)"
+                      :key="`${offer.sellerID}-${offer.skinID}-${offer.detectedAt}`"
+                      class="flex items-center justify-between gap-3 border-2 border-black bg-white px-3 py-2 text-xs"
+                    >
+                      <span class="truncate font-bold uppercase">{{ offer.sellerName || offer.sellerID }}</span>
+                      <span class="shrink-0 font-black">{{ formatPrice(offer.estimatedPrice) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,9 +393,28 @@ const isFavorite = computed(() => response.value?.skinInfo.isFavorite ?? false)
 const captures = computed(() => response.value?.data || [])
 const skinInfo = computed(() => response.value?.skinInfo || null)
 const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
-const trendData = computed(() => trendResponse.value?.data || [])
+const selectedCondition = ref(null)
+const availableConditions = computed(() => trendResponse.value?.conditions || [])
+const selectedConditionTrend = computed(() => {
+  if (!availableConditions.value.length) {
+    return {
+      data: trendResponse.value?.data || [],
+      summary: trendResponse.value?.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 },
+    }
+  }
+
+  return availableConditions.value.find((condition) => condition.conditionGroup === selectedCondition.value)
+    || availableConditions.value[0]
+})
+const trendData = computed(() => selectedConditionTrend.value.data || [])
 const velocityData = computed(() => velocityResponse.value?.data || null)
-const trendSummary = computed(() => trendResponse.value?.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 })
+const trendSummary = computed(() => selectedConditionTrend.value.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 })
+const inferredSoldOffers = computed(() => trendData.value
+  .flatMap((capture) => (capture.inferredSoldOffers || []).map((offer) => ({
+    ...offer,
+    detectedAt: capture.soldDetectedAt || capture.capturedAt,
+  })))
+  .sort((first, second) => new Date(second.detectedAt).getTime() - new Date(first.detectedAt).getTime()))
 const trendLabel = computed(() => trendSummary.value.label || 'sideways')
 const marketDirectionText = computed(() => {
   if (trendLabel.value === 'uptrend') return 'Uptrend'
@@ -509,7 +568,7 @@ const formatDate = (dateStr) => {
 }
 
 const getConditionData = (cond) => {
-  if (cond == 0) return { name: 'Factory New', color: 'bg-[#4D96FF]', text: 'text-white' }
+  if (cond < 0.01) return { name: 'Factory New', color: 'bg-[#4D96FF]', text: 'text-white' }
   if (cond < 0.15) return { name: 'Minimal Wear', color: 'bg-[#FFD23F]', text: 'text-black' }
   if (cond < 0.35) return { name: 'Field Tested', color: 'bg-white', text: 'text-black' }
   if (cond < 0.45) return { name: 'Well Worn', color: 'bg-[#FF5757]', text: 'text-white' }
