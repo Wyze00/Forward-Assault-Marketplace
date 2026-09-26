@@ -48,10 +48,13 @@ const postWebhook = async (alert: DiscordAlert) => {
 
 export async function sendDiscordAlert(alert: DiscordAlert): Promise<boolean> {
     try {
-        await postWebhook(alert);
+        const x = await postWebhook(alert);
+        console.log(`X : ${x}`);
     } catch (error) {
+        console.log(error);
         if (!isTimeoutError(error)) throw error;
-        await postWebhook(alert);
+        const y = await postWebhook(alert);
+        console.log(`Y : ${y}`);
     }
 
     return true;
