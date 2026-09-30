@@ -68,24 +68,36 @@
         <div v-else class="flex flex-col gap-12">
           <div class="grid grid-cols-1  gap-8">
             <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] p-6">
-              <div class="mb-4 flex items-start justify-between gap-3">
+              <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p class="text-xs font-black uppercase tracking-[0.2em] text-black/70">Trend</p>
                   <h3 class="text-2xl font-black uppercase mt-2">Floor Price Movement</h3>
                 </div>
-                <select
-                  v-if="availableConditions.length"
-                  v-model="selectedCondition"
-                  class="border-4 border-black bg-[#FFD23F] px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]"
-                  aria-label="Pilih kondisi skin"
-                >
-                  <option v-for="condition in availableConditions" :key="condition.conditionGroup" :value="condition.conditionGroup">
-                    {{ condition.conditionName }}
-                  </option>
-                </select>
-                <span :class="trendBadgeClass" class="inline-flex items-center border-4 border-black px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]">
-                  {{ trendLabel }}
-                </span>
+                <div class="flex flex-wrap items-center gap-3">
+                  <select
+                    v-if="availableConditions.length"
+                    v-model="selectedCondition"
+                    class="border-4 border-black bg-[#FFD23F] px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]"
+                    aria-label="Pilih kondisi skin"
+                  >
+                    <option v-for="condition in availableConditions" :key="condition.conditionGroup" :value="condition.conditionGroup">
+                      {{ condition.conditionName }}
+                    </option>
+                  </select>
+                  <select
+                    v-model="selectedRange"
+                    class="border-4 border-black bg-white px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]"
+                    aria-label="Pilih rentang waktu grafik"
+                  >
+                    <option value="alltime">All Time</option>
+                    <option value="6m">6 Bulan</option>
+                    <option value="3m">3 Bulan</option>
+                    <option value="1m">1 Bulan</option>
+                  </select>
+                  <span :class="trendBadgeClass" class="inline-flex items-center border-4 border-black px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]">
+                    {{ trendLabel }}
+                  </span>
+                </div>
               </div>
 
               <div v-if="trendLoading" class="text-sm font-bold uppercase">Loading trend...</div>
@@ -98,28 +110,38 @@
                   </span>
                 </div>
 
-                <div class="h-72 rounded-none border-4 border-black bg-[#F4F4F0] p-3">
-                  <svg viewBox="0 0 620 220" class="w-full h-full" role="img" aria-label="Price trend chart">
+                <div class="h-[85vh] min-h-[560px] max-h-[900px] overflow-x-auto rounded-none border-4 border-black bg-[#F4F4F0] p-3">
+                  <svg viewBox="0 0 860 560" class="h-full w-full min-w-[840px]" role="img" aria-label="Price trend chart">
                     <defs>
                       <linearGradient id="floorGradient" x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" stop-color="#FF5757" stop-opacity="0.35" />
                         <stop offset="100%" stop-color="#FF5757" stop-opacity="0.05" />
                       </linearGradient>
                     </defs>
-                    <g v-for="tick in 5" :key="tick">
+                    <g v-for="tick in priceAxisTicks" :key="tick.label + '-' + tick.y">
                       <line
-                        :x1="20"
-                        :x2="600"
-                        :y1="20 + ((tick - 1) * 40)"
-                        :y2="20 + ((tick - 1) * 40)"
+                        :x1="chartBounds.left"
+                        :x2="chartBounds.right"
+                        :y1="tick.y"
+                        :y2="tick.y"
                         stroke="#000"
                         stroke-width="1"
                         stroke-dasharray="4 6"
                         opacity="0.25"
                       />
+                      <text :x="chartBounds.left - 10" :y="tick.y + 4" text-anchor="end" font-size="11" font-weight="900" fill="#000">{{ tick.label }}</text>
                     </g>
-                    <path d="M 20 180 L 600 180" stroke="#000" stroke-width="3" fill="none" />
-                    <path d="M 20 20 L 20 180" stroke="#000" stroke-width="3" fill="none" />
+                    <path :d="`M ${chartBounds.left} ${chartBounds.bottom} L ${chartBounds.right} ${chartBounds.bottom}`" stroke="#000" stroke-width="3" fill="none" />
+                    <path :d="`M ${chartBounds.left} ${chartBounds.top} L ${chartBounds.left} ${chartBounds.bottom}`" stroke="#000" stroke-width="3" fill="none" />
+                    <text
+                      x="16"
+                      :y="(chartBounds.top + chartBounds.bottom) / 2"
+                      :transform="`rotate(-90 16 ${(chartBounds.top + chartBounds.bottom) / 2})`"
+                      text-anchor="middle"
+                      font-size="11"
+                      font-weight="900"
+                      fill="#000"
+                    >GOLD</text>
                     <path
                       :d="floorAreaPath"
                       fill="url(#floorGradient)"
@@ -168,20 +190,35 @@
                     <g v-if="hoveredTrendPoint" class="pointer-events-none">
                       <rect
                         :x="tooltipX"
-                        y="28"
-                        width="170"
-                        height="72"
+                        y="32"
+                        width="190"
+                        height="78"
                         fill="#FFFFFF"
                         stroke="#000000"
                         stroke-width="3"
                         class="drop-shadow-[3px_3px_0px_#000000]"
                       />
-                      <text :x="tooltipX + 10" y="45" font-size="10" font-weight="900" fill="#000000">{{ formatDate(hoveredTrendPoint.capturedAt) }}</text>
-                      <text :x="tooltipX + 10" y="63" font-size="11" font-weight="900" fill="#FF5757">Floor {{ formatPrice(hoveredTrendPoint.floorPrice) }}</text>
-                      <text :x="tooltipX + 10" y="81" font-size="11" font-weight="900" fill="#4D96FF">Avg {{ formatPrice(hoveredTrendPoint.avgPrice) }}</text>
+                      <text :x="tooltipX + 10" y="50" font-size="10" font-weight="900" fill="#000000">{{ formatDate(hoveredTrendPoint.capturedAt) }}</text>
+                      <text :x="tooltipX + 10" y="70" font-size="11" font-weight="900" fill="#FF5757">Floor {{ formatPrice(hoveredTrendPoint.floorPrice) }}</text>
+                      <text :x="tooltipX + 10" y="92" font-size="11" font-weight="900" fill="#4D96FF">Avg {{ formatPrice(hoveredTrendPoint.avgPrice) }}</text>
                     </g>
-                    <text v-if="lastTrendPoint" :x="lastTrendPoint.x + 10" :y="lastTrendPoint.y - 10" font-size="12" font-weight="900" fill="#000">Floor {{ formatPrice(lastTrendPoint.floorPrice) }}</text>
-                    <text v-if="lastAveragePoint" :x="lastAveragePoint.avgX + 10" :y="lastAveragePoint.avgY - 12" font-size="12" font-weight="900" fill="#4D96FF">Avg {{ formatPrice(lastAveragePoint.avgPrice) }}</text>
+                    <g v-for="label in endpointPriceLabels" :key="label.name" class="pointer-events-none">
+                      <rect
+                        :x="chartBounds.right + 12"
+                        :y="label.y - 14"
+                        width="158"
+                        height="18"
+                        fill="#F4F4F0"
+                      />
+                      <text
+                        :x="chartBounds.right + 18"
+                        :y="label.y"
+                        text-anchor="start"
+                        font-size="11"
+                        font-weight="900"
+                        :fill="label.color"
+                      >{{ label.name === 'Floor' ? 'Lowest' : label.name }} {{ formatPrice(label.price) }}</text>
+                    </g>
                   </svg>
                 </div>
 
@@ -394,6 +431,8 @@ const captures = computed(() => response.value?.data || [])
 const skinInfo = computed(() => response.value?.skinInfo || null)
 const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
 const selectedCondition = ref(null)
+const selectedRange = ref('alltime')
+const chartBounds = { left: 82, right: 680, top: 28, bottom: 500 }
 const availableConditions = computed(() => trendResponse.value?.conditions || [])
 const selectedConditionTrend = computed(() => {
   if (!availableConditions.value.length) {
@@ -406,10 +445,41 @@ const selectedConditionTrend = computed(() => {
   return availableConditions.value.find((condition) => condition.conditionGroup === selectedCondition.value)
     || availableConditions.value[0]
 })
-const trendData = computed(() => selectedConditionTrend.value.data || [])
+const conditionTrendData = computed(() => selectedConditionTrend.value.data || [])
+const rangeTrendData = computed(() => {
+  if (selectedRange.value === 'alltime') return conditionTrendData.value
+
+  const months = Number.parseInt(selectedRange.value, 10)
+  const cutoff = new Date()
+  cutoff.setMonth(cutoff.getMonth() - months)
+
+  return conditionTrendData.value.filter((capture) => new Date(capture.capturedAt) >= cutoff)
+})
+const trendData = computed(() => rangeTrendData.value)
 const velocityData = computed(() => velocityResponse.value?.data || null)
-const trendSummary = computed(() => selectedConditionTrend.value.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 })
-const inferredSoldOffers = computed(() => trendData.value
+const trendSummary = computed(() => {
+  const validPoints = rangeTrendData.value.filter((point) => point.floorPrice !== null && point.avgPrice !== null)
+  const firstFloor = validPoints[0]?.floorPrice ?? null
+  const lastFloor = validPoints[validPoints.length - 1]?.floorPrice ?? null
+  const deltaPrice = firstFloor !== null && lastFloor !== null ? lastFloor - firstFloor : 0
+  const changePercent = firstFloor !== null && firstFloor !== 0
+    ? Number(((deltaPrice / firstFloor) * 100).toFixed(2))
+    : 0
+  const inferredOffers = rangeTrendData.value.flatMap((capture) => capture.inferredSoldOffers || [])
+
+  return {
+    label: firstFloor !== null && lastFloor !== null && Math.abs(changePercent) >= 8
+      ? deltaPrice >= 0 ? 'uptrend' : 'downtrend'
+      : 'sideways',
+    deltaPrice,
+    changePercent,
+    inferredSoldCount: inferredOffers.length,
+    estimatedSoldAverage: inferredOffers.length
+      ? Math.round(inferredOffers.reduce((sum, offer) => sum + offer.estimatedPrice, 0) / inferredOffers.length)
+      : null,
+  }
+})
+const inferredSoldOffers = computed(() => rangeTrendData.value
   .flatMap((capture) => (capture.inferredSoldOffers || []).map((offer) => ({
     ...offer,
     detectedAt: capture.soldDetectedAt || capture.capturedAt,
@@ -427,18 +497,38 @@ const trendBadgeClass = computed(() => {
   return 'bg-[#FFD23F] text-black'
 })
 
-const trendPoints = computed(() => {
-  const values = trendData.value.filter((item) => item.floorPrice !== null && item.avgPrice !== null)
-  if (!values.length) return []
+const validTrendData = computed(() => trendData.value.filter((item) => item.floorPrice !== null && item.avgPrice !== null))
+const priceScale = computed(() => {
+  if (!validTrendData.value.length) return null
 
-  const minPrice = Math.min(...values.flatMap((item) => [item.floorPrice, item.avgPrice]))
-  const maxPrice = Math.max(...values.flatMap((item) => [item.floorPrice, item.avgPrice]))
-  const minMaxRange = maxPrice - minPrice || 1
+  const lowestFloor = Math.min(...validTrendData.value.map((item) => item.floorPrice))
+  const highestAverage = Math.max(...validTrendData.value.map((item) => item.avgPrice))
+  const captureRange = highestAverage - lowestFloor
+  const step = captureRange > 0
+    ? captureRange / 7
+    : Math.max(Math.abs(lowestFloor) * 0.05, 1)
+  const coreMin = captureRange > 0 ? lowestFloor : lowestFloor - (step * 3.5)
+  const coreMax = captureRange > 0 ? highestAverage : highestAverage + (step * 3.5)
+
+  return {
+    step,
+    domainMin: coreMin - step,
+    domainMax: coreMax + step,
+  }
+})
+
+const trendPoints = computed(() => {
+  const values = validTrendData.value
+  if (!values.length || !priceScale.value) return []
+
+  const minMaxRange = priceScale.value.domainMax - priceScale.value.domainMin
 
   return values.map((item, index) => {
-    const x = 20 + (index * (560 / Math.max(1, values.length - 1)))
-    const floorY = 180 - ((item.floorPrice - minPrice) / minMaxRange) * 140
-    const avgY = 180 - ((item.avgPrice - minPrice) / minMaxRange) * 140
+    const x = values.length === 1
+      ? (chartBounds.left + chartBounds.right) / 2
+      : chartBounds.left + (index * ((chartBounds.right - chartBounds.left) / (values.length - 1)))
+    const floorY = chartBounds.bottom - ((item.floorPrice - priceScale.value.domainMin) / minMaxRange) * (chartBounds.bottom - chartBounds.top)
+    const avgY = chartBounds.bottom - ((item.avgPrice - priceScale.value.domainMin) / minMaxRange) * (chartBounds.bottom - chartBounds.top)
 
     return {
       ...item,
@@ -449,16 +539,52 @@ const trendPoints = computed(() => {
     }
   })
 })
+const priceAxisTicks = computed(() => {
+  if (!priceScale.value) return []
 
+  return Array.from({ length: 10 }, (_, index) => {
+    const value = priceScale.value.domainMax - (index * priceScale.value.step)
+    return {
+      y: chartBounds.top + ((chartBounds.bottom - chartBounds.top) * index / 9),
+      label: `${new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 }).format(value)} G`,
+    }
+  })
+})
 const lastTrendPoint = computed(() => trendPoints.value[trendPoints.value.length - 1] || null)
 const lastAveragePoint = computed(() => trendPoints.value[trendPoints.value.length - 1] || null)
+const endpointPriceLabels = computed(() => {
+  if (!lastTrendPoint.value || !lastAveragePoint.value) return []
+
+  const minimumGap = 24
+  let floorY = lastTrendPoint.value.y
+  let averageY = lastAveragePoint.value.avgY
+
+  if (Math.abs(floorY - averageY) < minimumGap) {
+    const middleY = (floorY + averageY) / 2
+    floorY = middleY - minimumGap / 2
+    averageY = middleY + minimumGap / 2
+  }
+
+  const topLimit = chartBounds.top + 12
+  const bottomLimit = chartBounds.bottom - 4
+  const shift = floorY < topLimit || averageY < topLimit
+    ? topLimit - Math.min(floorY, averageY)
+    : floorY > bottomLimit || averageY > bottomLimit
+      ? bottomLimit - Math.max(floorY, averageY)
+      : 0
+
+  return [
+    { name: 'Floor', price: lastTrendPoint.value.floorPrice, color: '#000000', y: floorY + shift },
+    { name: 'Avg', price: lastAveragePoint.value.avgPrice, color: '#4D96FF', y: averageY + shift },
+  ]
+})
 const hoveredTrendPoint = computed(() => {
   if (hoveredPointIndex.value === null) return null
   return trendPoints.value[hoveredPointIndex.value] || null
 })
 const tooltipX = computed(() => {
   if (!hoveredTrendPoint.value) return 20
-  return Math.min(Math.max(20, hoveredTrendPoint.value.x - 85), 430)
+  return Math.min(Math.max(chartBounds.left, hoveredTrendPoint.value.x - 95), chartBounds.right - 190)
 })
 
 const trendPath = computed(() => {
@@ -474,7 +600,7 @@ const floorAreaPath = computed(() => {
 
   const line = trendPath.value
   const last = trendPoints.value[trendPoints.value.length - 1]
-  return `${line} L ${last.x} 180 L 20 180 Z`
+  return `${line} L ${last.x} ${chartBounds.bottom} L ${chartBounds.left} ${chartBounds.bottom} Z`
 })
 
 const formatPrice = (value) => {
