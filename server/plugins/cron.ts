@@ -1,20 +1,32 @@
 import { ItemType } from "~~/prisma/generated/enums";
 import { prismaClient } from "~~/server/util/prismaService";
 
-const FULL_SWEEP_INTERVAL_MS = 6 * 60 * 60 * 1000;
+const FULL_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 const PRIORITY_WEAPON_TYPES = new Set<number>([
-    1,  // AK-47
     14, // Knife
-    21, // Karambit
     22, // Butterfly Knife
-    28, // Fal
-    29, // Hachet
+    29, // Hatchet
+    21, // Karambit
     33, // Huntsman
     34, // Beretta
     35, // Brass Knuckles
     37, // Tecmic Knife
     38, // Kukri
+    26, // Glock
+    36, // USP 45
+    3,  // Desert Eagle
+    1,  // AK-47
+    5,  // M4A1
+    13, // M98
+    28, // Fal
+    32, // AWP
+    24, // M1014
+    9,  // SPAS 12
+    27, // UZI
+    20, // MP5K
+    10, // MP7
+    31, // P90
 ]);
 
 const FULL_SWEEP_WEAPON_TYPES = new Set<number>([
