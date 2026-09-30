@@ -42,14 +42,17 @@
 41,Mystery Hollow
 42,Melancholy Hill
 43,Holographic
+44,-
 45,Red Light
 46,Golden
+47,PoolWater
 48,Moderno
 49,Gardens
 50,Soap
 51,Green Light
 52,Wirey
 53,Radiation
+54,StoneHeads
 55,Red Death
 56,Creeps
 57,Lizard Skin
@@ -57,6 +60,8 @@
 59,Samurai
 60,Shooting Stars
 61,Gummies
+68,-
+69,-
 70,Purple Light
 71,Sakura
 72,Galaxy
@@ -66,6 +71,7 @@
 76,Blayze
 77,Green Widow
 78,Pixequa
+79,Beach Time
 80,Green Light
 81,Basilisk
 82,Glass
@@ -181,13 +187,19 @@
 10000,Commoners
 10001,Florascent
 10002,Prince
+10003,Ironclad
+10004,Midnight
+10005,Pink Mist
 10006,Dune
 10007,Venom
 10008,Jungle
+10009,Hornet
 10010,Inferno
 10011,Voltage
+10012,Crimson
 10013,Raptor
 10014,Webbed
+10015,TS Cyborg
 10016,Ramses
 10017,Moon Light
 10019,Petrified
@@ -206,7 +218,6 @@
 10040,Fee
 10041,Cloudy
 10043,Foil
-10045,None
 10046,TheBeast
 10047,Freedom
 10049,Rattle Snake
@@ -218,4 +229,7 @@
 10058,Brilliant Flame Crimson
 10060,Brilliant Flame Teal
 10062,Brilliant Flame Bronze
+10065,Basilisk
+10066,Joker
 10069,Purple Viper
+10070,Green Monster

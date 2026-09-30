@@ -38,7 +38,11 @@
 38,Disco2
 39,Waves
 40,Brazil
+41,Season1
+42,Season2
 43,Loyalty
+44,Season3
+45,BattleOfGlory
 46,Hitman
 47,Overpowered
 48,Cosmos
@@ -51,12 +55,14 @@
 55,RGB
 56,RED BLUE
 57,Sand
+58,Galaxy
 59,Red Reaper
 60,Skelly
 61,Graffiti
 62,Samurai
 63,RIP 2.0
 64,Gold Royale
+65,Bronze
 66,Webbed
 67,Bandage
 10018,Moon Light
@@ -67,6 +73,7 @@
 10028,Icesolo
 10031,Dreamwave
 10039,Pyreclaw
+10042,Cloudy
 10044,Foil
 10045,Blossom
 10048,TS Cyborg
@@ -75,3 +82,5 @@
 10059,Brilliant Flame Crimson
 10061,Brilliant Flame Teal
 10063,Brilliant Flame Bronze
+10064,Chromashift
+10071,Tesam
