@@ -320,10 +320,20 @@
                   <tr 
                     v-for="entry in capture.entries" 
                     :key="entry.uuid"
-                    class="transition-colors cursor-pointer hover:opacity-90"
+                    class="transition-colors cursor-pointer hover:opacity-90 focus:outline-4 focus:outline-black"
                     :class="getRowBgClass(entry.status)"
+                    role="link"
+                    tabindex="0"
+                    @click="router.push(`/seller/${entry.sellerID}`)"
+                    @keydown.enter="router.push(`/seller/${entry.sellerID}`)"
                   >
-                    <td class="py-4 px-6 font-bold border-r-4 border-black">{{ entry.sellerName || entry.sellerID }}</td>
+                    <td class="py-4 px-6 font-bold border-r-4 border-black">
+                      <NuxtLink
+                        :to="`/seller/${entry.sellerID}`"
+                        class="decoration-2 underline-offset-4 hover:decoration-4"
+                        @click.stop
+                      >{{ entry.sellerName || entry.sellerID }}</NuxtLink>
+                    </td>
                     <td class="py-4 px-6 border-r-4 border-black">
                       <span 
                         class="px-3 py-1 border-2 border-black text-xs font-black uppercase shadow-[2px_2px_0px_#000000] whitespace-nowrap"
