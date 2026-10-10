@@ -42,6 +42,15 @@ export default defineEventHandler(async (event) => {
         ).values()];
 
         const conditions = conditionGroups.map((conditionGroup) => {
+            const lastSeenIndexByOffer = new Map<string, number>();
+            histories.forEach((history, historyIndex) => {
+                history.skinHistoryEntries
+                    .filter((entry) => getConditionGroup(entry.condition).key === conditionGroup.key)
+                    .forEach((entry) => {
+                        lastSeenIndexByOffer.set(getOfferKey(entry), historyIndex);
+                    });
+            });
+
             const trendData = histories.map((history, historyIndex) => {
                 const entries = history.skinHistoryEntries
                     .filter((entry) => getConditionGroup(entry.condition).key === conditionGroup.key)
@@ -56,9 +65,11 @@ export default defineEventHandler(async (event) => {
                 const inferredSoldOffers = nextHistory
                     ? entries
                         .filter((entry) => {
-                            const disappeared = !nextEntryKeys.has(getOfferKey(entry));
+                            const offerKey = getOfferKey(entry);
+                            const disappeared = !nextEntryKeys.has(offerKey);
+                            const neverRelisted = lastSeenIndexByOffer.get(offerKey) === historyIndex;
                             const isLowestPriority = nextLowestPrice === null || entry.price <= nextLowestPrice;
-                            return disappeared && isLowestPriority;
+                            return disappeared && neverRelisted && isLowestPriority;
                         })
                         .map((entry) => ({
                             offerID: entry.offerID,
