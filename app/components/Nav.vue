@@ -82,7 +82,7 @@ const closeMobileMenu = () => {
           :key="link.path"
           :to="link.path"
           class="w-full text-center text-xl font-bold text-black bg-white border-4 border-black px-6 py-4 shadow-[6px_6px_0px_#000000] hover:translate-x-[6px] hover:translate-y-[6px] hover:shadow-none transition-all duration-75 uppercase"
-          active-class="bg-[#FF5757] text-white"
+          active-class="!bg-[#FF5757] text-white"
           @click="closeMobileMenu"
         >
           {{ link.name }}

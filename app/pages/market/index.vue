@@ -103,7 +103,7 @@ const router = useRouter()
 const sortOrder = ref('asc')
 const searchQuery = ref('')
 const capturingIds = reactive(new Set())
-const selectedValue = ref('glove')
+const selectedValue = useState('market-selected-category', () => 'glove')
 
 const { data: weaponsResponse, pending: weaponsPending, error: weaponsError } = await useFetch('/api/weapon')
 
