@@ -167,6 +167,7 @@ watch(cards, () => {
 <template>
   <Layout>
     <div class="max-w-7xl mx-auto">
+      <!-- Description -->
       <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between mb-10">
         <div>
           <p class="text-sm font-black uppercase tracking-[0.2em] mb-2">Python payload builder</p>
@@ -178,13 +179,16 @@ watch(cards, () => {
         </div>
       </div>
 
+
       <section class="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] items-start">
         <div>
+          <!-- Selection Button -->
           <div class="flex items-center justify-between mb-5">
             <h2 class="text-2xl font-black uppercase border-b-4 border-black pb-1">Skin selections</h2>
             <button type="button" class="bg-[#4D96FF] border-4 border-black px-4 py-2 text-2xl font-black leading-none shadow-[4px_4px_0px_#000000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-75" aria-label="Add skin selection" title="Add skin selection" @click="addCard">+</button>
           </div>
 
+          <!-- Skin cards -->
           <div v-if="cards.length === 0" class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_#000000] font-black uppercase text-center">Add a selection to begin.</div>
           <div v-for="(card, cardIndex) in cards" :key="card.id" class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] mb-8">
             <div class="flex items-center justify-between bg-[#FF5757] border-b-4 border-black px-5 py-4">
@@ -235,6 +239,7 @@ watch(cards, () => {
           <button type="button" class="w-full bg-black text-white border-4 border-black px-4 py-4 font-black uppercase shadow-[6px_6px_0px_#FF5757] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-75" @click="addCard">+ Add another item group</button>
         </div>
 
+        <!-- Generated Code -->
         <aside class="lg:sticky lg:top-28">
           <div class="bg-[#1D1D1D] border-4 border-black shadow-[8px_8px_0px_#4D96FF]">
             <div class="flex items-center justify-between bg-[#4D96FF] border-b-4 border-black px-5 py-4">

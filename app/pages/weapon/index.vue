@@ -1,200 +1,149 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import type { Weapon } from '~~/prisma/generated/client'
+import type { GetWeaponResponse } from '~~/server/types'
+
+const weapons = ref<Weapon[]>([])
+const newWeapon = ref({ weaponType: '', weaponName: '' })
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploadMessage = ref('')
+const isUploading = ref(false)
+const insertMessage = ref('')
+
+const fetchWeapons = async () => {
+  try {
+    const res = await $fetch<GetWeaponResponse>('/api/weapon');
+
+    if (res.data) {
+      weapons.value = res.data;
+    }
+
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const submitWeapon = async () => {
+  try {
+    insertMessage.value = 'Submitting...'
+    await $fetch('/api/weapon', {
+      method: 'POST',
+      body: {
+        weaponType: Number(newWeapon.value.weaponType),
+        weaponName: newWeapon.value.weaponName
+      }
+    })
+    insertMessage.value = 'Success!'
+    newWeapon.value = { weaponType: '', weaponName: '' }
+    fetchWeapons()
+  } catch (err: any) {
+    insertMessage.value = 'Failed: ' + (err.message || 'Unknown error')
+  }
+}
+
+const handleFileUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  const formData = new FormData()
+  formData.append('file', file)
+
+  try {
+    isUploading.value = true
+    uploadMessage.value = 'Uploading...'
+    await $fetch('/api/weapon/upload', {
+      method: 'POST',
+      body: formData
+    })
+    uploadMessage.value = 'Upload success!'
+    fetchWeapons()
+  } catch (err: any) {
+    uploadMessage.value = 'Upload failed: ' + (err.message || 'Unknown error')
+  } finally {
+    isUploading.value = false
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  }
+}
+
+onMounted(() => {
+  fetchWeapons();
+})
+</script>
+
 <template>
   <Layout>
-    <div class="min-h-screen bg-[#F4F4F0] p-6 font-grotesk text-black">
-      <div class="container mx-auto max-w-7xl">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4 border-b-4 border-black pb-6">
-          <h1 class="text-4xl font-black uppercase tracking-tight">Skins Browse</h1>
-          
-          <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <!-- Search Input -->
-            <input 
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search skins..."
-              class="px-5 py-3 border-4 border-black text-black font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none focus:ring-0 rounded-none w-full sm:w-auto"
-            />
+    <div class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-4xl font-black text-black mb-8 uppercase tracking-tight">Weapons</h1>
 
-            <!-- Category Selector -->
-            <select 
-              v-model="selectedValue" 
-              class="px-5 py-3 border-4 border-black bg-white text-black font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#FFD23F] transition-colors w-full sm:w-auto"
-              :disabled="weaponsPending"
-            >
-              <option v-if="weaponsPending" value="">Loading categories...</option>
-              <option v-for="opt in weaponOptions" :key="opt.value" :value="opt.value">
-                {{ opt.name }}
-              </option>
-            </select>
-
-            <!-- Price Sort Selector -->
-            <select 
-              v-model="sortOrder" 
-              class="px-5 py-3 border-4 border-black bg-[#FF5757] text-white font-bold uppercase shadow-[4px_4px_0px_#000000] focus:outline-none appearance-none rounded-none cursor-pointer hover:bg-[#4D96FF] transition-colors w-full sm:w-auto" 
-            >
-              <option value="asc">Harga Terendah</option>
-              <option value="desc">Harga Tertinggi</option>
-            </select>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <!-- Insert Form -->
+      <div class="bg-white p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Add Single Weapon</h2>
+        <form @submit.prevent="submitWeapon" class="space-y-5">
+          <div>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Weapon Type (ID)</label>
+            <input v-model="newWeapon.weaponType" type="number" required
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 focus:border-black shadow-[4px_4px_0px_#000000] transition-all rounded-none" />
           </div>
-        </div>
-        
-        <div v-if="skinsPending || weaponsPending" class="text-center py-16">
-          <span class="text-2xl font-black uppercase tracking-widest animate-pulse">Loading skins...</span>
-        </div>
-        <div v-else-if="skinsError || weaponsError" class="text-center py-16 bg-[#FF5757] border-4 border-black shadow-[8px_8px_0px_#000000] text-white">
-          <span class="text-2xl font-black uppercase">Error loading data: {{ skinsError?.message || weaponsError?.message }}</span>
-        </div>
-        <div v-else-if="!selectedValue" class="text-center py-16 bg-white border-4 border-black shadow-[8px_8px_0px_#000000]">
-          <span class="text-2xl font-black uppercase">Silakan pilih kategori terlebih dahulu</span>
-        </div>
-        <div v-else-if="skins.length === 0" class="text-center py-16 bg-white border-4 border-black shadow-[8px_8px_0px_#000000]">
-          <span class="text-2xl font-black uppercase">Tidak ada skin ditemukan untuk kategori ini.</span>
-        </div>
-        
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          <div 
-            v-for="skin in skins" 
-            :key="skin.id" 
-            class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_#000000] relative cursor-pointer hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_#000000] transition-all duration-75 flex flex-col justify-between"
-            @click="goToDetail(skin)"
-          >
-            <!-- Favorite Button -->
-            <button
-              class="absolute top-4 right-4 text-3xl leading-none hover:scale-110 transition-transform z-10"
-              :class="skin.isFavorite ? 'text-[#FF5757]' : 'text-gray-300 hover:text-black'"
-              :title="skin.isFavorite ? 'Remove from favorite' : 'Add to favorite'"
-              @click="toggleFavorite($event, skin)"
-            >
-              {{ skin.isFavorite ? '♥' : '♥' }}
-            </button>
-
-            <div>
-              <h2 class="text-2xl font-black mb-4 pr-8 uppercase tracking-tight leading-tight">{{ skin.name }}</h2>
-            </div>
-
-            <div class="text-sm flex flex-col gap-3 mt-4 border-t-4 border-black pt-4">
-              <p>
-                <span class="font-black uppercase">Last Capture:</span><br>
-                <span class="font-bold text-lg">{{ formatDate(skin.lastCaptureDate) }}</span>
-              </p>
-              <p>
-                <span class="font-black uppercase">Lowest Price:</span><br>
-                <span class="font-black text-3xl block text-[#FF5757]">{{ skin.lowestPrice }} G</span>
-              </p>
-              <button
-                class="mt-4 w-full py-3 border-4 border-black font-black uppercase tracking-wider text-black bg-[#FFD23F] shadow-[4px_4px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all duration-75 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_#000000]"
-                :disabled="capturingIds.has(skin.id)"
-                @click="captureNow($event, skin)"
-              >
-                {{ capturingIds.has(skin.id) ? 'Capturing...' : 'Capture' }}
-              </button>
-            </div>
+          <div>
+            <label class="block text-black font-bold mb-2 uppercase text-sm">Weapon Name</label>
+            <input v-model="newWeapon.weaponName" type="text" required
+              class="w-full px-4 py-3 border-4 border-black text-black font-bold focus:outline-none focus:ring-0 focus:border-black shadow-[4px_4px_0px_#000000] transition-all rounded-none" />
           </div>
+          <button type="submit" class="w-full py-3 px-4 bg-[#FFD23F] text-black border-4 border-black font-black uppercase tracking-wider shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 rounded-none">
+            Add Weapon
+          </button>
+          <p v-if="insertMessage" class="text-sm mt-2 font-bold uppercase" :class="insertMessage.startsWith('Failed') ? 'text-[#FF5757]' : 'text-black'">{{ insertMessage }}</p>
+        </form>
+      </div>
+
+      <!-- Upload Form -->
+      <div class="bg-[#4D96FF] p-6 border-4 border-black shadow-[8px_8px_0px_#000000]">
+        <h2 class="text-2xl font-bold text-black mb-6 uppercase">Bulk Upload CSV</h2>
+        <div class="space-y-5">
+          <p class="text-sm font-bold text-black uppercase">Format CSV: <code>weaponType,weaponName</code> (No Headers)</p>
+          <input type="file" accept=".csv" @change="handleFileUpload" ref="fileInput"
+            class="block w-full text-black font-bold border-4 border-black bg-white shadow-[4px_4px_0px_#000000] cursor-pointer rounded-none
+              file:mr-4 file:py-3 file:px-4
+              file:border-r-4 file:border-black file:border-y-0 file:border-l-0
+              file:font-bold file:uppercase
+              file:bg-[#FFD23F] file:text-black
+              hover:file:bg-[#FF5757] transition-all" />
+          <p v-if="uploadMessage" class="text-sm mt-2 font-bold uppercase" :class="uploadMessage.startsWith('Upload failed') ? 'text-white' : 'text-black'">{{ uploadMessage }}</p>
         </div>
       </div>
     </div>
+
+    <!-- Data Table -->
+    <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000000] overflow-hidden">
+      <div class="p-6 border-b-4 border-black bg-[#FFD23F]">
+        <h2 class="text-2xl font-black text-black uppercase tracking-tight">Weapon List</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-white border-b-4 border-black">
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">UUID</th>
+              <th class="px-6 py-4 font-black text-black uppercase border-r-4 border-black">Type</th>
+              <th class="px-6 py-4 font-black text-black uppercase">Name</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y-4 divide-black">
+            <tr v-for="w in weapons" :key="w.uuid" class="hover:bg-[#F4F4F0] transition-colors">
+              <td class="px-6 py-4 text-sm font-bold text-black border-r-4 border-black break-all">{{ w.uuid }}</td>
+              <td class="px-6 py-4 font-black text-black border-r-4 border-black">{{ w.weaponType }}</td>
+              <td class="px-6 py-4 font-black text-black">{{ w.weaponName }}</td>
+            </tr>
+            <tr v-if="weapons.length === 0">
+              <td colspan="3" class="px-6 py-8 text-center font-bold text-black uppercase">No weapons found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   </Layout>
 </template>
-
-<script setup>
-import { computed, ref, reactive, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const sortOrder = ref('asc')
-const searchQuery = ref('')
-const capturingIds = reactive(new Set())
-const selectedValue = ref('glove')
-
-const { data: weaponsResponse, pending: weaponsPending, error: weaponsError } = await useFetch('/api/weapon')
-
-const weaponOptions = computed(() => {
-  const list = [
-    { name: 'Glove', value: 'glove' },
-    { name: 'Character', value: 'character' },
-  ]
-  if (weaponsResponse.value?.data) {
-    weaponsResponse.value.data.forEach(w => {
-      list.push({ name: w.weaponName, value: w.weaponType })
-    })
-  }
-  return list
-})
-
-const currentItemType = computed(() => {
-  if (selectedValue.value === 'glove' || selectedValue.value === 'character') return selectedValue.value
-  return 'weapon'
-})
-
-const currentWeaponType = computed(() => {
-  if (selectedValue.value === 'glove' || selectedValue.value === 'character') return 0
-  return selectedValue.value
-})
-
-const { data: skinsResponse, pending: skinsPending, error: skinsError, refresh } = await useFetch('/api/skin/info', {
-  query: computed(() => ({
-    itemType: currentItemType.value,
-    weaponType: currentWeaponType.value
-  }))
-})
-
-// watch selectedValue and reset searchQuery
-watch(selectedValue, () => {
-  searchQuery.value = ''
-})
-
-const skins = computed(() => {
-  let data = skinsResponse.value?.data || []
-  if (searchQuery.value) {
-    const lower = searchQuery.value.toLowerCase()
-    data = data.filter(s => s.name.toLowerCase().includes(lower))
-  }
-  return [...data].sort((a, b) => {
-    if (a.isFavorite && !b.isFavorite) return -1
-    if (!a.isFavorite && b.isFavorite) return 1
-    if (sortOrder.value === 'asc') return a.lowestPrice - b.lowestPrice
-    return b.lowestPrice - a.lowestPrice
-  })
-})
-
-const goToDetail = (skin) => {
-  const itemType = skin.itemType || currentItemType.value
-  router.push(`/weapon/${itemType}/${skin.id}`)
-}
-
-const toggleFavorite = async (event, skin) => {
-  event.stopPropagation()
-  await $fetch('/api/skin/favorite', {
-    method: 'POST',
-    body: { skinUuid: skin.id }
-  })
-  await refresh()
-}
-
-const captureNow = async (event, skin) => {
-  event.stopPropagation()
-  if (capturingIds.has(skin.id)) return
-  capturingIds.add(skin.id)
-  try {
-    await $fetch('/api/skin/capture', {
-      method: 'POST',
-      body: { skinUuid: skin.id }
-    })
-    await refresh()
-  } catch (err) {
-    alert('Gagal capture: ' + (err.data?.msg || err.message))
-  } finally {
-    capturingIds.delete(skin.id)
-  }
-}
-
-const formatDate = (dateStr) => {
-  if (dateStr === '-') return '-'
-  return new Date(dateStr).toLocaleString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-</script>

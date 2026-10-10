@@ -168,7 +168,7 @@ const filteredChanges = computed(() => {
 
 const goToDetail = (item) => {
   const type = item.itemType || 'weapon'
-  router.push(`/weapon/${type}/${item.skinUuid}`)
+  router.push(`/market/${type}/${item.skinUuid}`)
 }
 
 const toggleSeen = async (item) => {

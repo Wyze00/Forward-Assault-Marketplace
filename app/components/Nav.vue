@@ -4,14 +4,14 @@ import { ref } from 'vue'
 const isMobileMenuOpen = ref(false)
 
 const navLinks = [
-  { name: 'Latest', path: '/latest' },
+  { name: 'Latest', path: '/market/latest' },
+  { name: 'Market', path: '/market' },
+  { name: 'Favorite', path: '/market/favorite' },
+  { name: 'Change', path: '/market/change' },
   { name: 'Weapon', path: '/weapon' },
-  { name: 'Favorite', path: '/favorite' },
-  { name: 'Change', path: '/change' },
-  { name: 'Weapon Type', path: '/weapon/type' },
   { name: 'Camo', path: '/camo' },
   { name: 'Skin', path: '/skin' },
-  { name: 'Code', path: '/try' },
+  { name: 'Code', path: '/code' },
 ]
 
 const toggleMobileMenu = () => {

@@ -71,6 +71,9 @@ export default defineEventHandler(async (event) => {
             include: { skinHistoryEntries: true }
         });
 
+        /**
+         * Cek kalau ideal price di set
+         */
         const idealPrice = skin.skinIdealPrice?.idealPrice;
         const alertThreshold = idealPrice !== null && idealPrice !== undefined
             ? idealPrice * 0.8
@@ -98,6 +101,7 @@ export default defineEventHandler(async (event) => {
                 }];
             });
 
+            // Kirim webhook ke discord jika ada alert 
             for (const alert of alerts) {
                 try {
                     await sendDiscordAlert({

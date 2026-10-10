@@ -185,7 +185,7 @@ const captureSingle = async (event, skin) => {
 
 const goToDetail = (skin) => {
   const type = skin.itemType || 'weapon'
-  router.push(`/weapon/${type}/${skin.id}`)
+  router.push(`/market/${type}/${skin.id}`)
 }
 
 const formatDate = (dateStr) => {
