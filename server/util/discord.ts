@@ -1,24 +1,12 @@
 import { getEnvOrExit } from "./getEnvOrExit";
+import { DiscordAlert, DiscordEmbed } from "../types/discordWebhook";
+import { logger } from "./logger";
 
-type DiscordEmbed = {
-    title: string;
-    description: string;
-    color?: number;
-    fields?: Array<{
-        name: string;
-        value: string;
-        inline?: boolean;
-    }>;
-};
-
-type DiscordAlert = {
-    title: string;
-    description: string;
-    fields?: DiscordEmbed['fields'];
-};
-
-const webhookUrl = getEnvOrExit('DISCORD_WEBHOOK_URL');
-const webhookTimeoutMs = 10_000;
+/**
+ * Get the Discord webhook URL from environment variables and define a timeout for webhook requests.
+ */
+const WEBHOOK_URL = getEnvOrExit('DISCORD_WEBHOOK_URL');
+const WEBHOOK_TIMEOUT_MS = 10_000;
 
 const isTimeoutError = (error: unknown) => {
     if (!error || typeof error !== 'object') return false;
@@ -31,10 +19,13 @@ const isTimeoutError = (error: unknown) => {
         || errorText.includes('abort');
 };
 
+/**
+ * Posts a Discord alert to the configured webhook URL.
+ */
 const postWebhook = async (alert: DiscordAlert) => {
-    return $fetch(webhookUrl, {
+    return $fetch(WEBHOOK_URL, {
         method: 'POST',
-        timeout: webhookTimeoutMs,
+        timeout: WEBHOOK_TIMEOUT_MS,
         body: {
             embeds: [{
                 title: alert.title,
@@ -46,13 +37,16 @@ const postWebhook = async (alert: DiscordAlert) => {
     });
 };
 
-export async function sendDiscordAlert(alert: DiscordAlert): Promise<boolean> {
+/**
+ * Sends a Discord alert to the configured webhook URL. If the request times out, it retries once.
+ */
+export async function sendDiscordAlert(alert: DiscordAlert): Promise<void> {
     try {
-        const x = await postWebhook(alert);
+        await postWebhook(alert);
     } catch (error) {
         if (!isTimeoutError(error)) throw error;
-        const y = await postWebhook(alert);
+        await postWebhook(alert);
     }
 
-    return true;
+    logger.verbose(`Discord alert sent succesfully`);
 }

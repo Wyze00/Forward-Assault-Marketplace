@@ -36,6 +36,8 @@ model Weapon {
   skins Skin[]
 }
 
+// Untuk itemType character dan glove selalu menggunakan weaponType 0
+// Untuk itemType weapon baru weaponType berbeda, contohnya weaponType 1 buat Ak-47
 model Skin {
   uuid String @id @default(uuid())
   camoUuid String

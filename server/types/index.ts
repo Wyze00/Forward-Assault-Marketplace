@@ -40,6 +40,20 @@ export interface PostCamoRequest {
     camoName: string;
 }
 
+export interface PutCamoRequest {
+    uuid: string;
+    itemType?: ItemType;
+    camoID?: number;
+    camoName?: string;
+}
+
+export interface DeleteCamoRequest {
+    uuid?: string;
+    itemType?: ItemType;
+    camoID?: number;
+    cascade?: boolean;
+}
+
 export interface PostWeaponRequest {
     weaponType: number;
     weaponName: string;

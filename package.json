@@ -15,9 +15,11 @@
     "@tailwindcss/vite": "^4.1.16",
     "dotenv": "^17.4.2",
     "nuxt": "^4.2.0",
+    "picocolors": "^1.1.1",
     "tailwindcss": "^4.1.16",
     "vue": "^3.5.22",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.20.1",

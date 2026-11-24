@@ -1,5 +1,7 @@
 import { ItemType } from "~~/prisma/generated/enums";
 import { prismaClient } from "~~/server/util/prismaService";
+import { fetchPostSkinCapture } from "../util/fetchApi";
+import { logger } from "nuxt/kit";
 
 const FULL_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
@@ -35,17 +37,6 @@ const FULL_SWEEP_WEAPON_TYPES = new Set<number>([
 
 const CHARACTER_OR_GLOVE_ITEM_TYPES = ['glove', 'character'] as ItemType[];
 
-async function callCaptureForSkin(skinUuid: string) {
-    try {
-        await $fetch('/api/skin/capture', {
-            method: 'POST',
-            body: { skinUuid }
-        });
-    } catch (error) {
-        console.error(`Cron capture failed for skinUuid=${skinUuid}:`, error);
-    }
-}
-
 async function capturePriorityGroup() {
     const skins = await prismaClient.skin.findMany({
         where: {
@@ -65,7 +56,7 @@ async function capturePriorityGroup() {
             continue;
         }
 
-        await callCaptureForSkin(skin.uuid);
+        await fetchPostSkinCapture(skin.uuid);
     }
 }
 
@@ -88,7 +79,7 @@ async function captureFavoriteGroup() {
         }
 
         if (!FULL_SWEEP_WEAPON_TYPES.has(skin.weaponType)) {
-            await callCaptureForSkin(skin.uuid);
+            await fetchPostSkinCapture(skin.uuid);
         }
     }
 }
@@ -111,13 +102,12 @@ export default defineNitroPlugin(() => {
         try {
             await runFullSweep();
         } catch (error) {
-            console.error('Full sweep failed:', error);
+            logger.error('Full sweep failed:', error);
         } finally {
             isRunning = false;
         }
     };
 
-    // void schedule();
     setInterval(() => {
         void schedule();
     }, FULL_SWEEP_INTERVAL_MS);
