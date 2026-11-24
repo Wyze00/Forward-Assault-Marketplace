@@ -1,4 +1,4 @@
-import { Camo, ItemType, Skin, SkinOfferChangeType, Weapon } from "~~/prisma/generated/client";
+import { ItemType } from "~~/prisma/generated/client";
 
 export interface FetchResponse {
     status: number;
@@ -34,70 +34,5 @@ export interface GetUniqueItemsResponse extends FetchResponse {
     hasMore: boolean;
 }
 
-export interface PostCamoRequest {
-    itemType: ItemType;
-    camoID: number;
-    camoName: string;
-}
 
-export interface PutCamoRequest {
-    uuid: string;
-    itemType?: ItemType;
-    camoID?: number;
-    camoName?: string;
-}
 
-export interface DeleteCamoRequest {
-    uuid?: string;
-    itemType?: ItemType;
-    camoID?: number;
-    cascade?: boolean;
-}
-
-export interface PostWeaponRequest {
-    weaponType: number;
-    weaponName: string;
-}
-
-interface ApiResponse<T> {
-    msg: string;
-    data?: T
-}
-
-export interface GetWeaponResponse extends ApiResponse<Weapon[]> {};
-export interface GetCamoResponse extends ApiResponse<Camo[]> {};
-
-export type SkinWithWeaponAndCamo = {
-    weapon: Weapon,
-    camo: Camo,
-} & Skin;
-
-export interface GetSkinResponse extends ApiResponse<SkinWithWeaponAndCamo[]> {};
-
-export interface GetSkinOfferChangeResponse extends ApiResponse<{
-    uuid: string,
-    type: SkinOfferChangeType,
-    seen: boolean,
-    skinUuid: string,
-    itemType: ItemType,
-    weaponName: string,
-    camoName: string,
-    name: string,
-    sellerName: string,
-    price: number,
-    condition: number,
-    createdAt: Date,
-}[]> {};
-
-export interface GetSkinInfoResponse extends ApiResponse<{
-    id: string,
-    itemType: ItemType,
-    camoName: string,
-    weaponName: string,
-    name: string,
-    lastCaptureDate: Date | string,
-    lowestPrice: number,
-    isFavorite: boolean,
-    idealPrice: number | undefined | null,
-    shopPrice: number | undefined | null,
-}[]> {};

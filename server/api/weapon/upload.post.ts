@@ -1,3 +1,4 @@
+import { logger } from "nuxt/kit";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {
@@ -45,6 +46,7 @@ export default defineEventHandler(async (event) => {
         
         
     } catch (e: unknown) {
+        logger.error(`POST /api/weapon/upload : ${e}`);
         setResponseStatus(event, 400);
         
         if (e instanceof Error) {

@@ -1,14 +1,15 @@
+import { logger } from "nuxt/kit";
+import { GetSellersResponse } from "~~/server/types/api/sellers";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
-    const sellerID = Number(getRouterParam(event, 'id'));
-
-    if (!Number.isSafeInteger(sellerID) || sellerID < 0) {
-        setResponseStatus(event, 400);
-        return { msg: 'Invalid sellerID' };
-    }
-
+export default defineEventHandler(async (event): Promise<GetSellersResponse | undefined> => {
     try {
+        const sellerID = Number(getRouterParam(event, 'id'));
+
+        if (!Number.isSafeInteger(sellerID) || sellerID < 0) {
+            throw new Error('Id not safe integer');
+        }
+
         const sellerEntries = await prismaClient.skinHistoryEntry.findMany({
             where: { sellerID },
             orderBy: { skinHistory: { createdAt: 'desc' } },
@@ -114,7 +115,7 @@ export default defineEventHandler(async (event) => {
             },
         };
     } catch (error) {
-        console.error('Failed to load seller history:', error);
+        logger.error(`GET /api/sellers : ${error}`);
         setResponseStatus(event, 500);
         return { msg: 'Failed to load seller information' };
     }

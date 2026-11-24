@@ -1,5 +1,5 @@
-import { ItemType } from "~~/prisma/generated/enums";
-import { GetCamoResponse } from "~~/server/types";
+import { logger } from "nuxt/kit";
+import { GetCamoResponse } from "~~/server/types/api/camo";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetCamoResponse | undefined> => {
@@ -12,6 +12,7 @@ export default defineEventHandler(async (event): Promise<GetCamoResponse | undef
         }
         
     } catch (e: unknown) {
+        logger.error(`GET /api/camo : ${e}`);
         setResponseStatus(event, 400);
         
         if (e instanceof Error) {
