@@ -73,6 +73,48 @@ export interface GetSkinVelocityResponse extends ApiResponse<{
     lastRemovedAt: Date | null;
 }> {}
 
+export interface SkinTrendSoldOffer {
+    offerID: number;
+    skinID: number;
+    sellerID: number;
+    sellerName: string;
+    condition: number;
+    estimatedPrice: number;
+}
+
+export interface SkinTrendPoint {
+    capturedAt: Date | string;
+    soldDetectedAt: Date | string | null;
+    floorPrice: number | null;
+    avgPrice: number | null;
+    count: number;
+    inferredSoldOffers: SkinTrendSoldOffer[];
+    inferredSoldCount: number;
+    estimatedSoldAverage: number | null;
+}
+
+export interface SkinTrendSummary {
+    label: 'uptrend' | 'downtrend' | 'sideways';
+    firstFloorPrice?: number | null;
+    lastFloorPrice?: number | null;
+    deltaPrice: number;
+    changePercent: number;
+    inferredSoldCount?: number;
+    estimatedSoldAverage?: number | null;
+}
+
+export interface SkinTrendCondition {
+    conditionGroup: string;
+    conditionName: string;
+    data: SkinTrendPoint[];
+    summary: SkinTrendSummary;
+}
+
+export interface GetSkinTrendResponse extends ApiResponse<SkinTrendPoint[]> {
+    summary?: SkinTrendSummary;
+    conditions?: SkinTrendCondition[];
+}
+
 /**
  * Skin offer change
  */

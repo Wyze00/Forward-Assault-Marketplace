@@ -12,6 +12,9 @@
               <h1 class="text-5xl font-black uppercase tracking-tight">
                 {{ skinInfo ? skinInfo.name : 'Loading...' }}
               </h1>
+              <p v-if="skinInfoError" class="mt-2 text-sm font-bold uppercase text-[#FF5757]" role="alert">
+                Skin info unavailable: {{ skinInfoError.message }}
+              </p>
               <p class="text-black font-bold mt-3 text-xl uppercase">History of the last 5 captures</p>
               
               <!-- INFO HARGA -->
@@ -24,6 +27,9 @@
                   <span class="text-black font-bold uppercase tracking-wide">Shop Price</span>
                   <span class="font-black text-2xl text-[#4D96FF]">{{ currentPrices.shopPrice !== null && currentPrices.shopPrice !== undefined ? currentPrices.shopPrice + ' G' : '-' }}</span>
                 </div>
+                <p v-if="skinIdealError" class="text-sm font-bold uppercase text-[#FF5757]" role="alert">
+                  Price data unavailable: {{ skinIdealError.message }}
+                </p>
                 <button 
                   @click="openPriceModal"
                   class="px-5 py-3 border-4 border-black font-black uppercase text-white bg-[#4D96FF] shadow-[4px_4px_0px_#000000] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-75 flex items-center gap-2"
@@ -413,9 +419,16 @@
   </Layout>
 </template>
   
-<script setup>
-import { computed, ref } from 'vue'
+<script setup lang="ts">
+import { computed, ref, unref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type {
+  GetOneSkinInfoResponse,
+  GetSkinHistoryResponse,
+  GetSkinIdealPriceResponse,
+  GetSkinTrendResponse,
+  GetSkinVelocityResponse,
+} from '~~/server/types/api/skin'
 
 const route = useRoute()
 const router = useRouter()
@@ -433,38 +446,49 @@ const editIdealPrice = ref(null)
 const editShopPrice = ref(null)
 
 // --- Fetch Data ---
-const { data: response, pending, error, refresh } = await useFetch('/api/skin/history', {
+const { data: response, pending, error, refresh } = await useFetch<GetSkinHistoryResponse>('/api/skin/history', {
   query: { skinUuid }
 })
 
-const { data: trendResponse, pending: trendLoading, error: trendError } = await useFetch('/api/skin/trend', {
+const { data: skinInfoResponse, error: skinInfoError, refresh: refreshSkinInfo } = await useFetch<GetOneSkinInfoResponse>(`/api/skin/info/${skinUuid}`)
+
+const { data: skinIdealPrice, error: skinIdealError, refresh: refreshSkinIdealPrice } = await useFetch<GetSkinIdealPriceResponse>('/api/skin/price', {
   query: { skinUuid }
 })
 
-const { data: velocityResponse, pending: velocityLoading, error: velocityError } = await useFetch('/api/skin/velocity', {
+const { data: trendResponse, pending: trendLoading, error: trendError } = await useFetch<GetSkinTrendResponse>('/api/skin/trend', {
+  query: { skinUuid }
+})
+
+const { data: velocityResponse, pending: velocityLoading, error: velocityError } = await useFetch<GetSkinVelocityResponse>('/api/skin/velocity', {
   query: { skinUuid }
 })
 
 // --- Computed ---
-const isFavorite = computed(() => response.value?.skinInfo.isFavorite ?? false)
+const skinInfo = computed(() => skinInfoResponse.value?.data || null)
+const isFavorite = computed(() => skinInfo.value?.isFavorite ?? false)
 const captures = computed(() => response.value?.data || [])
-const skinInfo = computed(() => response.value?.skinInfo || null)
-const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
-const selectedCondition = ref(null)
+const currentPrices = computed(() => ({
+  idealPrice: skinIdealPrice.value?.data?.idealPrice,
+  shopPrice: skinIdealPrice.value?.data?.shopPrice,
+}))
+const selectedCondition = ref<string | null>(null)
 const selectedPointRange = ref('20')
 const customPointCount = ref(20)
 const chartBounds = { left: 82, right: 680, top: 28, bottom: 500 }
-const availableConditions = computed(() => trendResponse.value?.conditions || [])
+const availableConditions = computed(() => unref(trendResponse)?.conditions || [])
 const selectedConditionTrend = computed(() => {
-  if (!availableConditions.value.length) {
+  const trendData = unref(trendResponse)
+  const conditions = trendData?.conditions || []
+  if (!conditions.length) {
     return {
-      data: trendResponse.value?.data || [],
-      summary: trendResponse.value?.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 },
+      data: trendData?.data || [],
+      summary: trendData?.summary || { label: 'sideways', deltaPrice: 0, changePercent: 0 },
     }
   }
 
-  return availableConditions.value.find((condition) => condition.conditionGroup === selectedCondition.value)
-    || availableConditions.value[0]
+  return conditions.find((condition) => condition.conditionGroup === selectedCondition.value)
+    || conditions[0]
 })
 const conditionTrendData = computed(() => selectedConditionTrend.value.data || [])
 const rangeTrendData = computed(() => {
@@ -648,15 +672,12 @@ const toggleFavorite = async () => {
   }
 }
 
-// Dummy refreshFavorite (since it's not defined in the original but called, we map it to refresh)
 const refreshFavorite = async () => {
-  await refresh()
+  await refreshSkinInfo()
 }
 
-
-// Same for refreshPrice
 const refreshPrice = async () => {
-  await refresh()
+  await refreshSkinIdealPrice()
 }
 
 const captureData = async () => {
@@ -667,7 +688,7 @@ const captureData = async () => {
       method: 'POST',
       body: { skinUuid }
     })
-    await refresh()
+    await Promise.all([refresh(), refreshSkinInfo()])
   } catch (err) {
     alert('Gagal capture data: ' + (err.data?.msg || err.message))
   } finally {
@@ -717,9 +738,9 @@ const formatDate = (dateStr) => {
 }
 
 const getConditionData = (cond) => {
-  if (cond < 0.01) return { name: 'Factory New', color: 'bg-[#4D96FF]', text: 'text-white' }
+  if (cond < 0.07) return { name: 'Factory New', color: 'bg-[#4D96FF]', text: 'text-white' }
   if (cond < 0.15) return { name: 'Minimal Wear', color: 'bg-[#FFD23F]', text: 'text-black' }
-  if (cond < 0.35) return { name: 'Field Tested', color: 'bg-white', text: 'text-black' }
+  if (cond < 0.38) return { name: 'Field Tested', color: 'bg-white', text: 'text-black' }
   if (cond < 0.45) return { name: 'Well Worn', color: 'bg-[#FF5757]', text: 'text-white' }
   return { name: 'Battle Scarred', color: 'bg-black', text: 'text-white' }
 }
