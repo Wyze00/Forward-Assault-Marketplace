@@ -1,3 +1,4 @@
+import { logger } from "nuxt/kit";
 import { ItemType } from "~~/prisma/generated/enums";
 import { prismaClient } from "~~/server/util/prismaService";
 
@@ -43,6 +44,7 @@ export default defineEventHandler(async (event) => {
             data
         }
     } catch (e: unknown) {
+        logger.error(`POST /api/skin : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message }

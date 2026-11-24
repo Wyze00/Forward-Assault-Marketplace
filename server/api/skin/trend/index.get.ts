@@ -1,12 +1,6 @@
+import { getSkinCondition } from "~~/server/util/game";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
-
-const getConditionGroup = (condition: number) => {
-    if (condition < 0.01) return { key: 'factory-new', name: 'Factory New' };
-    if (condition < 0.15) return { key: 'minimal-wear', name: 'Minimal Wear' };
-    if (condition < 0.35) return { key: 'field-tested', name: 'Field Tested' };
-    if (condition < 0.45) return { key: 'well-worn', name: 'Well Worn' };
-    return { key: 'battle-scarred', name: 'Battle Scarred' };
-};
 
 const getOfferKey = (entry: { skinID: number; sellerID: number }) =>
     `${entry.skinID}_${entry.sellerID}`;
@@ -36,7 +30,7 @@ export default defineEventHandler(async (event) => {
             histories
                 .flatMap((history) => history.skinHistoryEntries)
                 .map((entry) => {
-                    const group = getConditionGroup(entry.condition);
+                    const group = getSkinCondition(entry.condition);
                     return [group.key, group];
                 }),
         ).values()];
@@ -45,7 +39,7 @@ export default defineEventHandler(async (event) => {
             const lastSeenIndexByOffer = new Map<string, number>();
             histories.forEach((history, historyIndex) => {
                 history.skinHistoryEntries
-                    .filter((entry) => getConditionGroup(entry.condition).key === conditionGroup.key)
+                    .filter((entry) => getSkinCondition(entry.condition).key === conditionGroup.key)
                     .forEach((entry) => {
                         lastSeenIndexByOffer.set(getOfferKey(entry), historyIndex);
                     });
@@ -53,11 +47,11 @@ export default defineEventHandler(async (event) => {
 
             const trendData = histories.map((history, historyIndex) => {
                 const entries = history.skinHistoryEntries
-                    .filter((entry) => getConditionGroup(entry.condition).key === conditionGroup.key)
+                    .filter((entry) => getSkinCondition(entry.condition).key === conditionGroup.key)
                     .sort((first, second) => first.price - second.price);
                 const nextHistory = histories[historyIndex + 1];
                 const nextEntries = nextHistory?.skinHistoryEntries
-                    .filter((entry) => getConditionGroup(entry.condition).key === conditionGroup.key) ?? [];
+                    .filter((entry) => getSkinCondition(entry.condition).key === conditionGroup.key) ?? [];
                 const nextEntryKeys = new Set(nextEntries.map((entry) => getOfferKey(entry)));
                 const nextLowestPrice = nextEntries.length
                     ? Math.min(...nextEntries.map((entry) => entry.price))
@@ -101,6 +95,16 @@ export default defineEventHandler(async (event) => {
                 };
             });
 
+            const filteredTrendData = trendData.filter((point, historyIndex) => {
+                if (historyIndex === 0) {
+                    return true;
+                }
+
+                const previousPoint = trendData[historyIndex - 1];
+                return point.floorPrice !== previousPoint.floorPrice
+                    || point.avgPrice !== previousPoint.avgPrice;
+            });
+
             const allInferredSoldOffers = trendData.flatMap((capture) => capture.inferredSoldOffers);
             const validPoints = trendData.filter((point) => point.floorPrice !== null && point.avgPrice !== null);
             const firstFloor = validPoints[0]?.floorPrice ?? null;
@@ -116,7 +120,7 @@ export default defineEventHandler(async (event) => {
             return {
                 conditionGroup: conditionGroup.key,
                 conditionName: conditionGroup.name,
-                data: trendData,
+                data: filteredTrendData,
                 summary: {
                     label: trendLabel,
                     firstFloorPrice: firstFloor,
@@ -152,6 +156,7 @@ export default defineEventHandler(async (event) => {
             conditions,
         };
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/trend : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

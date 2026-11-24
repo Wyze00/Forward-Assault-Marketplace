@@ -1,6 +1,14 @@
+import { logger } from "nuxt/kit";
+import { GetSkinIdealPriceResponse } from "~~/server/types/api/skin";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+/**
+ * Data query param skinUuid
+ * Upsert skinUuid
+ * Return skinIdealPrice
+ */
+
+export default defineEventHandler(async (event): Promise<GetSkinIdealPriceResponse | undefined> => {
     try {
         const query = getQuery(event);
         const skinUuid = query.skinUuid as string;
@@ -23,6 +31,7 @@ export default defineEventHandler(async (event) => {
         };
 
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/price : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

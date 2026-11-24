@@ -1,6 +1,12 @@
 import { ItemType } from "~~/prisma/generated/enums";
-import { GetSkinInfoResponse } from "~~/server/types";
+import { GetSkinInfoResponse } from "~~/server/types/api/skin";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
+
+/**
+ * Request itemType and weaponType
+ * Return skins information
+ */
 
 export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | undefined> => {
     try {
@@ -43,7 +49,6 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
                         }
                     }
                 },
-                skinIdealPrice: true,
             }
         });
 
@@ -60,8 +65,6 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
                 lastCaptureDate: history ? history.createdAt : '-',
                 lowestPrice: lowestPriceEntry ? lowestPriceEntry.price : 0,
                 isFavorite: !!skin.favoriteSkin,
-                idealPrice: skin.skinIdealPrice?.idealPrice,
-                shopPrice: skin.skinIdealPrice?.shopPrice,
             };
         });
 
@@ -70,6 +73,7 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
             data: result,
         };
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/info : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return {

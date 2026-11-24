@@ -1,6 +1,11 @@
+import { logger } from "nuxt/kit";
 import { prismaClient } from "~~/server/util/prismaService";
 
-// Toggle favorite: if already favorited, remove it. If not, add it.
+/**
+ * Request skinUuid
+ * Toogle favoriteSkin
+ */
+
 export default defineEventHandler(async (event) => {
     try {
         const body: { skinUuid: string } = await readBody(event);
@@ -26,6 +31,7 @@ export default defineEventHandler(async (event) => {
         }
 
     } catch (e: unknown) {
+        logger.error(`POST /api/skin/favorite`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

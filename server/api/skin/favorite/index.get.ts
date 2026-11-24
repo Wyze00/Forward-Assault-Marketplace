@@ -1,5 +1,10 @@
-import { GetSkinInfoResponse } from "~~/server/types";
+import { logger } from "nuxt/kit";
+import { GetSkinInfoResponse } from "~~/server/types/api/skin";
 import { prismaClient } from "~~/server/util/prismaService";
+
+/**
+ * Get all favorite skins
+ */
 
 export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | undefined> => {
     try {
@@ -19,7 +24,6 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
                                 }
                             }
                         },
-                        skinIdealPrice: true,
                     }
                 }
             }
@@ -41,8 +45,6 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
                 lastCaptureDate: history ? history.createdAt : '-',
                 lowestPrice: lowestPriceEntry ? lowestPriceEntry.price : 0,
                 isFavorite: true,
-                idealPrice: skin.skinIdealPrice?.idealPrice,
-                shopPrice: skin.skinIdealPrice?.shopPrice,
             };
         });
 
@@ -52,6 +54,7 @@ export default defineEventHandler(async (event): Promise<GetSkinInfoResponse | u
         };
 
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/favorite : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

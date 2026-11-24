@@ -1,5 +1,4 @@
-import { GameAPIResponse } from "../types/gameApi";
-import type { FetchResponse } from "../types/index";
+import { GameAPIResponse, GetSellOffersGameAPIResponse, GetUniqueItemsGameAPIResponse } from "../types/gameApi";
 import { getEnvOrExit } from "./getEnvOrExit.js";
 import { logger } from "./logger";
 
@@ -19,7 +18,7 @@ const BOT_PASSWORD = getEnvOrExit('BOT_PASSWORD');
  * const encodedBody = formatRequestBody(body); // "username=john_doe&password=secret"
  * ```
  */
-function formatRequestBody(body: Record<string, string>): string {
+function formatRequestBody(body: Record<string, any>): string {
     return Object.entries(body)
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
         .join('&');
@@ -32,7 +31,7 @@ function formatRequestBody(body: Record<string, string>): string {
  * @param body - The request body containing key-value pairs.
  * @returns A promise resolving to the fetched data.
  */
-export async function fetchGameAPICustomCredential<T extends GameAPIResponse>(url: string, body: Record<string, string>): Promise<T> {
+export async function fetchGameAPICustomCredential<T extends GameAPIResponse>(url: string, body: Record<string, any>): Promise<T> {
     const response = await fetch(`https://fa.blayzegames.com/OnlineAccountSystem_NewFPS/${url}`, {
         method: 'POST',
         headers: {
@@ -64,20 +63,28 @@ export async function fetchGameAPICustomCredential<T extends GameAPIResponse>(ur
  * @param data - The request body containing key-value pairs.
  * @returns A promise resolving to the fetched data.
  */
-export async function fetchGameAPI<T extends FetchResponse>(url: string, data: Record<string, string>): Promise<T> {
+export async function fetchGameAPI<T extends GameAPIResponse>(url: string, data: Record<string, any>): Promise<T> {
     const body = {
         ...data,
         username: BOT_USERNAME,
         password: BOT_PASSWORD
     };
 
-    return fetchGameAPI<T>(url, body);
+    return fetchGameAPICustomCredential<T>(url, body);
+}
+
+export async function fetchGameAPIGetUniqueItems(data: Record<string, any>): Promise<GetUniqueItemsGameAPIResponse> {
+    return await fetchGameAPI<GetUniqueItemsGameAPIResponse>("marketplaceV3_get_unique_items.php", data);
+}
+
+export async function fetchGameAPIGetSellOffers(data: Record<string, any>): Promise<GetSellOffersGameAPIResponse> {
+    return await fetchGameAPI<GetSellOffersGameAPIResponse>("marketplaceV3_get_sell_offers.php", data);
 }
 
 /**
  * @deprecated Use `fetchGameAPICustomCredential` instead for better flexibility and type safety.
  */
-export async function fetchUtil<T extends FetchResponse>(url: string, data: string): Promise<T> {
+export async function fetchUtil<T extends GameAPIResponse>(url: string, data: string): Promise<T> {
     const response = await fetch(`https://fa.blayzegames.com/OnlineAccountSystem_NewFPS/${url}`, {
         method: 'POST',
         headers: {

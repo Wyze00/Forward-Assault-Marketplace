@@ -1,6 +1,8 @@
+import { GetSkinHistoryResponse } from "~~/server/types/api/skin";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<GetSkinHistoryResponse | undefined> => {
     try {
         /**
          * Validation
@@ -28,8 +30,6 @@ export default defineEventHandler(async (event) => {
                     include: {
                         camo: true,
                         weapon: true,
-                        favoriteSkin: true,
-                        skinIdealPrice: true,
                     }
                 }
             }
@@ -38,21 +38,9 @@ export default defineEventHandler(async (event) => {
         if (histories.length === 0) {
             return {
                 msg: "Success",
-                data: [],
-                skinInfo: null
+                data: [], 
             };
         }
-
-        const skinInfo = {
-            name: histories[0].skin.camo.itemType === 'glove' || histories[0].skin.camo.itemType === 'character' 
-                  ? histories[0].skin.camo.camoName 
-                  : `${histories[0].skin.weapon?.weaponName || ''} - ${histories[0].skin.camo.camoName}`,
-            camoName: histories[0].skin.camo.camoName,
-            itemType: histories[0].skin.camo.itemType,
-            isFavorite: !!histories[0].skin.favoriteSkin,
-            idealPrice: histories[0].skin.skinIdealPrice?.idealPrice,
-            shopPrice: histories[0].skin.skinIdealPrice?.shopPrice,
-        };
 
         histories.reverse();
 
@@ -138,10 +126,10 @@ export default defineEventHandler(async (event) => {
         return {
             msg: "Success",
             data: resultCaptures.reverse(),
-            skinInfo
         };
 
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/history : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return {

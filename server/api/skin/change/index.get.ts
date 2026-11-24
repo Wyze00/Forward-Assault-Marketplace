@@ -1,4 +1,5 @@
-import { GetSkinOfferChangeResponse } from "~~/server/types";
+import { logger } from "nuxt/kit";
+import { GetSkinOfferChangeResponse } from "~~/server/types/api/skin";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetSkinOfferChangeResponse | undefined> => {
@@ -59,6 +60,7 @@ export default defineEventHandler(async (event): Promise<GetSkinOfferChangeRespo
             data
         };
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/change : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

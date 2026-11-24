@@ -1,4 +1,4 @@
-import { Camo, ItemType, Skin, SkinOfferChangeType, Weapon } from "~~/prisma/generated/client";
+import { Camo, ItemType, Skin, SkinIdealPrice, SkinOfferChangeType, Weapon } from "~~/prisma/generated/client";
 import { ApiResponse } from "..";
 
 export type SkinWithWeaponAndCamo = {
@@ -6,8 +6,76 @@ export type SkinWithWeaponAndCamo = {
     camo: Camo,
 } & Skin;
 
+interface SkinInfo {
+    id: string,
+    itemType: ItemType,
+    camoName: string,
+    weaponName: string,
+    name: string,
+    lastCaptureDate: Date | string,
+    lowestPrice: number,
+    isFavorite: boolean,
+}
+
+/**
+ * Informasi seklias
+ */
 export interface GetSkinResponse extends ApiResponse<SkinWithWeaponAndCamo[]> {};
 
+/**
+ * Informasi detail
+ */
+export interface GetSkinInfoResponse extends ApiResponse<SkinInfo[]> {};
+export interface GetOneSkinInfoResponse extends ApiResponse<SkinInfo> {};
+
+/**
+ * Informasi skin per uuid
+ */
+
+// History
+export interface GetSkinHistoryResponse extends ApiResponse<{
+    uuid: string;
+    createdAt: Date;
+    entries: {
+        status: string;
+        prevPrice: number | null;
+        uuid: string;
+        skinHistoryUuid: string;
+        offerID: number;
+        sellerID: number;
+        sellerName: string;
+        price: number;
+        condition: number;
+        skinID: number;
+        listingDate: string;
+    }[];
+}[]> {}
+
+// Ideal price
+export interface GetSkinIdealPriceResponse extends ApiResponse<SkinIdealPrice> {}
+
+type a = {
+    name: string;
+    camoName: string;
+    itemType: ItemType;
+    isFavorite: boolean;
+    idealPrice: number | undefined | null;
+    shopPrice: number | undefined | null;
+} | null;
+
+// Velocity
+
+export interface GetSkinVelocityResponse extends ApiResponse<{
+    averageHours: number | null;
+    averageMinutes: number | null;
+    count: number;
+    firstSeenAt: Date | null;
+    lastRemovedAt: Date | null;
+}> {}
+
+/**
+ * Skin offer change
+ */
 export interface GetSkinOfferChangeResponse extends ApiResponse<{
     uuid: string,
     type: SkinOfferChangeType,
@@ -21,17 +89,4 @@ export interface GetSkinOfferChangeResponse extends ApiResponse<{
     price: number,
     condition: number,
     createdAt: Date,
-}[]> {};
-
-export interface GetSkinInfoResponse extends ApiResponse<{
-    id: string,
-    itemType: ItemType,
-    camoName: string,
-    weaponName: string,
-    name: string,
-    lastCaptureDate: Date | string,
-    lowestPrice: number,
-    isFavorite: boolean,
-    idealPrice: number | undefined | null,
-    shopPrice: number | undefined | null,
 }[]> {};

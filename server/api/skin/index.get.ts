@@ -1,5 +1,6 @@
+import { logger } from "nuxt/kit";
 import { ItemType } from "~~/prisma/generated/enums";
-import { GetSkinResponse } from "~~/server/types";
+import { GetSkinResponse } from "~~/server/types/api/skin";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetSkinResponse | undefined> => {
@@ -36,6 +37,7 @@ export default defineEventHandler(async (event): Promise<GetSkinResponse | undef
             data,
         }
     } catch (e: unknown) {
+        logger.error(`GET /api/skin : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message }

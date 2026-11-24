@@ -1,15 +1,7 @@
-import { GetSellOffersResponse } from "~~/server/types";
-import { fetchUtil } from "~~/server/util/fetchUtil";
+import { fetchGameAPIGetSellOffers } from "~~/server/util/fetchGameApi";
 import { prismaClient } from "~~/server/util/prismaService";
 import { sendDiscordAlert } from "~~/server/util/discord";
-
-const getConditionGroup = (condition: number) => {
-    if (condition < 0.01) return { key: 'factory-new', name: 'Factory New' };
-    if (condition < 0.15) return { key: 'minimal-wear', name: 'Minimal Wear' };
-    if (condition < 0.35) return { key: 'field-tested', name: 'Field Tested' };
-    if (condition < 0.45) return { key: 'well-worn', name: 'Well Worn' };
-    return { key: 'battle-scarred', name: 'Battle Scarred' };
-};
+import { logger } from "~~/server/util/logger";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -49,8 +41,17 @@ export default defineEventHandler(async (event) => {
         const lastHistoryEntriesMap = new Map(lastHistoryEntries.map(e => [`${e.skinID}_${e.sellerID}`, e]));
 
         // Fetch offer terbaru dari API dan buat history baru
-        const queryParams = `itemType=${itemType}&weaponType=${weaponType}&camoID=${camoID}&minCondition=0&maxCondition=1&page=0&limit=20`;
-        const offersResponse = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
+        const data = {
+            itemType,
+            weaponType,
+            camoID,
+            minCondition: 0,
+            maxCondition: 1,
+            page: 0,
+            limit: 20,
+        }
+
+        const offersResponse = await fetchGameAPIGetSellOffers(data);
         const currentHistoryEntriesMap = new Map(offersResponse.offers.map(o => [`${o.skinID}_${o.sellerID}`, o]));
 
         const currentHistory = await prismaClient.skinHistory.create({
@@ -108,7 +109,7 @@ export default defineEventHandler(async (event) => {
                         title: `${skin.camo.itemType === 'weapon' ? skin.weapon.weaponName.toUpperCase() : skin.camo.itemType.toUpperCase()} - ${skin.camo.camoName.toUpperCase()}`,
                         description: `Umm... hmm.. buy`,
                         fields: [
-                            { name: 'Condition', value: `${getConditionGroup(alert.condition).name}`, inline: true },
+                            { name: 'Condition', value: `${alert.condition}`, inline: true },
                             { name: 'Price', value: `${alert.entry.price} G`, inline: true },
                             ...(alert.previousPrice !== null
                                 ? [{ name: 'Previous Price', value: `${alert.previousPrice} G`, inline: true }]
@@ -183,6 +184,7 @@ export default defineEventHandler(async (event) => {
         };
 
     } catch (e: unknown) {
+        logger.error(`POST /api/skin/capture : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return {

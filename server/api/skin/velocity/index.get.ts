@@ -1,6 +1,19 @@
+import { logger } from "nuxt/kit";
+import { GetSkinVelocityResponse } from "~~/server/types/api/skin";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
+/**
+ * Untuk mendapatkan rata-rata waktu jual skin
+ */
+
+/**
+ * Data skinUuid
+ * Dapatkan semua history capture skin beserta entrynya. Filter secara descending dari yang paling baru
+ * Loop historynya, masukan semua active listing ke map bedasarkan key skinId_sellerId
+ * Jika sudah ada pada acive listing, masukan key ke Set dan hapus active listing
+ */
+
+export default defineEventHandler(async (event): Promise<GetSkinVelocityResponse | undefined> => {
     try {
         const query = getQuery(event);
         const skinUuid = query.skinUuid as string;
@@ -9,12 +22,15 @@ export default defineEventHandler(async (event) => {
             throw new Error('Harap sertakan skinUuid');
         }
 
+        /**
+         * Get all histories
+         */
         const histories = await prismaClient.skinHistory.findMany({
             where: {
                 skinUuid,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
             include: {
                 skinHistoryEntries: true,
@@ -35,6 +51,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const activeListings = new Map<string, Date>();
+        const soldKeys = new Set<string>();
         const durations: number[] = [];
 
         for (const history of histories) {
@@ -43,17 +60,23 @@ export default defineEventHandler(async (event) => {
             );
 
             for (const key of currentKeys) {
+                if(soldKeys.has(key)) {
+                    continue;
+                }
+
                 if (!activeListings.has(key)) {
                     activeListings.set(key, history.createdAt);
                 }
             }
 
-            for (const [key, firstSeenAt] of [...activeListings.entries()]) {
+            for (const [key, lastSeenAt] of [...activeListings.entries()]) {
                 if (!currentKeys.has(key)) {
-                    const durationMs = new Date(history.createdAt).getTime() - new Date(firstSeenAt).getTime();
+                    const durationMs = new Date(lastSeenAt).getTime() - new Date(history.createdAt).getTime();
                     if (durationMs > 0) {
                         durations.push(durationMs);
                     }
+
+                    soldKeys.add(key);
                     activeListings.delete(key);
                 }
             }
@@ -74,6 +97,7 @@ export default defineEventHandler(async (event) => {
             },
         };
     } catch (e: unknown) {
+        logger.error(`GET /api/skin/velocity : ${e}`);
         setResponseStatus(event, 400);
         if (e instanceof Error) {
             return { msg: e.message };

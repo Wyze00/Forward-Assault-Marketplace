@@ -1,93 +1,106 @@
+import { logger } from "nuxt/kit";
 import { Camo } from "~~/prisma/generated/client";
 import { ItemType } from "~~/prisma/generated/enums";
-import { GetSellOffersResponse, GetUniqueItemsResponse } from "~~/server/types";
-import { fetchUtil } from "~~/server/util/fetchUtil";
+import { fetchPostSkinCapture } from "~~/server/util/fetchApi";
+import { fetchGameAPIGetUniqueItems, fetchUtil } from "~~/server/util/fetchGameApi";
 import { prismaClient } from "~~/server/util/prismaService";
 
-export default defineEventHandler(async (event) => {
-    try {
-        /**
-         * Validation
-         */
-        const body: { itemType: ItemType, weaponType: number } = await readBody(event);
+/**
+ * Body ada itemType dan weaponType
+ * Fetch game API uniqueItem bedasarkan itemType dan weaponType buat dapaetin camoId
+ * Filter camoId dari response gameAPI sama camoId yang ada di database
+ * Upsert skin buat dapetin uuid nya
+ * Panggil fetchPostSkinCapture
+ */
 
-        if (!body || !body.itemType || (!body.weaponType && body.weaponType !== 0)) {
-            throw new Error('Harap isi itemType');
-        }
+/**
+ * @throws Error
+ */
+async function getCamoIDsFromGameAPI(itemType: ItemType, weaponType: number): Promise<number[]> {
+    let extraQuery = {};
 
-        /**
-         * Get All Camo from API
-         */
-        let weaponType = body.weaponType || 0;
-        let extraQuery = '';
+    if (itemType === 'weapon') {
 
-        if (body.itemType === 'weapon') {
-
-            const weapon = await prismaClient.weapon.findUnique({
-                where: {
-                    weaponType: weaponType,
-                }
-            })
-
-            if (!weapon) {
-                throw new Error('Weapon Type Tidak Ada');
-            }
-
-            extraQuery = `&weaponType=${weapon.weaponType}`;
-        } else if (body.itemType === 'glove' || body.itemType === 'character') {
-            weaponType = 0;
-        } else {
-            throw new Error('Item Type Tidak Valid');
-        }
-
-        const camoIDs: number[] = []
-        let page = 0;
-        
-        while (true) {
-            const response = await fetchUtil<GetUniqueItemsResponse>('marketplaceV3_get_unique_items.php', `page=${page}&itemPerPage=20&sortBy=price_asc&itemType=${body.itemType}${extraQuery}`);
-            
-            response.items.forEach((skin) => {
-                camoIDs.push(skin.camoID);
-            })
-
-            if (!response.hasMore) {
-                break;
-            }
-
-            page++;
-        }
-
-        // Cleaning CamoId
-        const dbCamo = await prismaClient.camo.findMany({
+        const weapon = await prismaClient.weapon.findUnique({
             where: {
-                itemType: body.itemType as ItemType
-            },
-        })
-
-        const dbCamoMap = new Map<number, Camo>(dbCamo.map((v) => [v.camoID, v]));
-        const camoSet = new Set<number>();
-
-        const cleanedCamoIDs = camoIDs.filter((id) => {
-            if (dbCamoMap.has(Number(id))) {
-                if (camoSet.has(Number(id))) {
-                    return false;
-                } else {
-                    camoSet.add(Number(id));
-                }
-
-                return true;
-            } else {
-                console.log(`Unknown ${body.itemType} CamoID : ${id}`);
-                return false;
+                weaponType: weaponType,
             }
         })
-        
-        /**
-         * Treat all camo
-         */
-        for (const camoID of cleanedCamoIDs) {
-            const camo = dbCamoMap.get(camoID)!;
 
+        if (!weapon) {
+            throw new Error('Weapon Type Tidak Ada');
+        }
+
+        extraQuery = {
+            weaponType,
+        };
+    } else if (itemType === 'glove' || itemType === 'character') {
+        weaponType = 0;
+    } else {
+        throw new Error('Item Type Tidak Valid');
+    }
+
+    const camoIDs: number[] = []
+    let page = 0;
+    
+    while (true) {
+        const response = await fetchGameAPIGetUniqueItems({
+            page,
+            itemPerPage: 20,
+            sortBy: "price_asc",
+            itemType,
+            ...extraQuery
+        });
+        
+        response.items.forEach((skin) => {
+            camoIDs.push(skin.camoID);
+        })
+
+        if (!response.hasMore) {
+            break;
+        }
+
+        page++;
+    }
+
+    return camoIDs;
+}
+
+/**
+ * @throws Error
+ */
+async function getCamosFromDB(itemType: ItemType): Promise<Camo[]> {
+    const response = await prismaClient.camo.findMany({
+        where: {
+            itemType
+        },
+    })
+
+    return response;
+}
+
+function cleanCamos(gameCamoIDs: number[], dbCamos: Camo[]): Camo[] {
+    const dbCamoMap = new Map(dbCamos.map((camo) => [camo.camoID, camo]));
+    const cleanedCamos: Camo[] = [];
+
+    for (const camoID of gameCamoIDs) {
+        const dbCamo = dbCamoMap.get(camoID);
+
+        if (dbCamo) {
+            cleanedCamos.push(dbCamo);
+        } else {
+            logger.warn(`Unknown camoID : ${camoID}`);
+        }
+    }
+
+    return cleanedCamos;
+}
+
+async function upsertSkins(weaponType: number, cleanedCamos: Camo[]): Promise<string[]> {
+    const skinUuids: string[] = [];
+
+    for (const camo of cleanedCamos) {
+        try {
             const skin = await prismaClient.skin.upsert({
                 where: {
                     camoUuid_weaponType: {
@@ -113,93 +126,54 @@ export default defineEventHandler(async (event) => {
                 }
             });
 
-            const lastHistory = skin.skinHistories[0];
-            const lastHistoryEntries = lastHistory ? lastHistory.skinHistoryEntries : [];
-            const lastHistoryEntriesMap = new Map(lastHistoryEntries.map(e => [`${e.skinID}_${e.sellerID}`, e]));
-
-            const queryParams = `itemType=${body.itemType}&weaponType=${skin.weaponType}&camoID=${camoID}&minCondition=0&maxCondition=1&page=0&limit=20`;
-            const offersResponse = await fetchUtil<GetSellOffersResponse>("marketplaceV3_get_sell_offers.php", queryParams);
-
-            if (!offersResponse.offers || offersResponse.offers.length === 0) continue;
-
-            const currentHistoryEntriesMap = new Map(offersResponse.offers.map(o => [`${o.skinID}_${o.sellerID}`, o]));
-
-            const currentHistory = await prismaClient.skinHistory.create({
-                data: {
-                    skinUuid: skin.uuid,
-                    skinHistoryEntries: {
-                        create: offersResponse.offers.map(offer => ({
-                            offerID: offer.offerID,
-                            sellerID: offer.sellerID,
-                            sellerName: offer.sellerName,
-                            price: offer.price,
-                            condition: offer.condition,
-                            skinID: offer.skinID,
-                            listingDate: offer.listingDate,
-                        }))
-                    }
-                },
-                include: { skinHistoryEntries: true }
-            });
-
-            /**
-             * Cek untuk mengetahui skin Add / Change
-             */
-
-            // Dapetin Top 10 data saat ini
-            const currentHistoryEntriesTop10 = currentHistory.skinHistoryEntries.slice(0, 10);
-            const currentHistoryEntriesTop10Map = new Map(currentHistoryEntriesTop10.map(e => [`${e.skinID}_${e.sellerID}`, e]));
-
-            for (const currentEntry of currentHistoryEntriesTop10) {
-                const key = `${currentEntry.skinID}_${currentEntry.sellerID}`;
-                
-                // Bandingkan dengan entry sebelumnya
-                const matchedPrev = lastHistoryEntriesMap.get(key);
-
-                if (!matchedPrev) {
-                    // Jika belum ada maka skin tersebut baru ditmbahkan
-                    await prismaClient.skinOfferChange.create({
-                        data: { skinHistoryEntryUuid: currentEntry.uuid, type: "add", seen: false }
-                    });
-                    
-                } else if (matchedPrev.price !== currentEntry.price) {
-                    // Kalo harga berubah
-                    await prismaClient.skinOfferChange.create({
-                        data: { skinHistoryEntryUuid: currentEntry.uuid, type: "change", seen: false }
-                    });
-                }
-            }
-
-            /**
-             * Cek untuk skin remove
-             */
-
-            // Dapetin data last top 10
-            const lastHistoryEntriesTop10Map = lastHistoryEntries.slice(0, 10);
-
-            for (const lastEntry of lastHistoryEntriesTop10Map) {
-                const key = `${lastEntry.skinID}_${lastEntry.sellerID}`;
-                
-                // Jika entry yang sebelumnya ada di top 10 tapi sudah tidak ada lagi sekarang
-                if (!currentHistoryEntriesTop10Map.has(key)) {
-
-                    // Pastikan kalau top 10 benar-benar hilang jadi tidak ke top 11
-                    if (currentHistoryEntriesMap.has(key)) {
-                        continue; 
-                    }
-
-                    await prismaClient.skinOfferChange.create({
-                        data: { skinHistoryEntryUuid: lastEntry.uuid, type: "remove", seen: false }
-                    });
-                }
-            }
+            skinUuids.push(skin.uuid);
+        } catch (error) {
+            continue;
         }
+    }
+
+    return skinUuids;
+}
+
+async function captureSkins(skinUuids: string[]) {
+    for (const skinUuid of skinUuids) {
+        await fetchPostSkinCapture(skinUuid);
+    }
+}
+
+export default defineEventHandler(async (event) => {
+    try {
+        /**
+         * Validation
+         */
+        const body: { itemType: ItemType, weaponType: number } = await readBody(event);
+
+        if (!body || !body.itemType || (!body.weaponType && body.weaponType !== 0)) {
+            throw new Error('Harap isi itemType');
+        }
+
+        /**
+         * Get & clean camoIDs
+         */
+        const gameCamoIDs = await getCamoIDsFromGameAPI(body.itemType, body.weaponType);
+        const dbCamo = await getCamosFromDB(body.itemType);
+        const cleanedCamos = cleanCamos(gameCamoIDs, dbCamo);
+
+        /**
+         * Upsert all camos
+         */
+        const skinUuids = await upsertSkins(body.weaponType, cleanedCamos);
+
+        /**
+         * Capture all skins
+         */
+        await captureSkins(skinUuids);
 
         return {
             msg: "Success",
         };
-
     } catch (e: unknown) {
+        logger.error(`POST /api/skin/init : ${e}`);
         setResponseStatus(event, 400);
         
         if (e instanceof Error) {

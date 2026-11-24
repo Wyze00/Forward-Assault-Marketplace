@@ -1,6 +1,6 @@
 import { ItemType } from "~~/prisma/generated/client";
 import { GetSellOffersResponse, GetUniqueItemsResponse } from "~~/server/types";
-import { fetchUtil } from "~~/server/util/fetchUtil";
+import { fetchUtil } from "~~/server/util/fetchGameApi";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {
