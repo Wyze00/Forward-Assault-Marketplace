@@ -1,6 +1,6 @@
-import { logger } from "nuxt/kit";
 import { ItemType } from "~~/prisma/generated/enums";
 import { GetSkinResponse } from "~~/server/types/api/skin";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetSkinResponse | undefined> => {

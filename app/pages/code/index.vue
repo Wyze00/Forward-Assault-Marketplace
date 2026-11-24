@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import type { ItemType } from '~~/prisma/generated/enums'
-import type { GetSkinResponse, GetWeaponResponse, SkinWithWeaponAndCamo } from '~~/server/types'
+import type { GetSkinResponse, SkinWithWeaponAndCamo } from '~~/server/types/api/skin'
+import type { GetWeaponResponse } from '~~/server/types/api/weapon'
 
 type SkinOption = SkinWithWeaponAndCamo
 

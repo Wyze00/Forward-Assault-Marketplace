@@ -2,10 +2,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fetchGameAPI } from "~~/server/util/fetchGameApi";
 import { prismaClient } from "~~/server/util/prismaService";
-import { GetUniqueItemsResponse } from "~~/server/types";
 import { fetchPostSkinCapture } from '../util/fetchApi';
 import { GetUniqueItemsGameAPIResponse } from '../types/gameApi';
-import { logger } from 'nuxt/kit';
+import { logger } from '../util/logger';
 
 const DATA_FILE = path.resolve(process.cwd(), 'lastCapturedData.json');
 
@@ -36,7 +35,7 @@ async function getMarketplaceItems(): Promise<GetUniqueItemsGameAPIResponse['ite
 async function getLastItems(): Promise<GetUniqueItemsGameAPIResponse['items']> {
     try {
         const fileContent = await fs.readFile(DATA_FILE, 'utf-8');
-        return JSON.parse(fileContent) as GetUniqueItemsResponse['items'];
+        return JSON.parse(fileContent) as GetUniqueItemsGameAPIResponse['items'];
     } catch (error) {
         return [];
     }

@@ -1,8 +1,8 @@
-import { logger } from "nuxt/kit";
 import { Camo } from "~~/prisma/generated/client";
 import { ItemType } from "~~/prisma/generated/enums";
 import { fetchPostSkinCapture } from "~~/server/util/fetchApi";
 import { fetchGameAPIGetUniqueItems, fetchUtil } from "~~/server/util/fetchGameApi";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 /**

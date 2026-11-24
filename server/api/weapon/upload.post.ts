@@ -1,4 +1,4 @@
-import { logger } from "nuxt/kit";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {

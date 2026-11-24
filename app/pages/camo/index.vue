@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Camo } from '~~/prisma/generated/client'
-import type { GetCamoResponse } from '~~/server/types'
+import type { GetCamoResponse } from '~~/server/types/api/camo'
 
 const camos = ref<Camo[]>([])
 const newCamo = ref<Omit<Camo,'uuid'>>({ camoID: 0, camoName: '', itemType: 'weapon' })

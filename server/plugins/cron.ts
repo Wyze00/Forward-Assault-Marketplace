@@ -1,7 +1,7 @@
 import { ItemType } from "~~/prisma/generated/enums";
 import { prismaClient } from "~~/server/util/prismaService";
 import { fetchPostSkinCapture } from "../util/fetchApi";
-import { logger } from "nuxt/kit";
+import { logger } from "../util/logger";
 
 const FULL_SWEEP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 

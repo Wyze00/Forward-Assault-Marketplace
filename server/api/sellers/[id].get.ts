@@ -1,5 +1,5 @@
-import { logger } from "nuxt/kit";
 import { GetSellersResponse } from "~~/server/types/api/sellers";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetSellersResponse | undefined> => {

@@ -1,5 +1,5 @@
-import { logger } from "nuxt/kit";
 import { GetSkinIdealPriceResponse } from "~~/server/types/api/skin";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 /**

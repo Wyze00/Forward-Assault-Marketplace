@@ -1,5 +1,5 @@
-import { logger } from "nuxt/kit";
 import { PostCamoRequest } from "~~/server/types/api/camo";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event) => {

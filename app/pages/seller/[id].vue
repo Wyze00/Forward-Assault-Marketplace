@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { GetSellersResponse } from '~~/server/types/api/sellers'
 
 const route = useRoute()
 const router = useRouter()
 const sellerID = computed(() => String(route.params.id))
 const selectedStatus = ref<'all' | 'active' | 'removed'>('all')
 
-const { data: response, pending, error } = await useFetch(() => `/api/sellers/${sellerID.value}`)
+const { data: response, pending, error } = await useFetch<GetSellersResponse>(() => `/api/sellers/${sellerID.value}`)
 
 const seller = computed(() => response.value?.data ?? null)
 const filteredOffers = computed(() => {

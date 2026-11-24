@@ -85,15 +85,25 @@
                     </option>
                   </select>
                   <select
-                    v-model="selectedRange"
+                    v-model="selectedPointRange"
                     class="border-4 border-black bg-white px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]"
-                    aria-label="Pilih rentang waktu grafik"
+                    aria-label="Pilih jumlah titik grafik"
                   >
+                    <option value="20">20 Point Terakhir</option>
+                    <option value="50">50 Point Terakhir</option>
+                    <option value="100">100 Point Terakhir</option>
                     <option value="alltime">All Time</option>
-                    <option value="6m">6 Bulan</option>
-                    <option value="3m">3 Bulan</option>
-                    <option value="1m">1 Bulan</option>
+                    <option value="custom">Custom</option>
                   </select>
+                  <input
+                    v-if="selectedPointRange === 'custom'"
+                    v-model.number="customPointCount"
+                    type="number"
+                    min="1"
+                    step="1"
+                    class="w-24 border-4 border-black bg-white px-3 py-2 text-xs font-black shadow-[3px_3px_0px_#000000]"
+                    aria-label="Jumlah titik grafik"
+                  />
                   <span :class="trendBadgeClass" class="inline-flex items-center border-4 border-black px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0px_#000000]">
                     {{ trendLabel }}
                   </span>
@@ -441,7 +451,8 @@ const captures = computed(() => response.value?.data || [])
 const skinInfo = computed(() => response.value?.skinInfo || null)
 const currentPrices = computed(() => ({ idealPrice: response.value?.skinInfo.idealPrice, shopPrice: response.value?.skinInfo.shopPrice}))
 const selectedCondition = ref(null)
-const selectedRange = ref('alltime')
+const selectedPointRange = ref('20')
+const customPointCount = ref(20)
 const chartBounds = { left: 82, right: 680, top: 28, bottom: 500 }
 const availableConditions = computed(() => trendResponse.value?.conditions || [])
 const selectedConditionTrend = computed(() => {
@@ -457,13 +468,15 @@ const selectedConditionTrend = computed(() => {
 })
 const conditionTrendData = computed(() => selectedConditionTrend.value.data || [])
 const rangeTrendData = computed(() => {
-  if (selectedRange.value === 'alltime') return conditionTrendData.value
+  if (selectedPointRange.value === 'alltime') return conditionTrendData.value
 
-  const months = Number.parseInt(selectedRange.value, 10)
-  const cutoff = new Date()
-  cutoff.setMonth(cutoff.getMonth() - months)
+  const pointCount = selectedPointRange.value === 'custom'
+    ? Number(customPointCount.value)
+    : Number(selectedPointRange.value)
 
-  return conditionTrendData.value.filter((capture) => new Date(capture.capturedAt) >= cutoff)
+  if (!Number.isInteger(pointCount) || pointCount < 1) return []
+
+  return conditionTrendData.value.slice(-pointCount)
 })
 const trendData = computed(() => rangeTrendData.value)
 const velocityData = computed(() => velocityResponse.value?.data || null)

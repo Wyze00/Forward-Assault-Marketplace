@@ -1,5 +1,5 @@
-import { logger } from "nuxt/kit";
 import { GetWeaponResponse } from "~~/server/types/api/weapon";
+import { logger } from "~~/server/util/logger";
 import { prismaClient } from "~~/server/util/prismaService";
 
 export default defineEventHandler(async (event): Promise<GetWeaponResponse  | undefined> => {

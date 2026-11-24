@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Weapon } from '~~/prisma/generated/client'
-import type { GetWeaponResponse } from '~~/server/types'
+import type { GetWeaponResponse } from '~~/server/types/api/weapon'
 
 const weapons = ref<Weapon[]>([])
 const newWeapon = ref({ weaponType: '', weaponName: '' })
